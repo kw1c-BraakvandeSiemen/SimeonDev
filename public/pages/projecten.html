@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html id="parent" lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>SimeonDev.</title>
+		<link rel="stylesheet" href="../styles/styles.css" />
+		<script src="../scripts/mobileNav.js" defer></script>
+		<script src="../scripts/darkmode.js" defer></script>
+	</head>
+	<body class="bg-gray-200 dark:bg-gray-900">
+		<header>
+			<!-- nav -->
+			<nav id="navbar" class="fixed top-0 z-40 w-full border-b-2 border-blue-600 bg-[#1682fd] text-white transition-[top] duration-[0.5s] dark:border-[#7444f7] dark:bg-[#2b0b6c]">
+				<div class="mx-auto px-8">
+					<div class="flex justify-between">
+						<div class="flex space-x-4">
+							<!-- home -->
+							<div class="flex">
+								<a href="../../public/index.html" class="flex items-center py-4 px-2">
+									<span class="dark:hover-text-white rounded bg-white py-1.5 px-3 font-bold text-[#1682fd] transition duration-300 hover:scale-110 hover:bg-[#1682fd] hover:text-white dark:text-[#7444f7] dark:hover:bg-[#2b0b6c]">Home</span>
+								</a>
+								<button onclick="toggleDarkMode()" id="darkModeToggle" type="button" class="p-3 transition duration-200 hover:scale-125">
+									<svg class="h-6 w-6 animate-pulse" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path></svg>
+								</button>
+							</div>
+						</div>
+						<!-- nav links -->
+						<div class="hidden items-center space-x-3 md:flex">
+							<a href="../pages/projecten.html" class="py-2 px-3 transition duration-100 hover:scale-110">Projecten</a>
+							<a href="../pages/talen.html" class="py-2 px-3 transition duration-100 hover:scale-110">Talen</a>
+						</div>
+						<!-- mobile button -->
+						<div class="flex items-center md:hidden">
+							<button class="mobileMenuButton">
+								<!-- hamburger menu -->
+								<svg class="h-12 w-12" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+									<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+								</svg>
+							</button>
+						</div>
+					</div>
+				</div>
+				<!-- mobile nav -->
+				<div class="mobileMenu hidden md:hidden">
+					<a href="../pages/projecten.html" class="block py-4 px-4 text-center hover:bg-blue-600 dark:hover:bg-[#7444f7]">Projecten</a>
+					<a href="../pages/talen.html" class="block py-4 px-4 text-center hover:bg-blue-600 dark:hover:bg-[#7444f7]">Talen</a>
+				</div>
+			</nav>
+		</header>
+		<main>
+			<div class="mx-auto max-w-md px-8 py-6 sm:max-w-xl lg:max-w-full xl:mr-0">
+				<div class="mx-auto lg:max-w-xl">
+					<div class="mt-7 flex h-32 flex-row items-center justify-center text-3xl font-bold sm:justify-start lg:h-32 lg:text-5xl">
+						<h1 class="mx-auto inline-block dark:text-gray-200">Projecten</h1>
+					</div>
+					<img id="keyboard" class="mx-auto h-4/5 w-4/5" src="../images/keyboard.png" alt="keyboard" />
+					<p class="mt-2 text-2xl font-semibold text-gray-900 dark:text-gray-200 sm:mt-8 sm:text-4xl lg:text-3xl xl:text-4xl">
+						Hier staat de timeline die ik heb doorlopen om te komen tot de website die u nu bekijkt.
+						<br class="lg:inline" />
+						<span class="text-[#1682fd] dark:text-[#7444f7]">voltooide en toekomstige projecten zullen hier ook getoond worden.</span>
+					</p>
+				</div>
+			</div>
+			<!-- timeline -->
+			<div class="mx-auto mt-20 h-full w-full bg-gray-100 dark:bg-gray-800">
+				<div class="wrap relative h-full overflow-hidden p-10">
+					<div class="absolute h-full bg-gray-700 w-1 bg-opacity-20 md:left-1/2"></div>
+					<!-- right timeline -->
+					<div class="right-timeline mb-8 flex w-full items-center justify-between">
+						<div class="order-1 w-1/2"></div>
+						<div class="z-20 order-1 flex h-8 w-72 items-center rounded-full bg-gray-800 shadow-xl">
+							<h1 class="mx-auto text-lg font-semibold text-white">30 aug. 2021</h1>
+						</div>
+						<div class="order-1 m-4 w-1/2 rounded-lg bg-gray-200 px-6 py-4 shadow-xl">
+							<h3 class="mb-3 text-xl font-bold text-gray-800">Start opleiding</h3>
+							<p class="leading-snug tracking-wide text-gray-900 text-opacity-100">Op maandag 30 augustus 2021 start ik met de opleiding Software developer op het Koning Willem 1 College in Den Bosch.</p>
+							<img class="mt-4 shadow-lg sm:w-full" src="../images/Kw1c_school.jpeg" alt="kw1c" />
+						</div>
+					</div>
+
+					<!-- left timeline -->
+					<div class="left-timeline mb-8 flex w-full flex-row-reverse items-center justify-between">
+						<div class="order-1 w-1/2"></div>
+						<div class="z-20 order-1 flex h-8 w-72 items-center rounded-full bg-gray-800 shadow-xl">
+							<h1 class="mx-auto text-lg font-semibold text-white">5 nov. 2021</h1>
+						</div>
+						<div class="order-1 m-4 w-1/2 rounded-lg bg-[#1682fd] px-6 py-4 shadow-xl">
+							<h3 class="mb-3 text-xl font-bold text-white">1e Project oplevering</h3>
+							<p class="font-medium leading-snug tracking-wide text-white text-opacity-100">Na ongeveer 10 weken vna de start was het zover om het eerste "grote" project (gemaakt in groepsverband) op te leveren dit was uit een simpele webpagina voor een kapperszaak met een paar pagina's met echt de basis van HTML, CSS (niet responsive) en JavaScript.</p>
+						</div>
+					</div>
+
+					<!-- right timeline -->
+					<div class="right-timeline mb-8 flex w-full items-center justify-between">
+						<div class="order-1 w-1/2"></div>
+						<div class="z-20 order-1 flex h-8 w-72 items-center rounded-full bg-gray-800 shadow-xl">
+							<h1 class="mx-auto text-lg font-semibold text-white">24 jan. 2022</h1>
+						</div>
+						<div class="order-1 m-4 w-1/2 rounded-lg bg-gray-200 px-6 py-4 shadow-xl">
+							<h3 class="mb-3 text-xl font-bold text-gray-800">2e Project oplevering</h3>
+							<p class="leading-snug tracking-wide text-gray-900 text-opacity-100">Nieuw jaar nieuwe website, het periode 2 eind project was een eigen portfolio website (individueel) deze moest ook responsief zijn voor mobiele apparaten. Dit was een leuke uitdaging om te maken en ik was erg trots op het resultaat.</p>
+						</div>
+					</div>
+
+					<!-- left timeline -->
+					<div class="left-timeline mb-8 flex w-full flex-row-reverse items-center justify-between">
+						<div class="order-1 w-1/2"></div>
+						<div class="z-20 order-1 flex h-8 w-72 items-center rounded-full bg-gray-800 shadow-xl">
+							<h1 class="mx-auto text-lg font-semibold text-white">04 feb. 2022</h1>
+						</div>
+						<div class="order-1 m-4 w-1/2 rounded-lg bg-[#1682fd] px-6 py-4 shadow-xl">
+							<h3 class="mb-3 text-xl font-bold text-white">Door naar het versnelde traject van de opleiding 🥳🎉</h3>
+							<p class="font-medium leading-snug tracking-wide text-white text-opacity-100">Na 2 periodes werdt bepaald op basis van je behaalde resultaten of je door mocht naar het versnelde traject van de opleiding (4 jaar in 3).</p>
+							<svg xmlns="http://www.w3.org/2000/svg" fill="white" viewBox="0 0 24 24" stroke-width="1.5" stroke="none" class="w-full h-52">
+								<path stroke-linecap="round" stroke-linejoin="round" d="M3 8.688c0-.864.933-1.405 1.683-.977l7.108 4.062a1.125 1.125 0 010 1.953l-7.108 4.062A1.125 1.125 0 013 16.81V8.688zM12.75 8.688c0-.864.933-1.405 1.683-.977l7.108 4.062a1.125 1.125 0 010 1.953l-7.108 4.062a1.125 1.125 0 01-1.683-.977V8.688z" />
+							</svg>
+						</div>
+					</div>
+					<!-- right timeline -->
+					<div class="right-timeline mb-8 flex w-full items-center justify-between">
+						<div class="order-1 w-1/2"></div>
+						<div class="z-20 order-1 flex h-8 w-72 items-center rounded-full bg-gray-800 shadow-xl">
+							<h1 class="mx-auto text-lg font-semibold text-white">21 apr. 2022</h1>
+						</div>
+						<div class="order-1 m-4 w-1/2 rounded-lg bg-gray-200 px-6 py-4 shadow-xl">
+							<h3 class="mb-3 text-xl font-bold text-gray-800">3e Project oplevering</h3>
+							<p class="leading-snug tracking-wide text-gray-900 text-opacity-100">Het 3e project (gemaakt in groepsverband) van het jaar was een website voor het Koning Willem 1 College waar gebruikers en potentiele studenten voor de ICT acedemie een enquête konden invullen, vervolgens berekende deze dan met de punten telling die aan de vragenlijst hing een score en kon deze tonen welke ICT opleiding het beste bij je past.</p>
+						</div>
+					</div>
+
+					<!-- left timeline -->
+					<div class="left-timeline mb-8 flex w-full flex-row-reverse items-center justify-between">
+						<div class="order-1 w-1/2"></div>
+						<div class="z-20 order-1 flex h-8 w-72 items-center rounded-full bg-gray-800 shadow-xl">
+							<h1 class="mx-auto text-lg font-semibold text-white">29 jun. 2022</h1>
+						</div>
+						<div class="order-1 m-4 w-1/2 rounded-lg bg-[#1682fd] px-6 py-4 shadow-xl">
+							<h3 class="mb-3 text-xl font-bold text-white">Laatste project af en vakantie</h3>
+							<p class="font-medium leading-snug tracking-wide text-white text-opacity-100">Het laatste project bestond uit een website waarop het mogelijk was voor de horeca afdeling van het Koning Willem 1 College om etentjes/diners in te kunnen plannen, aanpassen en te verwijderen (crud), gebruikers konden dan alleen de etentjes zien en niet aanpassen etc. leerjaar 1 is voltooid, veel kennis opgedaan en door naar leerjaar 2.</p>
+						</div>
+					</div>
+					<!-- right timeline -->
+					<div class="right-timeline mb-8 flex w-full items-center justify-between">
+						<div class="order-1 w-1/2"></div>
+						<div class="z-20 order-1 flex h-8 w-72 items-center rounded-full bg-gray-800 shadow-xl">
+							<h1 class="mx-auto text-lg font-semibold text-white">29 aug. 2022</h1>
+						</div>
+						<div class="order-1 m-4 w-1/2 rounded-lg bg-gray-200 px-6 py-4 shadow-xl">
+							<h3 class="mb-3 text-xl font-bold text-gray-800">Start stage</h3>
+							<p class="leading-snug tracking-wide text-gray-900 text-opacity-100">Leerjaar 2 begon met een stage voor de eerste 2 periodes ik heb stage gelopen bij Microway in Den Bosch hier heb ik verschillende opdrachten uitgevoerd (voornamelijk bezig geweest met narrowcasting en Power BI), maar ook had ik tijd om aan eigen opdrachten te werken zoals een website voor school maar ook deze website.</p>
+							<img src="../images/Microway-Logo-MKB.png" alt="microway logo" class="mt-4 sm:w-full" />
+						</div>
+					</div>
+
+					<!-- left timeline -->
+					<div class="left-timeline z-50 mb-8 flex w-full flex-col items-center justify-between md:flex-row-reverse">
+						<div class="order-1 w-1/2"></div>
+						<div class="z-20 order-1 flex h-8 w-72 items-center rounded-full bg-gray-800 shadow-xl">
+							<h1 class="mx-auto text-lg font-semibold text-white">6 okt. 2022</h1>
+						</div>
+						<div class="order-1 m-4 w-2/3 rounded-lg bg-[#1682fd] px-6 py-4 shadow-xl md:w-1/2">
+							<h3 class="mb-3 text-xl font-bold text-white">Start leren tailwind</h3>
+							<p class="font-medium leading-snug tracking-wide text-white text-opacity-100">Ik had me voorgenomen dat ik graag een keer Tailwind wilde leren en ook had ik nog geen eigen (los van school staande) website. Tijdens deze periode heb ik veel guides gevolgd en dingen uitgeprobeerd.</p>
+							<svg role="img" class="mx-auto mt-4 drop-shadow-2lg dark:text-black text-white sm:w-full md:w-1/2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+								<title>Tailwind CSS</title>
+								<path fill="currentColor" d="M12.001,4.8c-3.2,0-5.2,1.6-6,4.8c1.2-1.6,2.6-2.2,4.2-1.8c0.913,0.228,1.565,0.89,2.288,1.624 C13.666,10.618,15.027,12,18.001,12c3.2,0,5.2-1.6,6-4.8c-1.2,1.6-2.6,2.2-4.2,1.8c-0.913-0.228-1.565-0.89-2.288-1.624 C16.337,6.182,14.976,4.8,12.001,4.8z M6.001,12c-3.2,0-5.2,1.6-6,4.8c1.2-1.6,2.6-2.2,4.2-1.8c0.913,0.228,1.565,0.89,2.288,1.624 c1.177,1.194,2.538,2.576,5.512,2.576c3.2,0,5.2-1.6,6-4.8c-1.2,1.6-2.6,2.2-4.2,1.8c-0.913-0.228-1.565-0.89-2.288-1.624 C10.337,13.382,8.976,12,6.001,12z" />
+							</svg>
+						</div>
+					</div>
+					<!-- right timeline -->
+					<div class="right-timeline mb-8 flex w-full items-center justify-between">
+						<div class="order-1 w-1/2"></div>
+						<div class="z-20 order-1 flex h-8 w-72 items-center rounded-full bg-gray-800 shadow-xl">
+							<h1 class="mx-auto text-lg font-semibold text-white">4 nov. 2022</h1>
+						</div>
+						<div class="order-1 m-4 w-1/2 rounded-lg bg-gray-200 px-6 py-4 shadow-xl">
+							<h3 class="mb-3 text-xl font-bold text-gray-800">Huidige website grotendeels voltooid</h3>
+							<p class="leading-snug tracking-wide text-gray-900 text-opacity-100">Het geen wat je tot hier kan lezen en alle andere pagina's zijn op de dag van schrijven 4 november 2022 gemaakt/geschreven.</p>
+							<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-full">
+								<path stroke-linecap="round" stroke-linejoin="round" d="M10.125 2.25h-4.5c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125v-9M10.125 2.25h.375a9 9 0 019 9v.375M10.125 2.25A3.375 3.375 0 0113.5 5.625v1.5c0 .621.504 1.125 1.125 1.125h1.5a3.375 3.375 0 013.375 3.375M9 15l2.25 2.25L15 12" />
+							  </svg>
+							  
+							</svg>
+						</div>
+					</div>
+				</div>
+			</div>
+		</main>
+		<footer class="fixed bottom-0 z-20 w-screen border-t-2 border-blue-600 bg-[#1682fd] py-2 text-center text-white dark:border-[#7444f7] dark:bg-[#2b0b6c]">
+			<p>Siemen &copy; 2022</p>
+		</footer>
+	</body>
+</html>
+
+<!-- https://github.com/kw1c-BraakvandeSiemen/Project-3-Reupload
+https://github.com/kw1c-BraakvandeSiemen/PraktijkP2
+https://github.com/kw1c-BraakvandeSiemen/Project1 -->
