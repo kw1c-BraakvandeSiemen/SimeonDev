@@ -938,6 +938,33 @@ video {
           animation: pulse 5s cubic-bezier(0.4, 0, 0.6, 1) infinite;
 }
 
+.animate-\[\] {
+  -webkit-animation: ;
+          animation: ;
+}
+
+@keyframes pulse {
+  50% {
+    opacity: .5;
+  }
+}
+
+.animate-\[pulse\] {
+  -webkit-animation: pulse;
+          animation: pulse;
+}
+
+@keyframes pulse {
+  50% {
+    opacity: .5;
+  }
+}
+
+.animate-\[pulse_3s_cubic-bezier\(0\.4\2c _0\2c _0\.6\2c _1\)_infinite\] {
+  -webkit-animation: pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+          animation: pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
 .grid-cols-2 {
   grid-template-columns: repeat(2, minmax(0, 1fr));
 }
