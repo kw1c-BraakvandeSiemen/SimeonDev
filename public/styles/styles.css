@@ -742,6 +742,22 @@ video {
   margin-top: 2.5rem;
 }
 
+.mt-0\.5 {
+  margin-top: 0.125rem;
+}
+
+.ml-1 {
+  margin-left: 0.25rem;
+}
+
+.-mr-1 {
+  margin-right: -0.25rem;
+}
+
+.mt-0 {
+  margin-top: 0px;
+}
+
 .block {
   display: block;
 }
@@ -804,6 +820,14 @@ video {
 
 .h-24 {
   height: 6rem;
+}
+
+.h-0 {
+  height: 0px;
+}
+
+.h-96 {
+  height: 24rem;
 }
 
 .w-full {
@@ -873,6 +897,45 @@ video {
 .animate-pulse {
   -webkit-animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
           animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+@-webkit-keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.animate-spin {
+  -webkit-animation: spin 1s linear infinite;
+          animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.animate-\[spin_15s_linear_infinite\] {
+  -webkit-animation: spin 15s linear infinite;
+          animation: spin 15s linear infinite;
+}
+
+@keyframes pulse {
+  50% {
+    opacity: .5;
+  }
+}
+
+.animate-\[pulse_5s_cubic-bezier\(0\.4\2c _0\2c _0\.6\2c _1\)_infinite\] {
+  -webkit-animation: pulse 5s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+          animation: pulse 5s cubic-bezier(0.4, 0, 0.6, 1) infinite;
 }
 
 .grid-cols-2 {
@@ -987,6 +1050,14 @@ video {
 
 .bg-opacity-20 {
   --tw-bg-opacity: 0.2;
+}
+
+.stroke-gray-300 {
+  stroke: #d1d5db;
+}
+
+.stroke-2 {
+  stroke-width: 2;
 }
 
 .object-contain {
@@ -1163,6 +1234,14 @@ video {
   --tw-text-opacity: 1;
 }
 
+.opacity-0 {
+  opacity: 0;
+}
+
+.opacity-100 {
+  opacity: 1;
+}
+
 .shadow-xl {
   --tw-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
   --tw-shadow-colored: 0 20px 25px -5px var(--tw-shadow-color), 0 8px 10px -6px var(--tw-shadow-color);
@@ -1220,6 +1299,10 @@ video {
   transition-duration: 0.5s;
 }
 
+.duration-500 {
+  transition-duration: 500ms;
+}
+
 /* animated dark mode switch maar disabled want refresh is irritant */
 
 /* @layer base {
@@ -1259,6 +1342,15 @@ video {
 .hover\:text-white:hover {
   --tw-text-opacity: 1;
   color: rgb(255 255 255 / var(--tw-text-opacity));
+}
+
+.group:hover .group-hover\:translate-x-\[3px\] {
+  --tw-translate-x: 3px;
+  transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
+}
+
+.group:hover .group-hover\:opacity-100 {
+  opacity: 1;
 }
 
 .dark .dark\:inline {
@@ -1319,9 +1411,9 @@ video {
   background-color: rgb(29 78 216 / var(--tw-bg-opacity));
 }
 
-.dark .dark\:text-blue-700 {
+.dark .dark\:text-blue-800 {
   --tw-text-opacity: 1;
-  color: rgb(29 78 216 / var(--tw-text-opacity));
+  color: rgb(30 64 175 / var(--tw-text-opacity));
 }
 
 .dark .dark\:text-gray-200 {
@@ -1329,9 +1421,9 @@ video {
   color: rgb(229 231 235 / var(--tw-text-opacity));
 }
 
-.dark .dark\:text-blue-800 {
+.dark .dark\:text-blue-700 {
   --tw-text-opacity: 1;
-  color: rgb(30 64 175 / var(--tw-text-opacity));
+  color: rgb(29 78 216 / var(--tw-text-opacity));
 }
 
 .dark .dark\:text-gray-800 {
