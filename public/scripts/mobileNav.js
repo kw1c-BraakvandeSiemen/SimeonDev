@@ -27,4 +27,10 @@ var currentScrollPos = window.pageYOffset;
     document.getElementById("navbar").style.top = "-100px";
   }
   prevScrollpos = currentScrollPos;
+  //disable on ios
+  if (navigator.userAgent.match(/(iPod|iPhone|iPad)/))
+  {
+    document.getElementById("navbar").style.top = "0";
+  }
 }
+
