@@ -28,7 +28,7 @@ var currentScrollPos = window.pageYOffset;
   }
   prevScrollpos = currentScrollPos;
   //only trigger when scrolling down past 100px
-  if (prevScrollpos > 100)
+  if (prevScrollpos > 10)
   {
     document.getElementById("navbar").style.top = "-100px";
   }
