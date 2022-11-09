@@ -20,7 +20,7 @@
 		@apply inline-block rounded-lg px-5 py-3 text-sm font-semibold  tracking-wider focus:outline-none focus:ring focus:ring-opacity-50 sm:text-base;
 	}
 	.btn-primary {
-		@apply border-none bg-[#1682fd] text-white hover:bg-blue-600 hover:focus:ring-[#3d1096] active:bg-indigo-700 dark:bg-[#7444f7] dark:hover:bg-[#3d1096] dark:focus:ring-[#7444f7] dark:hover:focus:ring-[#3d1096];
+		@apply border-none bg-[#1682fd] text-white hover:bg-blue-600 hover:focus:ring-blue-800 active:bg-indigo-700 dark:bg-blue-700 dark:hover:bg-blue-800 dark:focus:ring-blue-700 dark:hover:focus:ring-blue-800;
 	}
 	.btn-secondary {
 		@apply bg-gray-300 text-gray-800 hover:bg-gray-200 focus:ring-gray-300 active:bg-gray-300 active:focus:ring-gray-400;
