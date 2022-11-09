@@ -27,10 +27,10 @@ var currentScrollPos = window.pageYOffset;
     document.getElementById("navbar").style.top = "-100px";
   }
   prevScrollpos = currentScrollPos;
-  //disable on ios
-  if (navigator.userAgent.match(/(iPod|iPhone|iPad)/))
+  //only trigger when scrolling down past 100px
+  if (prevScrollpos > 100)
   {
-    document.getElementById("navbar").style.top = "0";
+    document.getElementById("navbar").style.top = "-100px";
   }
 }
 
