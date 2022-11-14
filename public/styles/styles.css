@@ -897,12 +897,12 @@ video {
   height: 24rem;
 }
 
-.min-h-screen {
-  min-height: 100vh;
-}
-
 .min-h-full {
   min-height: 100%;
+}
+
+.min-h-screen {
+  min-height: 100vh;
 }
 
 .w-full {
@@ -1468,6 +1468,18 @@ video {
 
 .duration-500 {
   transition-duration: 500ms;
+}
+
+.duration-\[10s\] {
+  transition-duration: 10s;
+}
+
+.duration-\[5s\] {
+  transition-duration: 5s;
+}
+
+.duration-\[0\.7s\] {
+  transition-duration: 0.7s;
 }
 
 /* animated dark mode switch maar disabled want refresh is irritant */
