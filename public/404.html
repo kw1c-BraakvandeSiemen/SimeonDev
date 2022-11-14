@@ -5,24 +5,65 @@
 		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 		<title>Talen</title>
-		<link rel="stylesheet" href="/styles/styles.css"/>
-		<script src="/scripts/darkmode.js" defer></script>
+		<link rel="stylesheet" href="/styles/styles.css" />
 	</head>
-  <body class="bg-gray-100 dark:bg-slate-800">
-    <section class="bg-gray-100 dark:bg-slate-800">
-      <div class="mx-auto sm:flex h-full max-w-screen-xl py-8 px-4 lg:py-16 lg:px-6">
-        <div class="mx-auto max-w-screen-sm text-center sm:flex sm:flex-row justify-center sm:flex-grow items-center h-full p-4 gap-10">
-          <div>
-            <img src="/images/404kat.png" onclick="toggleDarkMode()" alt="404" class="h-full w-full" />
-            </div>
-          <div class="sm:w-2/3">
-            <h1 class="mb-4 text-7xl font-extrabold tracking-tight text-gray-900 dark:text-gray-100 lg:text-9xl">404</h1>
-            <p class="dark:gray-100 mb-4 text-3xl font-bold tracking-tight text-gray-900 dark:text-gray-100 sm:text-4xl">Er is iets fout gegaan.</p>
-            <p class="mb-4 text-lg font-light text-gray-900 dark:text-gray-100">De pagina die je probeerde te bereiken bestaat niet.</p>
-            <a href="/" class="my-4 sm:inline-flex rounded-lg bg-blue-600 px-5 py-2.5 text-center text-sm font-medium text-white shadow-xl hover:bg-blue-700">Terug naar home</a>
-          </div>
-        </div>
-      </div>
-    </section>
-  </body>
+	<body class="bg-gray-100 dark:bg-slate-800">
+		<section class="bg-gray-100 dark:bg-slate-800">
+			<div class="mx-auto h-full max-w-screen-xl py-8 px-4 sm:flex lg:py-16 lg:px-6">
+				<div class="mx-auto h-full max-w-screen-sm items-center justify-center gap-10 object-cover p-4 text-center sm:flex sm:flex-grow sm:flex-row">
+					<div class="flex min-h-full min-w-full flex-grow flex-row object-cover">
+						<img src="/images/404kat.png" onclick="toggleDarkMode()" alt="404" class="h-full w-full object-cover" />
+					</div>
+					<div class="sm:w-2/3">
+						<h1 class="mb-4 text-7xl font-extrabold tracking-tight text-gray-900 dark:text-gray-100 lg:text-9xl">404</h1>
+						<p class="dark:gray-100 mb-4 text-3xl font-bold tracking-tight text-gray-900 dark:text-gray-100 sm:text-4xl">Er is iets fout gegaan.</p>
+						<p class="mb-4 text-lg font-light text-gray-900 dark:text-gray-100">De pagina die je probeerde te bereiken bestaat niet.</p>
+						<a href="/" class="my-4 rounded-lg bg-blue-600 px-5 py-2.5 text-center text-sm font-medium text-white shadow-xl hover:bg-blue-700 sm:inline-flex">Terug naar home</a>
+					</div>
+				</div>
+			</div>
+		</section>
+
+		<script>
+			const parent = document.querySelector("html");
+			function toggleDarkMode() {
+				parent.classList.toggle("dark");
+				if (parent.classList.contains("dark")) {
+					localStorage.theme = "dark";
+				} else {
+					localStorage.theme = "light";
+				}
+			}
+
+			if (localStorage.theme === "dark") {
+				parent.classList.add("dark");
+			} else if (localStorage.theme === "light") {
+				parent.classList.remove("dark");
+			} else if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
+				parent.classList.add("dark");
+			} else if (window.matchMedia("(prefers-color-scheme: light)").matches) {
+				parent.classList.remove("dark");
+			} else {
+				parent.classList.remove("dark");
+			}
+
+			function colorscheme() {
+				if (localStorage.theme === "dark" || (!("theme" in localStorage) && window.matchMedia("(prefers-color-scheme: dark)").matches)) {
+					if (!document.getElementById("parent").classList.contains("dark")) {
+						document.getElementById("parent").classList.add("dark");
+					}
+				} else {
+					document.getElementById("parent").classList.remove("dark");
+				}
+			}
+
+			// detect when the user changes their OS theme
+			window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", (e) => {
+				localStorage.removeItem("theme");
+				colorscheme();
+			});
+
+			colorscheme();
+		</script>
+	</body>
 </html>
