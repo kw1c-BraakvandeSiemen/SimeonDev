@@ -1446,8 +1446,8 @@ video {
   transition-duration: 150ms;
 }
 
-.duration-\[1s\] {
-  transition-duration: 1s;
+.duration-\[0\.7s\] {
+  transition-duration: 0.7s;
 }
 
 .duration-300 {
@@ -1462,24 +1462,8 @@ video {
   transition-duration: 100ms;
 }
 
-.duration-\[0\.5s\] {
-  transition-duration: 0.5s;
-}
-
 .duration-500 {
   transition-duration: 500ms;
-}
-
-.duration-\[10s\] {
-  transition-duration: 10s;
-}
-
-.duration-\[5s\] {
-  transition-duration: 5s;
-}
-
-.duration-\[0\.7s\] {
-  transition-duration: 0.7s;
 }
 
 /* animated dark mode switch maar disabled want refresh is irritant */
@@ -1602,6 +1586,16 @@ video {
 .dark .dark\:bg-blue-700 {
   --tw-bg-opacity: 1;
   background-color: rgb(29 78 216 / var(--tw-bg-opacity));
+}
+
+.dark .dark\:bg-blue-100 {
+  --tw-bg-opacity: 1;
+  background-color: rgb(219 234 254 / var(--tw-bg-opacity));
+}
+
+.dark .dark\:bg-blue-400 {
+  --tw-bg-opacity: 1;
+  background-color: rgb(96 165 250 / var(--tw-bg-opacity));
 }
 
 .dark .dark\:text-gray-100 {
