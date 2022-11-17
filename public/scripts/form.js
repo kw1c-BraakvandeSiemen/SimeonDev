@@ -24,20 +24,20 @@ form.addEventListener("submit", function handleSubmit(event) {
     if (xhr.readyState !== XMLHttpRequest.DONE) return;
     if (xhr.status === 200) {
       form.reset();
-      document.getElementById("submitButton").innerText = "Message has been sent ✅!";
+      document.getElementById("submitButton").innerText = "Bericht is verzonden!";
       document.getElementById("submitButton").classList.add("!bg-green-500");
       setTimeout(() => {
         document.getElementById("submitButton").classList.remove("!bg-green-500");
-        document.getElementById("submitButton").innerText = "Send message";
+        document.getElementById("submitButton").innerText = "Verstuur";
       }, 3000);
       // save data to localStorage so that the same person can't send another message for 5 minutes
       localStorage.setItem("lastMessageSent", Date.now());
     } else {
-      document.getElementById("submitButton").innerText = "Oops! There was a problem 😞.";
+      document.getElementById("submitButton").innerText = "Er is iets misgegaan. Probeer het later nog eens.";
       document.getElementById("submitButton").classList.add("!bg-red-500");
       setTimeout(() => {
         document.getElementById("submitButton").classList.remove("!bg-red-500");
-        document.getElementById("submitButton").innerText = "Send message";
+        document.getElementById("submitButton").innerText = "Verstuur bericht";
       }, 3000);
     }
   };
