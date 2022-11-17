@@ -3,19 +3,7 @@ const form = document.getElementById("emailForm");
 form.addEventListener("submit", function handleSubmit(event) {
   event.preventDefault();
 
-  // check if user sent an email within the last hour
-  if (localStorage.getItem("lastMessageSent") !== null) {
-    const lastMessageSent = localStorage.getItem("lastMessageSent");
-    const timeSinceLastMessageSent = Date.now() - lastMessageSent;
-    if (timeSinceLastMessageSent < 3600000) {
-      document.getElementById("submitButton").innerText = "You have already sent a message in the last hour. Please wait before sending another one.";
-      document.getElementById("submitButton").classList.add("!bg-red-500");
-      document.getElementById("submitButton").disabled = true;
-      return;
-    }
-  }
-
-  // send data to server
+  // verstuur de data naar de server
   const data = new FormData(event.target);
   const xhr = new XMLHttpRequest();
   xhr.open(form.method, form.action);
@@ -37,7 +25,7 @@ form.addEventListener("submit", function handleSubmit(event) {
       document.getElementById("submitButton").classList.add("!bg-red-500");
       setTimeout(() => {
         document.getElementById("submitButton").classList.remove("!bg-red-500");
-        document.getElementById("submitButton").innerText = "Verstuur bericht";
+        document.getElementById("submitButton").innerText = "Verstuur";
       }, 3000);
     }
   };
@@ -47,13 +35,3 @@ form.addEventListener("submit", function handleSubmit(event) {
   form.reset();
 });
 
-// check if the user has sent a message in the last hour
-if (localStorage.getItem("lastMessageSent") !== null) {
-  const lastMessageSent = localStorage.getItem("lastMessageSent");
-  const oneHourAgo = Date.now() - 3600000;
-  if (lastMessageSent > oneHourAgo) {
-    document.getElementById("submitButton").innerText = "You have already sent a message in the last hour. Please wait before sending another one.";
-    document.getElementById("submitButton").classList.add("!bg-red-500");
-    document.getElementById("submitButton").disabled = true;
-  }
-}
