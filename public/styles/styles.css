@@ -1809,6 +1809,15 @@ video {
     grid-column: span 5 / span 5;
   }
 
+  .md\:float-left {
+    float: left;
+  }
+
+  .md\:mx-auto {
+    margin-left: auto;
+    margin-right: auto;
+  }
+
   .md\:inline {
     display: inline;
   }
@@ -1860,6 +1869,15 @@ video {
     grid-column: span 2 / span 2;
   }
 
+  .lg\:float-left {
+    float: left;
+  }
+
+  .lg\:mx-auto {
+    margin-left: auto;
+    margin-right: auto;
+  }
+
   .lg\:block {
     display: block;
   }
@@ -1882,6 +1900,10 @@ video {
 
   .lg\:w-2\/3 {
     width: 66.666667%;
+  }
+
+  .lg\:w-1\/2 {
+    width: 50%;
   }
 
   .lg\:max-w-full {
