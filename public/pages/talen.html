@@ -1,11 +1,11 @@
-<!DOCTYPE html>
+<!doctype html>
 <html id="parent" lang="en">
 	<head>
 		<meta charset="UTF-8" />
 		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 		<title>Talen</title>
-        <link rel="shortcut icon" type="image/svg" href="../img/favicon.svg" />
+		<link rel="shortcut icon" type="image/svg" href="../img/favicon.svg" />
 		<link rel="stylesheet" href="../styles/styles.css" />
 		<script src="../scripts/mobileNav.js" defer></script>
 		<script src="../scripts/darkmode.js" defer></script>
@@ -20,8 +20,7 @@
 							<!-- home -->
 							<div class="flex">
 								<a href="/" class="flex items-center py-4 px-2">
-									<span class="dark:hover-text-white rounded bg-white py-1.5 px-3 font-bold text-[#1682fd] transition duration-300 hover:scale-110 hover:bg-[#1682fd] hover:text-white dark:text-slate-900 
-									dark:hover:text-white dark:hover:bg-slate-900">Home</span>
+									<span class="dark:hover-text-white rounded bg-white py-1.5 px-3 font-bold text-[#1682fd] transition duration-300 hover:scale-110 hover:bg-[#1682fd] hover:text-white dark:text-slate-900 dark:hover:text-white dark:hover:bg-slate-900">Home</span>
 								</a>
 								<button onclick="toggleDarkMode()" id="darkModeToggle" type="button" class="p-3 transition duration-200 hover:scale-125">
 									<svg class="animate-[pulse_3s_cubic-bezier(0.4,_0,_0.6,_1)_infinite] h-6 w-6" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path></svg>
@@ -54,161 +53,123 @@
 			</nav>
 		</header>
 		<main>
-            <div>
-				<div class="mx-auto max-w-md px-8 py-6 sm:max-w-xl lg:max-w-full xl:mr-0">
-					<div class="lg:max-w-xl mx-auto">
-						<div class="mt-7 flex h-32 flex-row items-center justify-center text-3xl font-bold sm:justify-start lg:h-32 lg:text-5xl">
-							<h1 class="inline-block mx-auto dark:text-gray-200">Talen<span class="text-[#1682fd] dark:text-blue-700"> &amp; </span>Frameworks</h1>
-						</div>
-						<img id="vscode" class="mt-2 dark:hidden rounded-lg bg-[#1682fd] object-center md:object-contain shadow-xl px-10 py-10 sm:mt-8 sm:h-64 sm:w-full sm:object-contain " src="../images/vscodewit.png" alt="VSCode" />
-                        <img id="vscode2" class="mt-2 hidden dark:inline rounded-lg bg-blue-700 object-center shadow-xl px-10 py-10 sm:mt-8 sm:h-64 sm:w-full md:object-contain  sm:object-contain " src="../images/vscodegrijs.png" alt="VSCode" />
-						<p class="mt-2 text-2xl font-semibold dark:text-gray-200 text-gray-900 sm:mt-8 sm:text-4xl lg:text-3xl xl:text-4xl">
-							Op deze pagina staan de Talen, Frameworks en vaardigheden die ik beheers.
-							<br class="lg:inline" />
-							<span class="text-[#1682fd] dark:text-blue-700">To be continued...</span>
-						</p>
+			<div class="mx-auto max-w-md px-8 py-6 sm:max-w-xl lg:max-w-full xl:mr-0">
+				<div class="lg:max-w-xl mx-auto">
+					<div class="mt-7 flex h-32 flex-row items-center justify-center text-3xl font-bold sm:justify-start lg:h-32 lg:text-5xl">
+						<h1 class="inline-block mx-auto dark:text-gray-200">Talen<span class="text-[#1682fd] dark:text-blue-700"> &amp; </span>Frameworks</h1>
 					</div>
+					<img id="vscode" class="mt-2 dark:hidden rounded-lg bg-[#1682fd] object-center md:object-contain shadow-xl px-10 py-10 sm:mt-8 sm:h-64 sm:w-full sm:object-contain" src="../images/vscodewit.png" alt="VSCode" />
+					<img id="vscode2" class="mt-2 hidden dark:inline rounded-lg bg-blue-700 object-center shadow-xl px-10 py-10 sm:mt-8 sm:h-64 sm:w-full md:object-contain sm:object-contain" src="../images/vscodegrijs.png" alt="VSCode" />
+					<p class="mt-2 text-2xl font-semibold dark:text-gray-200 text-gray-900 sm:mt-8 sm:text-4xl lg:text-3xl xl:text-4xl">
+						Op deze pagina staan de Talen, Frameworks en vaardigheden die ik beheers.
+						<br class="lg:inline" />
+						<span class="text-[#1682fd] dark:text-blue-700">To be continued...</span>
+					</p>
 				</div>
-                
-			<div class="flex items-center bg-gray-200 dark:bg-slate-900">
-				<div class="mx-auto mb-2 max-w-2xl flex-1 p-10">
-                    <h2 class="dark:text-gray-200 font-bold text-xl mb-2">
-                        Talen
-                    </h2>
-					<ul class="grid grid-cols-2 gap-4 md:grid-cols-3 md:gap-8">
-						<li class="rounded-lg bg-white dark:bg-blue-700 shadow-xl">
-                            <div class="h-full w-full p-8 flex flex-col justify-between">
-                                <img class="object-contain h-full w-full" src="../icons/html5-line.svg" alt="HTML">
-                                <p class="text-center font-bold">
-                                    HTML
-                                </p>
-                            </div>
-                        </li>
-                        <li class="rounded-lg bg-white dark:bg-blue-700 shadow-xl">
-                            <div class="h-full w-full p-8 flex flex-col justify-between">
-                                <img class="object-contain h-full w-full" src="../icons/css3-fill.svg" alt="CSS">
-                                <p class="text-center font-bold">
-                                    CSS
-                                </p>
-                            </div>
-                        </li>
-                        <li class="rounded-lg bg-white dark:bg-blue-700 shadow-xl">
-                            <div class="h-full w-full p-8 flex flex-col justify-between">
-                                <img class="object-contain h-full w-full" src="../icons/javascript.svg" alt="JavaSript">
-                                <p class="text-center font-bold">
-                                    JavaScript
-                                </p>
-                            </div>
-                        </li>
-                        <li class="rounded-lg bg-white dark:bg-blue-700 shadow-xl">
-                            <div class="h-full w-full p-8 flex flex-col justify-between">
-                                <img class="object-contain h-full w-full" src="../icons/php.svg" alt="PHP">
-                                <p class="text-center font-bold">
-                                    PHP
-                                </p>
-                            </div>
-                        </li>
-                        <li class="rounded-lg bg-white dark:bg-blue-700 shadow-xl">
-                            <div class="h-full w-full p-8 flex flex-col justify-between">
-                                <img class="object-contain h-full w-full" src="../icons/microsoftsqlserver.svg" alt="MSSQL">
-                                <p class="text-center font-bold">
-                                    MSSQL
-                                </p>
-                            </div>
-                        </li>
-                        <li class="rounded-lg bg-white dark:bg-blue-700 shadow-xl">
-                            <div class="h-full w-full p-8 flex flex-col justify-between">
-                                <img class="object-contain h-full w-full" src="../icons/csharp (1).svg" alt="MSSQL">
-                                <p class="text-center font-bold">
-                                    C#
-                                </p>
-                            </div>
-                        </li>
-					</ul>
-                    <h2 class="mt-10 text-xl mb-2 font-bold dark:text-gray-200">
-                        Frameworks
-                    </h2>
-                    <ul class="grid grid-cols-2 gap-4 md:grid-cols-3 md:gap-8">
-                        <li class="rounded-lg bg-white dark:bg-blue-700 shadow-xl">
-                            <div class="h-full w-full p-8 flex flex-col justify-between">
-                                <img class="object-contain h-full w-full" src="../icons/tailwindcss.svg" alt="Tailwind">
-                                <p class="text-center font-bold">
-                                    Tailwind
-                                </p>
-							</div>
-                        </li>
-					</ul>
-				</div>
-				
-			</div>
-			    
-			<div class="flex items-center bg-gray-200 dark:bg-slate-900">
-				<div class="mx-auto mb-8 max-w-2xl flex-1 p-10">
-                    <h2 class="dark:text-gray-200 font-bold text-xl mb-2">
-                        Overige vaardigheden
-                    </h2>
-					<ul class="grid grid-cols-2 gap-4 md:grid-cols-3 md:gap-8">
-						<li class="rounded-lg bg-white dark:bg-blue-700 shadow-xl">
-                            <div class="h-full w-full p-8 flex flex-col justify-between">
-                                <img class="object-contain h-full w-full" src="../icons/icons8-final-cut-pro-x.svg" alt="Final Cut Pro">
-                                <p class="text-center font-bold">
-                                    Final Cut Pro
-                                </p>
-                            </div>
-                        </li>
-                        <li class="rounded-lg bg-white dark:bg-blue-700 shadow-xl">
-                            <div class="h-full w-full p-8 flex flex-col justify-between">
-                                <img class="object-contain h-full w-full" src="../icons/adobephotoshop.svg" alt="Photoshop">
-                                <p class="text-center font-bold">
-                                    Photoshop
-                                </p>
-                            </div>
-                        </li>
-                        <li class="rounded-lg bg-white dark:bg-blue-700 shadow-xl">
-                            <div class="h-full w-full p-8 flex flex-col justify-between">
-                                <img class="object-contain h-full w-full" src="../icons/adobepremierepro.svg" alt="Premiere Pro">
-                                <p class="text-center font-bold">
-                                    Premiere Pro
-                                </p>
-                            </div>
-                        </li>
-                        <li class="rounded-lg bg-white dark:bg-blue-700 shadow-xl">
-                            <div class="h-full w-full p-8 flex flex-col justify-between">
-                                <img class="object-contain h-full w-full" src="../icons/adobeaftereffects.svg" alt="After Effects">
-                                <p class="text-center font-bold">
-                                    After Effects
-                                </p>
-                            </div>
-                        </li>
-                        <li class="rounded-lg bg-white dark:bg-blue-700 shadow-xl">
-                            <div class="h-full w-full p-8 flex flex-col justify-between">
-                                <img class="object-contain h-full w-full" src="../icons/adobeillustrator.svg" alt="Adobe Illustrator">
-                                <p class="text-center font-bold">
-                                    Adobe Illustrator
-                                </p>
-                            </div>
-                        </li>
-						<li class="rounded-lg bg-white dark:bg-blue-700 shadow-xl">
-                            <div class="h-full w-full p-8 flex flex-col justify-between">
-                                <img class="object-contain h-full w-full" src="../icons/adobexd.svg" alt="Adobe XD">
-                                <p class="text-center font-bold">
-                                    Adobe XD
-                                </p>
-                            </div>
-                        </li>
-						<li class="rounded-lg bg-white dark:bg-blue-700 shadow-xl">
-                            <div class="h-full w-full p-8 flex flex-col justify-between">
-                                <img class="object-contain h-full w-full" src="../icons/adobeindesign.svg" alt="InDesign">
-                                <p class="text-center font-bold">
-                                    InDesign 
-                                </p>
-                            </div>
-                        </li>
-					</ul>
-				</div>
-				
 			</div>
 
+			<div class="flex items-center bg-gray-200 dark:bg-slate-900">
+				<div class="mx-auto mb-2 max-w-2xl flex-1 p-10">
+					<h2 class="dark:text-gray-200 font-bold text-xl mb-2">Talen</h2>
+					<ul class="grid grid-cols-2 gap-4 md:grid-cols-3 md:gap-8">
+						<li class="rounded-lg bg-white dark:bg-blue-700 shadow-xl">
+							<div class="h-full w-full p-8 flex flex-col justify-between">
+								<img class="object-contain h-full w-full" src="../icons/html5-line.svg" alt="HTML" />
+								<p class="text-center font-bold">HTML</p>
+							</div>
+						</li>
+						<li class="rounded-lg bg-white dark:bg-blue-700 shadow-xl">
+							<div class="h-full w-full p-8 flex flex-col justify-between">
+								<img class="object-contain h-full w-full" src="../icons/css3-fill.svg" alt="CSS" />
+								<p class="text-center font-bold">CSS</p>
+							</div>
+						</li>
+						<li class="rounded-lg bg-white dark:bg-blue-700 shadow-xl">
+							<div class="h-full w-full p-8 flex flex-col justify-between">
+								<img class="object-contain h-full w-full" src="../icons/javascript.svg" alt="JavaSript" />
+								<p class="text-center font-bold">JavaScript</p>
+							</div>
+						</li>
+						<li class="rounded-lg bg-white dark:bg-blue-700 shadow-xl">
+							<div class="h-full w-full p-8 flex flex-col justify-between">
+								<img class="object-contain h-full w-full" src="../icons/php.svg" alt="PHP" />
+								<p class="text-center font-bold">PHP</p>
+							</div>
+						</li>
+						<li class="rounded-lg bg-white dark:bg-blue-700 shadow-xl">
+							<div class="h-full w-full p-8 flex flex-col justify-between">
+								<img class="object-contain h-full w-full" src="../icons/microsoftsqlserver.svg" alt="MSSQL" />
+								<p class="text-center font-bold">MSSQL</p>
+							</div>
+						</li>
+						<li class="rounded-lg bg-white dark:bg-blue-700 shadow-xl">
+							<div class="h-full w-full p-8 flex flex-col justify-between">
+								<img class="object-contain h-full w-full" src="../icons/csharp (1).svg" alt="MSSQL" />
+								<p class="text-center font-bold">C#</p>
+							</div>
+						</li>
+					</ul>
+					<h2 class="mt-10 text-xl mb-2 font-bold dark:text-gray-200">Frameworks</h2>
+					<ul class="grid grid-cols-2 gap-4 md:grid-cols-3 md:gap-8">
+						<li class="rounded-lg bg-white dark:bg-blue-700 shadow-xl">
+							<div class="h-full w-full p-8 flex flex-col justify-between">
+								<img class="object-contain h-full w-full" src="../icons/tailwindcss.svg" alt="Tailwind" />
+								<p class="text-center font-bold">Tailwind</p>
+							</div>
+						</li>
+					</ul>
+				</div>
+			</div>
+
+			<div class="flex items-center bg-gray-200 dark:bg-slate-900">
+				<div class="mx-auto mb-8 max-w-2xl flex-1 p-10">
+					<h2 class="dark:text-gray-200 font-bold text-xl mb-2">Overige vaardigheden</h2>
+					<ul class="grid grid-cols-2 gap-4 md:grid-cols-3 md:gap-8">
+						<li class="rounded-lg bg-white dark:bg-blue-700 shadow-xl">
+							<div class="h-full w-full p-8 flex flex-col justify-between">
+								<img class="object-contain h-full w-full" src="../icons/icons8-final-cut-pro-x.svg" alt="Final Cut Pro" />
+								<p class="text-center font-bold">Final Cut Pro</p>
+							</div>
+						</li>
+						<li class="rounded-lg bg-white dark:bg-blue-700 shadow-xl">
+							<div class="h-full w-full p-8 flex flex-col justify-between">
+								<img class="object-contain h-full w-full" src="../icons/adobephotoshop.svg" alt="Photoshop" />
+								<p class="text-center font-bold">Photoshop</p>
+							</div>
+						</li>
+						<li class="rounded-lg bg-white dark:bg-blue-700 shadow-xl">
+							<div class="h-full w-full p-8 flex flex-col justify-between">
+								<img class="object-contain h-full w-full" src="../icons/adobepremierepro.svg" alt="Premiere Pro" />
+								<p class="text-center font-bold">Premiere Pro</p>
+							</div>
+						</li>
+						<li class="rounded-lg bg-white dark:bg-blue-700 shadow-xl">
+							<div class="h-full w-full p-8 flex flex-col justify-between">
+								<img class="object-contain h-full w-full" src="../icons/adobeaftereffects.svg" alt="After Effects" />
+								<p class="text-center font-bold">After Effects</p>
+							</div>
+						</li>
+						<li class="rounded-lg bg-white dark:bg-blue-700 shadow-xl">
+							<div class="h-full w-full p-8 flex flex-col justify-between">
+								<img class="object-contain h-full w-full" src="../icons/adobeillustrator.svg" alt="Adobe Illustrator" />
+								<p class="text-center font-bold">Adobe Illustrator</p>
+							</div>
+						</li>
+						<li class="rounded-lg bg-white dark:bg-blue-700 shadow-xl">
+							<div class="h-full w-full p-8 flex flex-col justify-between">
+								<img class="object-contain h-full w-full" src="../icons/adobexd.svg" alt="Adobe XD" />
+								<p class="text-center font-bold">Adobe XD</p>
+							</div>
+						</li>
+						<li class="rounded-lg bg-white dark:bg-blue-700 shadow-xl">
+							<div class="h-full w-full p-8 flex flex-col justify-between">
+								<img class="object-contain h-full w-full" src="../icons/adobeindesign.svg" alt="InDesign" />
+								<p class="text-center font-bold">InDesign</p>
+							</div>
+						</li>
+					</ul>
+				</div>
+			</div>
 		</main>
 
 		<footer class="fixed bottom-0 z-20 w-screen border-t-2 border-blue-600 bg-[#1682fd] py-2 text-center text-white dark:border-blue-700 dark:bg-slate-900">

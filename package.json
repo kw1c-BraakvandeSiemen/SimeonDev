@@ -4,16 +4,17 @@
 	"description": "",
 	"main": "index.js",
 	"scripts": {
-		"build-css": "npx tailwindcss -i src/styles.css -o public/styles/styles.css --watch"
+		"build-css": "npx tailwindcss -i src/styles.css -o public/styles/styles.css --watch",
+		"format": "prettier --write ."
 	},
 	"keywords": [],
 	"author": "",
 	"license": "ISC",
-	"devDependencies": {
-		"prettier": "^2.7.1",
-		"prettier-plugin-tailwindcss": "^0.1.13"
-	},
 	"dependencies": {
-		"tailwindcss": "^3.1.8"
+		"tailwindcss": "^3.4.1"
+	},
+	"devDependencies": {
+		"prettier": "^3.2.5",
+		"prettier-plugin-tailwindcss": "^0.5.11"
 	}
 }

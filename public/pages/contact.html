@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html id="parent" lang="en">
 	<head>
 		<meta charset="UTF-8" />
@@ -21,8 +21,7 @@
 							<!-- home -->
 							<div class="flex">
 								<a href="/" class="flex items-center py-4 px-2">
-									<span class="dark:hover-text-white rounded bg-white py-1.5 px-3 font-bold text-[#1682fd] transition duration-300 hover:scale-110 hover:bg-[#1682fd] hover:text-white dark:text-slate-900 
-									dark:hover:text-white dark:hover:bg-slate-900">Home</span>
+									<span class="dark:hover-text-white rounded bg-white py-1.5 px-3 font-bold text-[#1682fd] transition duration-300 hover:scale-110 hover:bg-[#1682fd] hover:text-white dark:text-slate-900 dark:hover:text-white dark:hover:bg-slate-900">Home</span>
 								</a>
 								<button onclick="toggleDarkMode()" id="darkModeToggle" type="button" class="p-3 transition duration-200 hover:scale-125">
 									<svg class="animate-[pulse_3s_cubic-bezier(0.4,_0,_0.6,_1)_infinite] h-6 w-6" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path></svg>
@@ -33,7 +32,7 @@
 						<div class="hidden items-center space-x-3 md:flex">
 							<a href="../pages/projecten.html" class="py-2 px-3 transition duration-100 hover:scale-110">Projecten</a>
 							<a href="../pages/talen.html" class="py-2 px-3 transition duration-100 hover:scale-110">Talen</a>
-                            <a href="../pages/contact.html" class="py-2 px-3 transition duration-100 hover:scale-110">Contact</a>
+							<a href="../pages/contact.html" class="py-2 px-3 transition duration-100 hover:scale-110">Contact</a>
 						</div>
 						<!-- mobile button -->
 						<div class="flex items-center md:hidden">
@@ -50,55 +49,52 @@
 				<div class="mobileMenu hidden md:hidden">
 					<a href="../pages/projecten.html" class="block py-4 px-4 text-center hover:bg-blue-600 dark:hover:bg-blue-700">Projecten</a>
 					<a href="../pages/talen.html" class="block py-4 px-4 text-center hover:bg-blue-600 dark:hover:bg-blue-700">Talen</a>
-                    <a href="../pages/contact.html" class="block py-4 px-4 text-center hover:bg-blue-600 dark:hover:bg-blue-700">Contact</a>
+					<a href="../pages/contact.html" class="block py-4 px-4 text-center hover:bg-blue-600 dark:hover:bg-blue-700">Contact</a>
 				</div>
 			</nav>
 		</header>
 		<main>
-            <div class="min-h-screen p-6 bg-gray-100 dark:bg-gray-900 py-28  flex items-center justify-center">
-                <div class="container max-w-screen-lg mx-auto">
-                  <div>
-                    <h2 class="font-semibold text-xl text-gray-700 dark:text-gray-100">Contact? Vul dit formulier in en ik neem zo snel mogelijk contact met je op!</h2>
-                    <p class="text-gray-600 mt-2 mb-6 dark:text-gray-50">Ook bereikbaar via Discord: Simeon#0291</p>
-					
-                    <form action="https://formspree.io/f/mlevakzg" method="POST" id="emailForm">
-                    <div class="bg-white dark:bg-slate-800 rounded shadow-lg p-4 px-4 md:p-8 mb-6">
-                      <div class="grid gap-4 gap-y-2 text-sm grid-cols-1 lg:grid-cols-3">
-                        <div class="text-gray-600 dark:text-gray-100">
-                          <p class="font-medium text-lg">Contact formulier</p>
-                          <p>Vul alle velden in.</p>
-                        </div>
-              
-                        <div class="lg:col-span-2 mt-7">
-                          <div class="grid gap-4 gap-y-2 text-sm grid-cols-1 md:grid-cols-5">
-                            <div class="md:col-span-5">
-                              <label for="full_name" class="text-gray-800 dark:text-gray-100">Volledige naam</label>
-                              <input type="text" name="full_name" id="full_name" class="h-10 dark:bg-slate-700 dark:text-gray-200 dark:border-none border mt-1 rounded px-4 w-full bg-gray-50" value="" placeholder="Voornaam Achternaam" required/>
-                            </div>
-              
-                            <div class="md:col-span-5">
-                              <label for="email" class="text-gray-800 dark:text-gray-100">Email adres</label>
-                              <input type="email" name="email" id="email" class="h-10 dark:bg-slate-700 dark:text-gray-200 dark:border-none border mt-1 rounded px-4 w-full bg-gray-50" value="" placeholder="email@gmail.com" required/>
-                            </div>
-                            <div class="md:col-span-5">
-                            <label for="email" class="mt-8 text-gray-800 dark:text-gray-100">Bericht</label>
-                            <textarea  name="message" id="message" cols="30" rows="10" class="h-5/6 dark:bg-slate-700 dark:text-gray-200 dark:border-none border py-2 rounded px-4 w-full bg-gray-50" placeholder="Hallo ik ben een bericht" required></textarea>
-                            </div>
-                            </div>
-                            <div class="md:col-span-5 text-right">
-                              <div class="inline-flex items-end">
-                                <button id="submitButton" class="bg-[#1682fd] dark:bg-blue-800 dark:hover:bg-blue-900  hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Verstuur</button>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                </form>
-                </div>
-                </div>
-              </div>
-        </main>
+			<div class="min-h-screen p-6 bg-gray-100 dark:bg-gray-900 py-28 flex items-center justify-center">
+				<div class="container max-w-screen-lg mx-auto">
+					<div>
+						<h2 class="font-semibold text-xl text-gray-700 dark:text-gray-100">Contact? Vul dit formulier in en ik neem zo snel mogelijk contact met je op!</h2>
+						<p class="text-gray-600 mt-2 mb-6 dark:text-gray-50">Ook bereikbaar via Discord: Simeon#0291</p>
+						<form action="https://formspree.io/f/mlevakzg" method="POST" id="emailForm">
+							<div class="bg-white dark:bg-slate-800 rounded shadow-lg p-4 px-4 md:p-8 mb-6">
+								<div class="grid gap-4 gap-y-2 text-sm grid-cols-1 lg:grid-cols-3">
+									<div class="text-gray-600 dark:text-gray-100">
+										<p class="font-medium text-lg">Contact formulier</p>
+										<p>Vul alle velden in.</p>
+									</div>
+									<div class="lg:col-span-2 mt-7">
+										<div class="grid gap-4 gap-y-2 text-sm grid-cols-1 md:grid-cols-5">
+											<div class="md:col-span-5">
+												<label for="full_name" class="text-gray-800 dark:text-gray-100">Volledige naam</label>
+												<input type="text" name="full_name" id="full_name" class="h-10 dark:bg-slate-700 dark:text-gray-200 dark:border-none border mt-1 rounded px-4 w-full bg-gray-50" value="" placeholder="Voornaam Achternaam" required />
+											</div>
+
+											<div class="md:col-span-5">
+												<label for="email" class="text-gray-800 dark:text-gray-100">Email adres</label>
+												<input type="email" name="email" id="email" class="h-10 dark:bg-slate-700 dark:text-gray-200 dark:border-none border mt-1 rounded px-4 w-full bg-gray-50" value="" placeholder="email@gmail.com" required />
+											</div>
+											<div class="md:col-span-5">
+												<label for="email" class="mt-8 text-gray-800 dark:text-gray-100">Bericht</label>
+												<textarea name="message" id="message" cols="30" rows="10" class="h-5/6 dark:bg-slate-700 dark:text-gray-200 dark:border-none border py-2 rounded px-4 w-full bg-gray-50" placeholder="Hallo ik ben een bericht" required></textarea>
+											</div>
+										</div>
+										<div class="md:col-span-5 text-right">
+											<div class="inline-flex items-end">
+												<button id="submitButton" class="bg-[#1682fd] dark:bg-blue-800 dark:hover:bg-blue-900 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Verstuur</button>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+						</form>
+					</div>
+				</div>
+			</div>
+		</main>
 		<footer class="fixed bottom-0 z-20 w-screen border-t-2 border-blue-600 bg-[#1682fd] py-2 text-center text-white dark:border-blue-700 dark:bg-slate-900">
 			<p>Siemen &copy; 2023</p>
 		</footer>
