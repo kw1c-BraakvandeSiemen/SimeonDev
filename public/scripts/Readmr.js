@@ -1,10 +1,3 @@
-/*
-    Auteur:         <Siemen van de Braak>
-    Aanmaakdatum:   <20-09-2022>
-
-      Lees verder
-*/
-
 function readMore() {
 	//waarde declareren
 	var more = document.getElementById("more");

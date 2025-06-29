@@ -1,6 +1,4 @@
-/*
-    Auteur:         <Siemen van de Braak>
-    Aanmaakdatum:   <07-09-2022>
+/*    Aanmaakdatum:   <07-09-2022>
 
       JS hamburger menu
 */
