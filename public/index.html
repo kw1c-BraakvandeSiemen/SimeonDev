@@ -1,109 +1,308 @@
 <!doctype html>
-<html id="parent" lang="en">
+<html lang="en">
 	<head>
-		<!-- Primary Meta Tags -->
-		<title>Siemen van de Braak</title>
-		<meta name="author" content="Siemen van de Braak" />
-		<meta name="title" content="Siemen van de Braak" />
-		<meta name="description" content="Software developer" />
-
-		<!-- Open Graph / Facebook -->
-		<meta property="og:type" content="website" />
-		<meta property="og:url" content="https://siemenvandebraak.com/" />
-		<meta property="og:title" content="Siemen van de Braak" />
-		<meta property="og:description" content="Software developer" />
-
-		<!-- Twitter -->
-		<meta property="twitter:card" content="summary_large_image" />
-		<meta property="twitter:url" content="https://siemenvandebraak.com/" />
-		<meta property="twitter:title" content="Siemen van de Braak" />
-		<meta property="twitter:description" content="Software developer" />
 		<meta charset="UTF-8" />
-		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-		<link rel="shortcut icon" type="image/svg" href="img/favicon.svg" />
-		<link rel="stylesheet" href="styles/styles.css" />
-		<script src="scripts/mobileNav.js" defer></script>
-		<script src="scripts/darkmode.js" defer></script>
-		<script src="../scripts/footer.js" defer></script>
+		<title>Siemen.dev</title>
+		<script src="https://cdn.tailwindcss.com"></script>
+		<style>
+			body {
+				background: #0b0a12;
+				color: white;
+				overflow-x: hidden;
+			}
+
+			/* Lava blobs */
+			.blob {
+				position: absolute;
+				border-radius: 9999px;
+				filter: blur(100px);
+				opacity: 0.5;
+				animation: float 25s infinite ease-in-out;
+			}
+			@keyframes float {
+				0% {
+					transform: translate(0, 0) scale(1);
+				}
+				25% {
+					transform: translate(120px, -100px) scale(1.2);
+				}
+				50% {
+					transform: translate(-120px, 120px) scale(0.9);
+				}
+				75% {
+					transform: translate(100px, 120px) scale(1.1);
+				}
+				100% {
+					transform: translate(0, 0) scale(1);
+				}
+			}
+
+			/* Card animation */
+			.card {
+				position: absolute;
+				top: 50%;
+				left: 50%;
+				transform: translate(-50%, -50%);
+				transition:
+					transform 0.5s ease-in-out,
+					opacity 0.5s ease-in-out;
+				width: 90%;
+				max-width: 600px;
+			}
+			.off-left {
+				transform: translate(-150%, -50%);
+				opacity: 0;
+			}
+			.off-right {
+				transform: translate(150%, -50%);
+				opacity: 0;
+			}
+			.visible {
+				transform: translate(-50%, -50%);
+				opacity: 1;
+			}
+
+			/* Experience dropdown */
+			.experience-section button {
+				width: 100%;
+				background: rgba(255, 255, 255, 0.1);
+				border: 1px solid rgba(255, 255, 255, 0.2);
+				border-radius: 0.75rem;
+				padding: 0.5rem 1rem;
+				text-align: left;
+				font-weight: bold;
+				cursor: pointer;
+				display: flex;
+				justify-content: space-between;
+				align-items: center;
+				margin-top: 0.5rem;
+				color: white;
+				transition:
+					background 0.3s,
+					color 0.3s;
+			}
+			.experience-section button:hover {
+				background: rgba(255, 255, 255, 0.2);
+			}
+			.experience-section button.active {
+				background: white;
+				color: black;
+			}
+
+			.experience-grid {
+				max-height: 0;
+				overflow: hidden;
+				transition: max-height 0.5s ease;
+				margin-top: 0.5rem;
+			}
+
+			/* Grid items */
+			.experience-grid .grid-item {
+				background: rgba(255, 255, 255, 0.1);
+				border: 1px solid rgba(255, 255, 255, 0.2);
+				border-radius: 1rem;
+				height: 120px;
+				display: flex;
+				flex-direction: column;
+				align-items: center;
+				justify-content: center;
+				padding: 0.5rem;
+				transition:
+					transform 0.3s ease,
+					background 0.3s ease;
+			}
+			.experience-grid .grid-item:hover {
+				transform: scale(1.05);
+				background: rgba(255, 255, 255, 0.2);
+			}
+			.experience-grid img {
+				max-height: 60px;
+				object-fit: contain;
+			}
+			.experience-grid p {
+				margin-top: 0.5rem;
+				font-weight: bold;
+				text-align: center;
+			}
+
+			.text-box {
+				background: rgba(255, 255, 255, 0.1);
+				border: 1px solid rgba(255, 255, 255, 0.2);
+				border-radius: 1rem;
+				padding: 1rem;
+				text-align: left;
+				font-size: 1rem;
+				color: white;
+			}
+		</style>
 	</head>
-	<body class="bg-gray-200 dark:bg-gray-800">
-		<header>
-			<!-- nav -->
-			<nav id="navbar" class="fixed top-0 z-10 w-full border-b-2 border-blue-600 bg-[#1682fd] text-white transition-[top] duration-[0.7s] dark:border-blue-700 dark:bg-slate-900">
-				<div class="mx-auto px-8">
-					<div class="flex justify-between">
-						<div class="flex space-x-4">
-							<!-- home -->
-							<div class="flex">
-								<a href="/" class="flex items-center py-4 px-2">
-									<span class="dark:hover-text-white rounded bg-white py-1.5 px-3 font-bold text-[#1682fd] transition duration-300 hover:scale-110 hover:bg-[#1682fd] hover:text-white dark:text-slate-900 dark:hover:bg-slate-900 dark:hover:text-white">Home</span>
-								</a>
-								<button onclick="toggleDarkMode()" id="darkModeToggle" type="button" class="p-3 transition duration-200 hover:scale-125"></button>
-							</div>
-						</div>
-						<!-- nav links -->
-						<div class="hidden items-center space-x-3 md:flex">
-							<a href="pages/projecten.html" class="py-2 px-3 transition duration-100 hover:scale-110">Projecten</a>
-							<a href="pages/talen.html" class="py-2 px-3 transition duration-100 hover:scale-110">Talen</a>
-						</div>
-						<!-- mobile button -->
-						<div class="flex items-center md:hidden">
-							<button class="mobileMenuButton">
-								<!-- hamburger menu -->
-								<svg class="h-12 w-12" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-									<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
-								</svg>
-							</button>
-						</div>
+	<body>
+		<!-- Lava blobs -->
+		<div class="fixed inset-0 -z-10">
+			<div class="blob bg-purple-500 w-80 h-80 top-10 left-10"></div>
+			<div class="blob bg-indigo-500 w-96 h-96 bottom-10 right-10" style="animation-delay: 6s"></div>
+			<div class="blob bg-fuchsia-400 w-72 h-72 top-1/2 left-1/3" style="animation-delay: 12s"></div>
+		</div>
+
+		<!-- Homepage Card -->
+		<div id="homeCard" class="card visible backdrop-blur-2xl bg-white/10 p-12 rounded-2xl border border-white/20 shadow-2xl text-center">
+			<h1 class="text-5xl font-bold">Siemen<span class="text-purple-300">.dev</span></h1>
+			<p class="mt-4 text-gray-300 text-lg">Building smooth and modern web experiences.</p>
+			<div class="mt-8 flex gap-4 justify-center">
+				<button id="experienceBtn" class="bg-purple-400 text-black px-6 py-3 rounded-lg font-semibold hover:scale-110 transition">Experience</button>
+				<button id="contactBtn" class="border border-white px-6 py-3 rounded-lg hover:bg-white hover:text-black transition">Contact</button>
+			</div>
+		</div>
+
+		<!-- Contact Card -->
+		<div id="contactCard" class="card off-right backdrop-blur-2xl bg-white/10 p-12 rounded-2xl border border-white/20 shadow-2xl text-center">
+			<h1 class="text-5xl font-bold">Contact</h1>
+			<div class="mt-4 text-gray-300 text-lg">
+				<p class="mt-2 font-semibold">
+					LinkedIn:
+					<a href="https://www.linkedin.com/in/siemen-van-de-braak-a871a8339/" target="_blank" rel="noopener noreferrer" class="text-purple-400 hover:text-purple-600 underline">Visit profile</a>
+				</p>
+				<p class="mt-2 font-semibold">Location: Kerkdriel, Netherlands</p>
+			</div>
+			<div class="mt-8 flex gap-4 justify-center">
+				<button id="backFromContact" class="border border-white px-6 py-3 rounded-lg hover:bg-white hover:text-black transition">Back</button>
+			</div>
+		</div>
+
+		<!-- Experience Card -->
+		<div id="experienceCard" class="card off-left backdrop-blur-2xl bg-white/10 p-12 rounded-2xl border border-white/20 shadow-2xl text-center">
+			<h1 class="text-5xl font-bold">Experience & Skills</h1>
+
+			<div class="experience-section mt-6">
+				<!-- Coding -->
+				<button data-target="section1"><span>Coding</span> <span class="indicator">></span></button>
+				<div id="section1" class="experience-grid grid grid-cols-2 md:grid-cols-3 gap-4">
+					<div class="grid-item">
+						<img src="icons/icons8-html-5.svg" alt="HTML5" />
+						<p>HTML</p>
+					</div>
+					<div class="grid-item">
+						<img src="icons/css3.svg" alt="CSS3" />
+						<p>CSS</p>
+					</div>
+					<div class="grid-item">
+						<img src="icons/javascript.svg" alt="JavaScript" />
+						<p>JavaScript</p>
+					</div>
+					<div class="grid-item">
+						<img src="icons/php.svg" alt="PHP" />
+						<p>PHP</p>
+					</div>
+					<div class="grid-item">
+						<img src="icons/microsoftsqlserver.svg" alt="MSSQL" />
+						<p>MSSQL</p>
+					</div>
+					<div class="grid-item">
+						<img src="icons/csharp (1).svg" alt="C#" />
+						<p>C#</p>
 					</div>
 				</div>
-				<!-- mobile nav -->
-				<div class="mobileMenu hidden md:hidden">
-					<a href="pages/projecten.html" class="block py-4 px-4 text-center hover:bg-blue-600">Projecten</a>
-					<a href="pages/talen.html" class="block py-4 px-4 text-center hover:bg-blue-600">Talen</a>
-				</div>
-			</nav>
-		</header>
-		<main>
-			<!-- grid voor large screen -->
-			<div class="grid bg-gray-100 dark:bg-gray-900 lg:grid-cols-2">
-				<div class="mx-auto max-w-md px-8 py-12 sm:max-w-xl lg:max-w-full xl:mr-0">
-					<div class="xl:max-w-xl">
-						<div class="mt-7 flex h-20 flex-row items-center justify-center text-3xl font-bold sm:justify-start lg:h-52 lg:text-5xl">
-							<img class="inline h-16 dark:hidden" src="images/LogoSiemen.svg" alt="Logo" />
-							<img class="hidden h-16 dark:inline" src="images/LogoSiemen2.svg" alt="LogoDM" />
-							<h1 class="inline-block dark:text-gray-200">Siemen<span class="text-[#1682fd] dark:text-blue-700">vdBraak</span></h1>
-						</div>
-						<img class="mt-6 rounded-lg bg-[#1682fd] object-center shadow-xl dark:bg-blue-800 sm:mt-8 sm:h-64 sm:w-full sm:object-contain lg:hidden" src="images/LogoSiemen.svg" alt="fotoIk" />
-						<p class="mt-2 text-2xl font-semibold text-gray-900 dark:text-gray-200 sm:mt-8 sm:text-4xl lg:text-3xl xl:text-4xl">
-							Hey, welkom op mijn portfolio website!
-							<br class="lg:inline" />
-							<span class="text-[#1682fd] dark:text-blue-700">Ik ben Siemen</span>
-						</p>
-						<p class="mt-6 text-gray-700 dark:text-gray-200 sm:mt-8 sm:text-xl">
-							Deze website is een work in progress, door de jaren heen zal ik deze website
-							<span class="font-medium text-[#1682fd] dark:text-blue-700">updaten met nieuwe projecten en informatie over mijzelf.</span>
-						</p>
-						<div class="mt-4 space-x-2 sm:mt-6">
-							<a class="btn btn-primary transform shadow-lg transition-all duration-300 hover:scale-110" href="pages/projecten.html">Projecten</a>
-							<a class="btn btn-secondary transform shadow-lg transition-all duration-300 hover:scale-110" href="pages/talen.html">Talen</a>
-						</div>
+
+				<!-- Creative -->
+				<button data-target="section2"><span>Creative</span> <span class="indicator">></span></button>
+				<div id="section2" class="experience-grid grid grid-cols-2 md:grid-cols-3 gap-4">
+					<div class="grid-item">
+						<img src="icons/icons8-final-cut-pro-x.svg" alt="Final Cut Pro" />
+						<p>Final Cut Pro</p>
+					</div>
+					<div class="grid-item">
+						<img src="icons/adobephotoshop.svg" alt="PhotoShop" />
+						<p>PhotoShop</p>
+					</div>
+					<div class="grid-item">
+						<img src="icons/adobepremierepro.svg" alt="Premiere Pro" />
+						<p>Premiere Pro</p>
+					</div>
+					<div class="grid-item">
+						<img src="icons/adobeaftereffects.svg" alt="After Effects" />
+						<p>After Effects</p>
+					</div>
+					<div class="grid-item">
+						<img src="icons/adobeillustrator.svg" alt="Illustrator" />
+						<p>Illustrator</p>
+					</div>
+					<div class="grid-item">
+						<img src="icons/adobexd.svg" alt="Adobe Xd" />
+						<p>Adobe Xd</p>
+					</div>
+					<div class="grid-item">
+						<img src="icons/adobeindesign.svg" alt="InDesign" />
+						<p>InDesign</p>
 					</div>
 				</div>
-				<div class="relative hidden bg-blue-500 dark:bg-blue-800 lg:block">
-					<img class="absolute inset-0 h-full w-full object-contain object-bottom" src="images/LogoSiemen.svg" alt="fotoIk" />
+
+				<!-- Other -->
+				<button data-target="section3"><span>Other</span> <span class="indicator">></span></button>
+				<div id="section3" class="experience-grid">
+					<div class="text-box">
+						<ul class="list-disc pl-5">
+							<li>Creating apps</li>
+							<li>Experience working with APIs</li>
+							<li>Good with team/customer communication</li>
+							<li>Problem solving</li>
+						</ul>
+					</div>
 				</div>
 			</div>
-			<div class="mx-auto mb-8 px-8 py-12 dark:text-gray-200 md:w-3/4 lg:w-1/2">
-				<h2 class="text-center text-3xl md:text-4xl">Hoe ik bij Software Development terecht ben gekomen</h2>
-				<p class="mt-2">Ik heb eerst twee heel verschillende opleidingen gevolgd, maar na enige tijd ontdekte ik dat ik toch een andere richting wilde inslaan. Een aantal vrienden werkten in de ICT-sector, en zo raakte ik geïnteresseerd in software development.</p>
-				<p class="mt-2">Ik ben inmiddels afgestudeerd aan het Koning Willem I College, waar ik het versnelde traject in de opleiding Software Development heb gevolgd.</p>
-				<p class="mt-2">Voor het bouwen van deze website heb ik mezelf de vaardigheden van Tailwind CSS eigen gemaakt. Dit is het eerste framework dat ik buiten school om heb geleerd. In de toekomst wil ik graag nog meer nieuwe programmeertalen, frameworks en vaardigheden ontdekken en ontwikkelen.</p>
+
+			<div class="mt-8 flex gap-4 justify-center">
+				<button id="backFromExperience" class="border border-white px-6 py-3 rounded-lg hover:bg-white hover:text-black transition">Back</button>
 			</div>
-		</main>
-		<footer id="footer" class="fixed bottom-0 z-20 w-screen border-t-2 border-blue-600 bg-[#1682fd] py-2 text-center text-white dark:border-blue-700 dark:bg-slate-900">
-			<p id="copyright">Siemen &copy; <span id="year"></span></p>
-		</footer>
+		</div>
+
+		<script>
+			// Card references
+			const homeCard = document.getElementById("homeCard");
+			const contactCard = document.getElementById("contactCard");
+			const experienceCard = document.getElementById("experienceCard");
+
+			// Button references
+			const contactBtn = document.getElementById("contactBtn");
+			const backFromContact = document.getElementById("backFromContact");
+			const experienceBtn = document.getElementById("experienceBtn");
+			const backFromExperience = document.getElementById("backFromExperience");
+
+			// Card swipe logic
+			function showCard(show, hide1, hide2, directionShow, directionHide1, directionHide2) {
+				hide1.classList.add(directionHide1);
+				hide1.classList.remove("visible");
+				hide2.classList.add(directionHide2);
+				hide2.classList.remove("visible");
+				show.classList.add("visible");
+				show.classList.remove(directionShow);
+			}
+
+			contactBtn.addEventListener("click", () => showCard(contactCard, homeCard, experienceCard, "", "off-left", "off-left"));
+			backFromContact.addEventListener("click", () => showCard(homeCard, contactCard, experienceCard, "", "off-right", "off-left"));
+
+			experienceBtn.addEventListener("click", () => showCard(experienceCard, homeCard, contactCard, "", "off-right", "off-right"));
+			backFromExperience.addEventListener("click", () => showCard(homeCard, experienceCard, contactCard, "", "off-left", "off-right"));
+
+			// Dropdown logic
+			document.querySelectorAll(".experience-section button").forEach((btn) => {
+				btn.addEventListener("click", () => {
+					const target = document.getElementById(btn.dataset.target);
+					const isOpen = target.style.maxHeight && target.style.maxHeight !== "0px";
+
+					document.querySelectorAll(".experience-grid").forEach((grid) => (grid.style.maxHeight = "0"));
+					document.querySelectorAll(".experience-section button").forEach((b) => {
+						b.classList.remove("active");
+						b.querySelector(".indicator").textContent = ">";
+					});
+
+					if (!isOpen) {
+						target.style.maxHeight = target.scrollHeight + "px";
+						btn.classList.add("active");
+						btn.querySelector(".indicator").textContent = "v";
+					}
+				});
+			});
+		</script>
 	</body>
 </html>
