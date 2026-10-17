@@ -25,6 +25,11 @@ const CONFIG = {
 	themeDelay: 700,
 	themeFade: 0.025,
 	textColorEvery: 3,
+	partyCats: 6,
+	partyMinGap: 20,
+	partySpawnEvery: 450,
+	partyLineGap: [1100, 1700],
+	partyPause: [2500, 4500],
 };
 
 const LIGHT = (() => {
@@ -101,6 +106,18 @@ function clamp(value, min, max) {
 
 function lerp(a, b, t) {
 	return a + (b - a) * t;
+}
+
+function randomBetween(range) {
+	return range[0] + Math.random() * (range[1] - range[0]);
+}
+
+function sleep(ms) {
+	return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+function pickRandom(list) {
+	return list[Math.floor(Math.random() * list.length)];
 }
 
 function hslToRgb(h, s, l) {
@@ -190,6 +207,186 @@ const themeState = {
 	mix: 1,
 };
 
+const CAT_FACES = ["🐈", "🐈‍⬛", "🐱", "😺", "😸", "🐈"];
+
+const OPENERS = ["meow", "meow?", "mrrp", "meow meow", "nyaa"];
+
+const ANSWERS_TO_QUESTION = ["meow.", "meow meow", "purr...", "mrrp", "MEOW"];
+
+const ANSWERS_TO_SHOUT = ["meow?!", "mrrp?", "...meow", "meow meow?"];
+
+const ANSWERS_GENERIC = ["meow", "meow?", "mrrp", "purr...", "meow meow meow", "MEOW!"];
+
+const party = {
+	element: null,
+	cats: [],
+	active: false,
+};
+
+function placeCat(cat) {
+	let best = null;
+	let bestGap = -1;
+
+	for (let attempt = 0; attempt < 40; attempt++) {
+		const px = 8 + Math.random() * 84;
+		const py = 14 + Math.random() * 76;
+
+		let gap = Infinity;
+
+		party.cats.forEach((other) => {
+			if (other !== cat) {
+				gap = Math.min(gap, Math.hypot(other.px - px, (other.py - py) * 1.6));
+			}
+		});
+
+		if (gap > bestGap) {
+			bestGap = gap;
+			best = { px, py };
+		}
+
+		if (gap >= CONFIG.partyMinGap) {
+			break;
+		}
+	}
+
+	cat.px = best.px;
+	cat.py = best.py;
+
+	cat.element.style.left = `${best.px}%`;
+	cat.element.style.top = `${best.py}%`;
+}
+
+function spawnCat() {
+	const element = document.createElement("div");
+	element.className = "party-cat";
+
+	const flip = document.createElement("span");
+	flip.className = "party-flip";
+
+	if (Math.random() < 0.5) {
+		flip.style.transform = "scaleX(-1)";
+	}
+
+	const face = document.createElement("span");
+	face.className = "party-face";
+	face.textContent = pickRandom(CAT_FACES);
+
+	const bubble = document.createElement("div");
+	bubble.className = "party-bubble";
+
+	flip.appendChild(face);
+	element.appendChild(flip);
+	element.appendChild(bubble);
+
+	party.element.appendChild(element);
+
+	const cat = { element, bubble, px: 50, py: 50, timeout: null };
+
+	party.cats.push(cat);
+
+	placeCat(cat);
+
+	requestAnimationFrame(() => {
+		requestAnimationFrame(() => element.classList.add("in"));
+	});
+
+	return cat;
+}
+
+function say(cat, text) {
+	cat.bubble.textContent = text;
+	cat.bubble.classList.add("show");
+
+	cat.element.classList.remove("talking");
+
+	void cat.element.offsetWidth;
+
+	cat.element.classList.add("talking");
+
+	clearTimeout(cat.timeout);
+
+	cat.timeout = setTimeout(() => cat.bubble.classList.remove("show"), 1500);
+}
+
+function replyTo(previous) {
+	if (previous.endsWith("?")) {
+		return pickRandom(ANSWERS_TO_QUESTION);
+	}
+
+	if (previous === previous.toUpperCase() || previous.endsWith("!")) {
+		return pickRandom(ANSWERS_TO_SHOUT);
+	}
+
+	return pickRandom(ANSWERS_GENERIC);
+}
+
+async function hop(cat) {
+	cat.element.classList.remove("in");
+
+	await sleep(420);
+
+	placeCat(cat);
+
+	await sleep(60);
+
+	cat.element.classList.add("in");
+}
+
+async function conversation() {
+	while (party.active) {
+		const lines = 2 + Math.floor(Math.random() * 4);
+
+		let speaker = pickRandom(party.cats);
+		let text = pickRandom(OPENERS);
+
+		for (let line = 0; line < lines && party.active; line++) {
+			say(speaker, text);
+
+			await sleep(randomBetween(CONFIG.partyLineGap));
+
+			const others = party.cats.filter((cat) => cat !== speaker);
+
+			speaker = pickRandom(others);
+			text = replyTo(text);
+		}
+
+		await sleep(randomBetween(CONFIG.partyPause));
+
+		const hops = 1 + Math.floor(Math.random() * 2);
+
+		for (let n = 0; n < hops; n++) {
+			hop(pickRandom(party.cats));
+
+			await sleep(250);
+		}
+
+		await sleep(600);
+	}
+}
+
+async function startCatParty() {
+	if (party.active) {
+		return;
+	}
+
+	party.active = true;
+
+	party.element = document.createElement("div");
+	party.element.className = "cat-party";
+
+	clothContent.appendChild(party.element);
+
+	for (let n = 0; n < CONFIG.partyCats; n++) {
+		spawnCat();
+
+		await sleep(CONFIG.partySpawnEvery);
+	}
+
+	await sleep(700);
+
+	conversation();
+}
+
 function themeColor(theme, t, nx, ny, s, time) {
 	if (!theme) {
 		const base = baseColor(t);
@@ -249,6 +446,8 @@ function changeTheme() {
 			z[k] += (Math.random() - 0.5) * 6;
 		}
 	}
+
+	startCatParty();
 }
 
 function build() {

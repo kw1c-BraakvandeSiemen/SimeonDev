@@ -1284,6 +1284,170 @@ body {
   }
 }
 
+/* =========================================================
+   THEME TEXT
+   ========================================================= */
+
+html[data-theme] {
+  --deep-a: color-mix(in srgb, var(--text-a) 68%, #151412);
+  --deep-b: color-mix(in srgb, var(--text-b) 68%, #151412);
+  --deep-c: color-mix(in srgb, var(--text-c) 68%, #151412);
+}
+
+@keyframes foilShine {
+  0% {
+    background-position:
+			160% 0,
+			0 0;
+  }
+
+  100% {
+    background-position:
+			-60% 0,
+			0 0;
+  }
+}
+
+html[data-theme] :is(.intro h1, .contact h2, .hello) {
+  background:
+		linear-gradient(105deg, transparent 42%, rgba(255, 255, 255, 0.75) 50%, transparent 58%) 0 0 / 250% 100% no-repeat,
+		linear-gradient(100deg, var(--deep-a), var(--deep-b) 50%, var(--deep-c)) 0 0 / 100% 100% no-repeat;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: foilShine 6s ease-in-out infinite;
+}
+
+html[data-theme] .contact h2 em {
+  background:
+		linear-gradient(105deg, transparent 42%, rgba(255, 255, 255, 0.75) 50%, transparent 58%) 0 0 / 250% 100% no-repeat,
+		linear-gradient(100deg, var(--deep-c), var(--text-b) 50%, var(--deep-a)) 0 0 / 100% 100% no-repeat;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: foilShine 6s ease-in-out infinite;
+  animation-delay: -1.5s;
+}
+
+html[data-theme] .intro h1 span {
+  opacity: 0.55;
+}
+
+html[data-theme] :is(.eyebrow, .section-label span:first-child, .contact-row span:last-child) {
+  color: var(--deep-b);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html[data-theme] :is(.intro h1, .contact h2, .hello, .contact h2 em) {
+    animation: none;
+  }
+}
+
+/* =========================================================
+   CAT PARTY
+   ========================================================= */
+
+.cat-party {
+  position: absolute;
+  z-index: 30;
+  inset: 0;
+  pointer-events: none;
+}
+
+.party-cat {
+  position: absolute;
+  display: inline-block;
+  transform: translate(-50%, -50%);
+}
+
+.party-flip {
+  display: block;
+}
+
+.party-face {
+  display: block;
+  font-size: 28px;
+  line-height: 1;
+  opacity: 0;
+  transform: scale(0) rotate(-24deg);
+  filter: drop-shadow(0 3px 4px rgba(0, 0, 0, 0.28));
+  transition:
+		transform 420ms cubic-bezier(0.3, 1.7, 0.5, 1),
+		opacity 260ms ease;
+}
+
+.party-cat.in .party-face {
+  opacity: 1;
+  transform: scale(1) rotate(0deg);
+}
+
+.party-cat.talking .party-face {
+  animation: catTalk 520ms ease-in-out;
+}
+
+@keyframes catTalk {
+  0% {
+    transform: scale(1) rotate(0deg);
+  }
+
+  30% {
+    transform: scale(1.2) rotate(-7deg);
+  }
+
+  60% {
+    transform: scale(1.1) rotate(6deg);
+  }
+
+  100% {
+    transform: scale(1) rotate(0deg);
+  }
+}
+
+.party-bubble {
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  margin-bottom: 6px;
+  padding: 4px 9px;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.95);
+  color: var(--ink);
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+  opacity: 0;
+  transform: translate(-50%, 6px) scale(0.8);
+  transform-origin: 50% 100%;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.18);
+  transition:
+		opacity 180ms ease,
+		transform 260ms cubic-bezier(0.3, 1.5, 0.5, 1);
+}
+
+.party-bubble::after {
+  content: "";
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  width: 7px;
+  height: 7px;
+  margin-top: -4px;
+  background: inherit;
+  transform: translateX(-50%) rotate(45deg);
+}
+
+.party-bubble.show {
+  opacity: 1;
+  transform: translate(-50%, 0) scale(1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .party-cat.talking .party-face {
+    animation: none;
+  }
+}
+
 .group:hover .group-hover\:translate-x-\[3px\] {
   --tw-translate-x: 3px;
   transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
