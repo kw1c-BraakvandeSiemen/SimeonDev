@@ -604,6 +604,10 @@ video {
   animation: spin 15s linear infinite;
 }
 
+.resize {
+  resize: both;
+}
+
 .stroke-gray-300 {
   stroke: #d1d5db;
 }
@@ -647,9 +651,6 @@ video {
    ========================================================= */
 
 :root {
-  --black: #000000;
-  --cloth: rgba(226, 220, 211, 0.94);
-  --cloth-bright: rgba(247, 243, 236, 0.97);
   --ink: #151412;
   --muted: rgba(21, 20, 18, 0.52);
   --line: rgba(21, 20, 18, 0.15);
@@ -687,7 +688,7 @@ body {
 }
 
 /* =========================================================
-   PAGE
+   SITE
    ========================================================= */
 
 .site {
@@ -704,7 +705,7 @@ body {
 
 .topbar {
   position: fixed;
-  z-index: 20;
+  z-index: 50;
   top: 0;
   left: 0;
   right: 0;
@@ -731,15 +732,33 @@ body {
 }
 
 /* =========================================================
+   CANVAS
+   ========================================================= */
+
+.cloth-canvas {
+  position: fixed;
+  z-index: 1;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  touch-action: none;
+  -webkit-user-select: none;
+     -moz-user-select: none;
+          user-select: none;
+}
+
+/* =========================================================
    SCENE
    ========================================================= */
 
 .scene {
   position: absolute;
+  z-index: 2;
   inset: 0;
   display: grid;
   place-items: center;
   padding: 90px 40px 70px;
+  pointer-events: none;
 }
 
 /* =========================================================
@@ -747,109 +766,34 @@ body {
    ========================================================= */
 
 .cloth {
-  --move-x: 0px;
-  --move-y: 0px;
-  --rotate: 0deg;
-  --scale-x: 1;
-  --scale-y: 1;
-  --skew-x: 0deg;
-  --skew-y: 0deg;
   position: relative;
   width: min(900px, calc(100vw - 80px));
   height: min(560px, calc(100vh - 150px));
-  overflow: hidden;
-  border-radius: 22px;
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.3), transparent 30%), linear-gradient(120deg, var(--cloth), var(--cloth-bright) 52%, rgba(198, 190, 178, 0.94));
-  border: 1px solid rgba(255, 255, 255, 0.42);
-  box-shadow:
-		0 45px 100px rgba(0, 0, 0, 0.72),
-		0 12px 35px rgba(0, 0, 0, 0.4),
-		inset 0 1px 0 rgba(255, 255, 255, 0.72),
-		inset 0 -1px 0 rgba(0, 0, 0, 0.1);
-  transform: translate3d(var(--move-x), var(--move-y), 0) rotate(var(--rotate)) skew(var(--skew-x), var(--skew-y)) scale(var(--scale-x), var(--scale-y));
-  transform-origin: 50% 50%;
-  cursor: grab;
-  touch-action: none;
-  -webkit-user-select: none;
-     -moz-user-select: none;
-          user-select: none;
-  will-change: transform;
-  transition:
-		box-shadow 220ms ease,
-		border-radius 220ms ease;
-}
-
-.cloth.dragging {
-  cursor: grabbing;
-  box-shadow:
-		0 55px 125px rgba(0, 0, 0, 0.82),
-		0 18px 45px rgba(0, 0, 0, 0.46),
-		inset 0 1px 0 rgba(255, 255, 255, 0.7);
-}
-
-/* =========================================================
-   CLOTH LIGHT
-   ========================================================= */
-
-.cloth-light {
-  position: absolute;
-  z-index: 1;
-  inset: -40%;
   pointer-events: none;
-  background: radial-gradient(ellipse at 23% 17%, rgba(255, 255, 255, 0.62), transparent 25%), radial-gradient(ellipse at 82% 78%, rgba(65, 54, 42, 0.16), transparent 31%);
-  transform: rotate(-7deg);
 }
 
 /* =========================================================
-   FABRIC TEXTURE
-   ========================================================= */
-
-.cloth-texture {
-  position: absolute;
-  z-index: 2;
-  inset: -50%;
-  pointer-events: none;
-  opacity: 0.25;
-  background-image: repeating-linear-gradient(0deg, rgba(255, 255, 255, 0.2) 0 1px, transparent 1px 5px), repeating-linear-gradient(90deg, rgba(0, 0, 0, 0.08) 0 1px, transparent 1px 7px);
-  transform: rotate(5deg);
-}
-
-/* =========================================================
-   CLOTH FOLD
-   ========================================================= */
-
-.cloth-fold {
-  position: absolute;
-  z-index: 3;
-  width: 260px;
-  height: 260px;
-  left: 0;
-  top: 0;
-  pointer-events: none;
-  opacity: 0;
-  border-radius: 50%;
-  background: radial-gradient(circle, rgba(80, 67, 51, 0.25) 0%, rgba(80, 67, 51, 0.1) 18%, transparent 65%);
-  filter: blur(5px);
-  transform: translate(-50%, -50%) scale(0.7);
-  will-change: transform, opacity;
-}
-
-/* =========================================================
-   CLOTH CONTENT
+   CONTENT
    ========================================================= */
 
 .cloth-content {
   position: relative;
-  z-index: 10;
   display: flex;
   flex-direction: column;
   width: 100%;
   height: 100%;
   padding: clamp(26px, 4vw, 44px);
+  pointer-events: none;
+  will-change: transform;
+}
+
+.cloth-content a,
+.cloth-content button {
+  pointer-events: auto;
 }
 
 /* =========================================================
-   CLOTH META
+   META
    ========================================================= */
 
 .cloth-meta {
@@ -892,13 +836,13 @@ body {
 }
 
 /* =========================================================
-   MEOW TEXT
+   MEOW
    ========================================================= */
 
 .meow {
   position: absolute;
   top: 4px;
-  right: 42px;
+  right: 46px;
   white-space: nowrap;
   color: var(--accent);
   font-size: 10px;
@@ -907,22 +851,14 @@ body {
   opacity: 0;
   pointer-events: none;
   transform: translateY(4px) rotate(-4deg);
-  transition:
-		opacity 180ms ease,
-		transform 180ms ease;
 }
 
 .meow.show {
   opacity: 1;
-  transform: translateY(-2px) rotate(-4deg);
   animation:
 		meowWave 1.4s ease-in-out infinite,
 		meowColor 1.8s ease-in-out infinite;
 }
-
-/* =========================================================
-   MEOW WAVE
-   ========================================================= */
 
 @keyframes meowWave {
   0% {
@@ -949,10 +885,6 @@ body {
     transform: translateY(-2px) rotate(-4deg);
   }
 }
-
-/* =========================================================
-   MEOW COLOR
-   ========================================================= */
 
 @keyframes meowColor {
   0% {
@@ -987,7 +919,7 @@ body {
 }
 
 /* =========================================================
-   MAIN CONTENT
+   GRID
    ========================================================= */
 
 .content-grid {
@@ -1069,7 +1001,7 @@ body {
 
 .section-label .version {
   color: rgba(21, 20, 18, 0.42);
-  font-size: 8px !important;
+  font-size: 7px !important;
   line-height: 1;
   font-weight: 700;
   letter-spacing: 0.12em;
@@ -1120,18 +1052,13 @@ body {
 }
 
 /* =========================================================
-   CLOTH FOOTER
+   FOOTER
    ========================================================= */
 
 .cloth-footer {
   padding-top: 17px;
   border-top: 1px solid var(--line);
-  color: rgba(21, 20, 18, 0.36);
 }
-
-/* =========================================================
-   PAGE FOOTER
-   ========================================================= */
 
 .page-footer {
   position: fixed;
@@ -1139,9 +1066,6 @@ body {
   left: clamp(22px, 5vw, 70px);
   right: clamp(22px, 5vw, 70px);
   bottom: 25px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
   color: rgba(255, 255, 255, 0.25);
   font-size: 8px;
   font-weight: 800;
@@ -1182,10 +1106,6 @@ body {
    ========================================================= */
 
 @media (max-width: 700px) {
-  body {
-    overflow: hidden;
-  }
-
   .topbar {
     padding: 20px;
   }
@@ -1195,28 +1115,26 @@ body {
   }
 
   .scene {
-    padding: 70px 16px 40px;
+    padding: 80px 22px 60px;
   }
 
   .cloth {
-    width: calc(100vw - 32px);
-    height: calc(100vh - 110px);
-    border-radius: 16px;
+    width: min(680px, calc(100vw - 44px));
+    height: min(470px, calc(100vh - 180px));
   }
 
   .cloth-content {
-    padding: 24px;
+    padding: 25px;
   }
 
   .content-grid {
     grid-template-columns: 1fr;
-    gap: 28px;
-    overflow-y: auto;
-    padding: 25px 0;
+    gap: 26px;
+    padding-top: 35px;
   }
 
   .intro h1 {
-    font-size: clamp(46px, 14vw, 72px);
+    font-size: clamp(42px, 13vw, 65px);
   }
 
   .hello {
@@ -1230,7 +1148,7 @@ body {
   }
 
   .contact h2 {
-    font-size: clamp(32px, 10vw, 52px);
+    font-size: clamp(30px, 9vw, 46px);
   }
 
   .contact-list {
@@ -1242,7 +1160,7 @@ body {
   }
 
   .section-label .version {
-    font-size: 7px !important;
+    font-size: 6px !important;
   }
 
   .meow {
@@ -1265,13 +1183,12 @@ body {
   }
 
   .scene {
-    padding: 65px 12px 25px;
+    padding: 70px 18px 45px;
   }
 
   .cloth {
-    width: calc(100vw - 24px);
-    height: calc(100vh - 90px);
-    border-radius: 14px;
+    width: calc(100vw - 36px);
+    height: min(400px, calc(100vh - 150px));
   }
 
   .cloth-content {
@@ -1279,15 +1196,16 @@ body {
   }
 
   .content-grid {
-    gap: 22px;
+    gap: 20px;
+    padding-top: 25px;
   }
 
   .intro h1 {
-    font-size: 48px;
+    font-size: 45px;
   }
 
   .contact h2 {
-    font-size: 34px;
+    font-size: 32px;
   }
 
   .eyebrow {
@@ -1296,16 +1214,16 @@ body {
   }
 
   .hello {
-    font-size: 15px;
+    font-size: 14px;
   }
 
   .intro-text {
-    font-size: 11px;
+    font-size: 10px;
   }
 
   .contact-row {
-    padding: 11px 0;
-    font-size: 10px;
+    padding: 9px 0;
+    font-size: 9px;
   }
 
   .meow {
@@ -1322,6 +1240,10 @@ body {
   .scene {
     padding-top: 65px;
     padding-bottom: 25px;
+  }
+
+  .cloth {
+    height: calc(100vh - 125px);
   }
 
   .cloth-content {

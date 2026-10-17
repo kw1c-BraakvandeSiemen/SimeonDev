@@ -1,115 +1,659 @@
 const cloth = document.getElementById("cloth");
-const fold = document.getElementById("clothFold");
-
+const clothContent = cloth.querySelector(".cloth-content");
+const canvas = document.getElementById("clothCanvas");
+const ctx = canvas.getContext("2d");
 const dragState = document.getElementById("dragState");
 
 const catButton = document.getElementById("catButton");
 const meow = document.getElementById("meow");
 
-/* =========================================================
-   SETTINGS
-   ========================================================= */
-
-const settings = {
-	maxX: 230,
-	maxY: 160,
-
-	follow: 0.17,
-
-	spring: 0.055,
-
-	damping: 0.8,
-
-	maxRotation: 8,
-
-	maxStretch: 0.055,
-
-	clickThreshold: 5,
+const CONFIG = {
+	spacing: 20,
+	iterations: 12,
+	damping: 0.985,
+	restStiffness: 0.01,
+	shearStiffness: 0.7,
+	bendStiffness: 0.25,
+	grabRadius: 40,
+	maxPull: 380,
+	dragThreshold: 6,
+	perspective: 1200,
 };
 
-/* =========================================================
-   STATE
-   ========================================================= */
+const LIGHT = (() => {
+	const x = -0.4;
+	const y = -0.5;
+	const z = 0.77;
+	const length = Math.hypot(x, y, z);
+
+	return { x: x / length, y: y / length, z: z / length };
+})();
 
 const state = {
-	dragging: false,
-
 	pointerDown: false,
-
+	dragging: false,
 	pointerId: null,
 
-	startPointerX: 0,
-	startPointerY: 0,
+	startClientX: 0,
+	startClientY: 0,
 
-	pointerX: 0,
-	pointerY: 0,
+	startLocalX: 0,
+	startLocalY: 0,
 
-	previousX: 0,
-	previousY: 0,
+	targetDx: 0,
+	targetDy: 0,
 
-	x: 0,
-	y: 0,
-
-	velocityX: 0,
-	velocityY: 0,
-
-	rotation: 0,
-
-	targetX: 0,
-	targetY: 0,
-
-	targetRotation: 0,
-
-	foldX: 0,
-	foldY: 0,
-
-	foldOpacity: 0,
+	dx: 0,
+	dy: 0,
 };
 
-/* =========================================================
-   CAT
-   ========================================================= */
+let cols = 0;
+let rows = 0;
+let count = 0;
 
-const catMessages = ["meow", "meow meow?", "meow meow meow...", "MEOW?!", "MEOOOOOOOOOOOOOOOOOOOOOOW!"];
+let width = 0;
+let height = 0;
+
+let offsetX = 0;
+let offsetY = 0;
+
+let dpr = 1;
+
+let rx;
+let ry;
+let x;
+let y;
+let z;
+let qx;
+let qy;
+let qz;
+let sx;
+let sy;
+let shade;
+let pinned;
+
+let cA;
+let cB;
+let cLen;
+let cK;
+
+let cluster = [];
+
+let anchors = null;
+
+function clamp(value, min, max) {
+	return Math.max(min, Math.min(max, value));
+}
+
+function build() {
+	const rect = cloth.getBoundingClientRect();
+
+	offsetX = rect.left;
+	offsetY = rect.top;
+
+	width = rect.width;
+	height = rect.height;
+
+	cols = Math.max(4, Math.round(width / CONFIG.spacing) + 1);
+	rows = Math.max(4, Math.round(height / CONFIG.spacing) + 1);
+
+	count = cols * rows;
+
+	rx = new Float32Array(count);
+	ry = new Float32Array(count);
+
+	for (let j = 0; j < rows; j++) {
+		for (let i = 0; i < cols; i++) {
+			const k = j * cols + i;
+
+			rx[k] = (i / (cols - 1)) * width;
+			ry[k] = (j / (rows - 1)) * height;
+		}
+	}
+
+	x = new Float32Array(rx);
+	y = new Float32Array(ry);
+	z = new Float32Array(count);
+
+	qx = new Float32Array(rx);
+	qy = new Float32Array(ry);
+	qz = new Float32Array(count);
+
+	sx = new Float32Array(rx);
+	sy = new Float32Array(ry);
+
+	shade = new Float32Array(count).fill(1);
+
+	pinned = new Uint8Array(count);
+
+	cluster = [];
+
+	const list = [];
+
+	const add = (a, b, k) => list.push([a, b, k]);
+
+	for (let j = 0; j < rows; j++) {
+		for (let i = 0; i < cols; i++) {
+			const k = j * cols + i;
+
+			if (i < cols - 1) add(k, k + 1, 1);
+			if (j < rows - 1) add(k, k + cols, 1);
+
+			if (i < cols - 1 && j < rows - 1) {
+				add(k, k + cols + 1, CONFIG.shearStiffness);
+				add(k + 1, k + cols, CONFIG.shearStiffness);
+			}
+
+			if (i < cols - 2) add(k, k + 2, CONFIG.bendStiffness);
+			if (j < rows - 2) add(k, k + 2 * cols, CONFIG.bendStiffness);
+		}
+	}
+
+	cA = new Uint32Array(list.length);
+	cB = new Uint32Array(list.length);
+	cLen = new Float32Array(list.length);
+	cK = new Float32Array(list.length);
+
+	list.forEach(([a, b, k], index) => {
+		cA[index] = a;
+		cB[index] = b;
+		cK[index] = k;
+		cLen[index] = Math.hypot(rx[b] - rx[a], ry[b] - ry[a]);
+	});
+
+	const midCol = (cols - 1) >> 1;
+	const midRow = (rows - 1) >> 1;
+
+	const left = midRow * cols;
+	const right = midRow * cols + cols - 1;
+	const top = midCol;
+	const bottom = (rows - 1) * cols + midCol;
+
+	anchors = {
+		left,
+		right,
+		top,
+		bottom,
+		restCx: (rx[left] + rx[right] + rx[top] + rx[bottom]) / 4,
+		restCy: (ry[left] + ry[right] + ry[top] + ry[bottom]) / 4,
+		spanX: rx[right] - rx[left],
+		spanY: ry[bottom] - ry[top],
+	};
+
+	clothContent.style.transformOrigin = `${anchors.restCx}px ${anchors.restCy}px`;
+}
+
+function resizeCanvas() {
+	dpr = Math.min(window.devicePixelRatio || 1, 2);
+
+	canvas.width = Math.round(window.innerWidth * dpr);
+	canvas.height = Math.round(window.innerHeight * dpr);
+}
+
+function pick(localX, localY) {
+	let best = -1;
+	let bestDistance = CONFIG.spacing * 1.6;
+
+	for (let k = 0; k < count; k++) {
+		const distance = Math.hypot(sx[k] - localX, sy[k] - localY);
+
+		if (distance < bestDistance) {
+			bestDistance = distance;
+			best = k;
+		}
+	}
+
+	return best;
+}
+
+function applyPins() {
+	for (let n = 0; n < cluster.length; n++) {
+		const item = cluster[n];
+
+		x[item.index] = item.x + state.dx;
+		y[item.index] = item.y + state.dy;
+	}
+}
+
+function startDrag() {
+	const center = pick(state.startLocalX, state.startLocalY);
+
+	if (center === -1) {
+		return false;
+	}
+
+	const cx = x[center];
+	const cy = y[center];
+
+	cluster = [];
+
+	for (let k = 0; k < count; k++) {
+		if (Math.hypot(x[k] - cx, y[k] - cy) <= CONFIG.grabRadius) {
+			pinned[k] = 1;
+
+			cluster.push({ index: k, x: x[k], y: y[k] });
+		}
+	}
+
+	for (let k = 0; k < count; k++) {
+		z[k] += (Math.random() - 0.5) * 1.5;
+	}
+
+	state.dx = 0;
+	state.dy = 0;
+	state.targetDx = 0;
+	state.targetDy = 0;
+
+	return true;
+}
+
+function endDrag() {
+	for (let n = 0; n < cluster.length; n++) {
+		pinned[cluster[n].index] = 0;
+	}
+
+	cluster = [];
+}
+
+function integrate() {
+	const damping = CONFIG.damping;
+	const rest = CONFIG.restStiffness;
+
+	for (let k = 0; k < count; k++) {
+		if (pinned[k]) {
+			continue;
+		}
+
+		const vx = (x[k] - qx[k]) * damping;
+		const vy = (y[k] - qy[k]) * damping;
+		const vz = (z[k] - qz[k]) * damping;
+
+		qx[k] = x[k];
+		qy[k] = y[k];
+		qz[k] = z[k];
+
+		x[k] += vx + (rx[k] - x[k]) * rest;
+		y[k] += vy + (ry[k] - y[k]) * rest;
+		z[k] += vz - z[k] * rest;
+
+		if (state.dragging) {
+			z[k] += (Math.random() - 0.5) * 0.05;
+		}
+	}
+}
+
+function solve() {
+	const total = cA.length;
+
+	for (let iteration = 0; iteration < CONFIG.iterations; iteration++) {
+		for (let c = 0; c < total; c++) {
+			const a = cA[c];
+			const b = cB[c];
+
+			const wa = pinned[a] ? 0 : 1;
+			const wb = pinned[b] ? 0 : 1;
+
+			const sum = wa + wb;
+
+			if (sum === 0) {
+				continue;
+			}
+
+			const dx = x[b] - x[a];
+			const dy = y[b] - y[a];
+			const dz = z[b] - z[a];
+
+			const distance = Math.sqrt(dx * dx + dy * dy + dz * dz) || 0.0001;
+
+			const diff = ((distance - cLen[c]) / distance) * (cK[c] / sum);
+
+			x[a] += dx * diff * wa;
+			y[a] += dy * diff * wa;
+			z[a] += dz * diff * wa;
+
+			x[b] -= dx * diff * wb;
+			y[b] -= dy * diff * wb;
+			z[b] -= dz * diff * wb;
+		}
+
+		applyPins();
+	}
+}
+
+function project() {
+	const cx = width / 2;
+	const cy = height / 2;
+
+	for (let k = 0; k < count; k++) {
+		const depth = clamp(z[k], -400, CONFIG.perspective * 0.6);
+		const scale = CONFIG.perspective / (CONFIG.perspective - depth);
+
+		sx[k] = cx + (x[k] - cx) * scale;
+		sy[k] = cy + (y[k] - cy) * scale;
+	}
+}
+
+function computeShading() {
+	for (let j = 0; j < rows; j++) {
+		for (let i = 0; i < cols; i++) {
+			const k = j * cols + i;
+
+			const l = j * cols + Math.max(i - 1, 0);
+			const r = j * cols + Math.min(i + 1, cols - 1);
+			const t = Math.max(j - 1, 0) * cols + i;
+			const b = Math.min(j + 1, rows - 1) * cols + i;
+
+			const ux = x[r] - x[l];
+			const uy = y[r] - y[l];
+			const uz = z[r] - z[l];
+
+			const vx = x[b] - x[t];
+			const vy = y[b] - y[t];
+			const vz = z[b] - z[t];
+
+			let nx = uy * vz - uz * vy;
+			let ny = uz * vx - ux * vz;
+			let nz = ux * vy - uy * vx;
+
+			if (nz < 0) {
+				nx = -nx;
+				ny = -ny;
+				nz = -nz;
+			}
+
+			const length = Math.hypot(nx, ny, nz) || 1;
+
+			const d = (nx * LIGHT.x + ny * LIGHT.y + nz * LIGHT.z) / length;
+
+			shade[k] = clamp(1 + (d - LIGHT.z) * 1.7, 0.4, 1.22);
+		}
+	}
+}
+
+function baseColor(t) {
+	if (t < 0.52) {
+		const u = t / 0.52;
+
+		return [226 + 21 * u, 220 + 23 * u, 211 + 25 * u];
+	}
+
+	const u = (t - 0.52) / 0.48;
+
+	return [247 - 49 * u, 243 - 53 * u, 236 - 58 * u];
+}
+
+function draw() {
+	ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+	ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
+
+	ctx.translate(offsetX, offsetY);
+
+	ctx.lineWidth = 1;
+	ctx.lineJoin = "round";
+
+	for (let j = 0; j < rows - 1; j++) {
+		for (let i = 0; i < cols - 1; i++) {
+			const a = j * cols + i;
+			const b = a + 1;
+			const c = a + cols;
+			const d = c + 1;
+
+			const s = (shade[a] + shade[b] + shade[c] + shade[d]) * 0.25;
+
+			const t = (i / (cols - 1) + j / (rows - 1)) / 2;
+
+			const base = baseColor(t);
+
+			const color = `rgb(${Math.min(255, base[0] * s) | 0},${Math.min(255, base[1] * s) | 0},${Math.min(255, base[2] * s) | 0})`;
+
+			ctx.fillStyle = color;
+			ctx.strokeStyle = color;
+
+			ctx.beginPath();
+			ctx.moveTo(sx[a], sy[a]);
+			ctx.lineTo(sx[b], sy[b]);
+			ctx.lineTo(sx[d], sy[d]);
+			ctx.lineTo(sx[c], sy[c]);
+			ctx.closePath();
+
+			ctx.fill();
+			ctx.stroke();
+		}
+	}
+
+	ctx.beginPath();
+
+	for (let i = 0; i < cols; i++) {
+		const k = i;
+
+		if (i === 0) ctx.moveTo(sx[k], sy[k]);
+		else ctx.lineTo(sx[k], sy[k]);
+	}
+
+	for (let j = 1; j < rows; j++) {
+		const k = j * cols + cols - 1;
+
+		ctx.lineTo(sx[k], sy[k]);
+	}
+
+	for (let i = cols - 2; i >= 0; i--) {
+		const k = (rows - 1) * cols + i;
+
+		ctx.lineTo(sx[k], sy[k]);
+	}
+
+	for (let j = rows - 2; j >= 0; j--) {
+		const k = j * cols;
+
+		ctx.lineTo(sx[k], sy[k]);
+	}
+
+	ctx.closePath();
+
+	ctx.strokeStyle = "rgba(255, 255, 255, 0.35)";
+	ctx.stroke();
+}
+
+function updateContent() {
+	const { left, right, top, bottom, restCx, restCy, spanX, spanY } = anchors;
+
+	const exX = (sx[right] - sx[left]) / spanX;
+	const exY = (sy[right] - sy[left]) / spanX;
+
+	const eyX = (sx[bottom] - sx[top]) / spanY;
+	const eyY = (sy[bottom] - sy[top]) / spanY;
+
+	const cx = (sx[left] + sx[right] + sx[top] + sx[bottom]) / 4;
+	const cy = (sy[left] + sy[right] + sy[top] + sy[bottom]) / 4;
+
+	clothContent.style.transform = `translate(${cx - restCx}px, ${cy - restCy}px) matrix(${exX}, ${exY}, ${eyX}, ${eyY}, 0, 0)`;
+}
+
+function animate() {
+	state.dx += (state.targetDx - state.dx) * 0.5;
+	state.dy += (state.targetDy - state.dy) * 0.5;
+
+	for (let n = 0; n < cluster.length; n++) {
+		const item = cluster[n];
+
+		qx[item.index] = x[item.index];
+		qy[item.index] = y[item.index];
+		qz[item.index] = z[item.index];
+	}
+
+	integrate();
+
+	applyPins();
+
+	solve();
+
+	project();
+
+	computeShading();
+
+	draw();
+
+	updateContent();
+
+	requestAnimationFrame(animate);
+}
+
+function toLocal(event) {
+	return {
+		x: event.clientX - offsetX,
+		y: event.clientY - offsetY,
+	};
+}
+
+canvas.addEventListener("pointerdown", (event) => {
+	const local = toLocal(event);
+
+	if (pick(local.x, local.y) === -1) {
+		return;
+	}
+
+	state.pointerDown = true;
+	state.pointerId = event.pointerId;
+
+	state.startClientX = event.clientX;
+	state.startClientY = event.clientY;
+
+	state.startLocalX = local.x;
+	state.startLocalY = local.y;
+
+	try {
+		canvas.setPointerCapture(event.pointerId);
+	} catch {
+		// Ignore.
+	}
+});
+
+canvas.addEventListener("pointermove", (event) => {
+	if (!state.pointerDown) {
+		const local = toLocal(event);
+
+		canvas.style.cursor = pick(local.x, local.y) === -1 ? "default" : "grab";
+
+		return;
+	}
+
+	if (event.pointerId !== state.pointerId) {
+		return;
+	}
+
+	const dx = event.clientX - state.startClientX;
+	const dy = event.clientY - state.startClientY;
+
+	if (!state.dragging && Math.hypot(dx, dy) >= CONFIG.dragThreshold) {
+		if (!startDrag()) {
+			state.pointerDown = false;
+
+			return;
+		}
+
+		state.dragging = true;
+
+		canvas.style.cursor = "grabbing";
+
+		dragState.textContent = "DRAGGING";
+	}
+
+	if (!state.dragging) {
+		return;
+	}
+
+	const length = Math.hypot(dx, dy);
+	const scale = length > CONFIG.maxPull ? CONFIG.maxPull / length : 1;
+
+	state.targetDx = dx * scale;
+	state.targetDy = dy * scale;
+
+	event.preventDefault();
+});
+
+function releaseCloth(event) {
+	if (!state.pointerDown || event.pointerId !== state.pointerId) {
+		return;
+	}
+
+	state.pointerDown = false;
+
+	state.pointerId = null;
+
+	if (state.dragging) {
+		state.dragging = false;
+
+		endDrag();
+
+		canvas.style.cursor = "grab";
+
+		dragState.textContent = "RELAXING";
+
+		setTimeout(() => {
+			if (!state.dragging) {
+				dragState.textContent = "READY";
+			}
+		}, 650);
+	}
+
+	try {
+		canvas.releasePointerCapture(event.pointerId);
+	} catch {
+		// Ignore.
+	}
+}
+
+canvas.addEventListener("pointerup", releaseCloth);
+
+canvas.addEventListener("pointercancel", releaseCloth);
+
+window.addEventListener("resize", () => {
+	state.pointerDown = false;
+	state.dragging = false;
+
+	resizeCanvas();
+
+	build();
+});
+
+resizeCanvas();
+
+build();
+
+animate();
+
+const catMessages = ["meow", "meow meow?", "meow meow meow...", "MEOW?!", "MEOOOOOOOOOOOOOOW!"];
 
 const catPositions = [
 	{
-		right: "44px",
+		right: "46px",
 		top: "4px",
 	},
 
 	{
-		right: "92px",
-		top: "24px",
+		right: "100px",
+		top: "25px",
 	},
 
 	{
-		right: "25px",
-		top: "38px",
+		right: "28px",
+		top: "40px",
 	},
 
 	{
-		right: "115px",
+		right: "118px",
 		top: "2px",
 	},
 
 	{
-		right: "58px",
-		top: "54px",
+		right: "62px",
+		top: "57px",
 	},
 ];
 
-const catRotations = [-8, 10, -14, 12, -18];
-
-const catScales = [1.12, 1.18, 1.25, 1.32, 1.42];
-
 let catClickCount = 0;
 
-/* =========================================================
-   CAT CLICK
-   ========================================================= */
-
-catButton.addEventListener("click", function (event) {
+catButton.addEventListener("click", (event) => {
 	event.stopPropagation();
 
 	catClickCount++;
@@ -132,6 +676,10 @@ catButton.addEventListener("click", function (event) {
 
 	meow.classList.add("show");
 
+	const rotation = index % 2 === 0 ? -8 : 8;
+
+	const scale = 1 + index * 0.07;
+
 	catButton.animate(
 		[
 			{
@@ -139,8 +687,7 @@ catButton.addEventListener("click", function (event) {
 			},
 
 			{
-				transform: `rotate(${catRotations[index]}deg)
-					scale(${catScales[index]})`,
+				transform: `rotate(${rotation}deg) scale(${scale})`,
 			},
 
 			{
@@ -148,7 +695,7 @@ catButton.addEventListener("click", function (event) {
 			},
 		],
 		{
-			duration: 360 + catClickCount * 70,
+			duration: 350 + index * 80,
 
 			easing: "ease-out",
 		},
@@ -157,359 +704,9 @@ catButton.addEventListener("click", function (event) {
 	clearTimeout(catButton.meowTimeout);
 
 	catButton.meowTimeout = setTimeout(
-		function () {
+		() => {
 			meow.classList.remove("show");
 		},
-		1100 + catClickCount * 300,
+		1200 + index * 250,
 	);
-});
-
-/* =========================================================
-   HELPERS
-   ========================================================= */
-
-function clamp(value, min, max) {
-	return Math.max(min, Math.min(max, value));
-}
-
-function lerp(current, target, amount) {
-	return current + (target - current) * amount;
-}
-
-/* =========================================================
-   POINTER DOWN
-   ========================================================= */
-
-cloth.addEventListener("pointerdown", function (event) {
-	if (event.target.closest("a, button")) {
-		return;
-	}
-
-	state.pointerDown = true;
-
-	state.dragging = true;
-
-	state.pointerId = event.pointerId;
-
-	state.startPointerX = event.clientX;
-
-	state.startPointerY = event.clientY;
-
-	state.pointerX = event.clientX;
-
-	state.pointerY = event.clientY;
-
-	state.previousX = event.clientX;
-
-	state.previousY = event.clientY;
-
-	state.velocityX = 0;
-
-	state.velocityY = 0;
-
-	cloth.classList.add("dragging");
-
-	dragState.textContent = "DRAGGING";
-
-	try {
-		cloth.setPointerCapture(event.pointerId);
-	} catch (error) {
-		// Nothing to do.
-	}
-
-	event.preventDefault();
-});
-
-/* =========================================================
-   POINTER MOVE
-   ========================================================= */
-
-cloth.addEventListener("pointermove", function (event) {
-	if (!state.pointerDown) {
-		return;
-	}
-
-	if (state.pointerId !== null && event.pointerId !== state.pointerId) {
-		return;
-	}
-
-	state.pointerX = event.clientX;
-
-	state.pointerY = event.clientY;
-
-	const dx = event.clientX - state.previousX;
-
-	const dy = event.clientY - state.previousY;
-
-	state.previousX = event.clientX;
-
-	state.previousY = event.clientY;
-
-	/*
-	 * De cloth volgt de muis.
-	 */
-
-	state.targetX = clamp(
-		event.clientX - state.startPointerX,
-
-		-settings.maxX,
-
-		settings.maxX,
-	);
-
-	state.targetY = clamp(
-		event.clientY - state.startPointerY,
-
-		-settings.maxY,
-
-		settings.maxY,
-	);
-
-	/*
-	 * Snelheid.
-	 */
-
-	state.velocityX = lerp(state.velocityX, dx, 0.45);
-
-	state.velocityY = lerp(state.velocityY, dy, 0.45);
-
-	/*
-	 * Rotatie.
-	 */
-
-	state.targetRotation = clamp(
-		state.velocityX * 0.55,
-
-		-settings.maxRotation,
-
-		settings.maxRotation,
-	);
-
-	/*
-	 * Fold positie.
-	 */
-
-	const rect = cloth.getBoundingClientRect();
-
-	state.foldX = event.clientX - rect.left;
-
-	state.foldY = event.clientY - rect.top;
-
-	state.foldOpacity = clamp(
-		(Math.abs(dx) + Math.abs(dy)) / 20,
-
-		0.25,
-		0.85,
-	);
-});
-
-/* =========================================================
-   POINTER UP
-   ========================================================= */
-
-function releaseCloth(event) {
-	if (!state.pointerDown) {
-		return;
-	}
-
-	if (state.pointerId !== null && event.pointerId !== state.pointerId) {
-		return;
-	}
-
-	const movedX = event.clientX - state.startPointerX;
-
-	const movedY = event.clientY - state.startPointerY;
-
-	const distance = Math.sqrt(movedX * movedX + movedY * movedY);
-
-	const wasClick = distance < settings.clickThreshold;
-
-	state.pointerDown = false;
-
-	state.pointerId = null;
-
-	if (wasClick) {
-		state.dragging = false;
-
-		cloth.classList.remove("dragging");
-
-		dragState.textContent = "READY";
-
-		return;
-	}
-
-	state.dragging = false;
-
-	state.targetX = 0;
-
-	state.targetY = 0;
-
-	state.targetRotation = 0;
-
-	cloth.classList.remove("dragging");
-
-	dragState.textContent = "RELEASING";
-
-	try {
-		cloth.releasePointerCapture(event.pointerId);
-	} catch (error) {
-		// Nothing to do.
-	}
-}
-
-cloth.addEventListener("pointerup", releaseCloth);
-
-cloth.addEventListener("pointercancel", function () {
-	state.pointerDown = false;
-
-	state.dragging = false;
-
-	state.pointerId = null;
-
-	cloth.classList.remove("dragging");
-
-	dragState.textContent = "READY";
-});
-
-/* =========================================================
-   PHYSICS
-   ========================================================= */
-
-function updatePhysics() {
-	if (state.dragging) {
-		state.x = lerp(state.x, state.targetX, settings.follow);
-
-		state.y = lerp(state.y, state.targetY, settings.follow);
-
-		state.rotation = lerp(state.rotation, state.targetRotation, 0.14);
-	} else {
-		/*
-		 * Spring physics.
-		 */
-
-		const forceX = -state.x * settings.spring;
-
-		const forceY = -state.y * settings.spring;
-
-		state.velocityX += forceX;
-
-		state.velocityY += forceY;
-
-		state.velocityX *= settings.damping;
-
-		state.velocityY *= settings.damping;
-
-		state.x += state.velocityX;
-
-		state.y += state.velocityY;
-
-		state.rotation = lerp(state.rotation, 0, 0.08);
-	}
-
-	/* =====================================================
-	   STRETCH
-	   ===================================================== */
-
-	const movement = Math.sqrt(state.x * state.x + state.y * state.y);
-
-	const stretch = clamp(movement * 0.00028, 0, settings.maxStretch);
-
-	const scaleX = 1 + stretch;
-
-	const scaleY = 1 - stretch * 0.45;
-
-	/* =====================================================
-	   SKEW
-	   ===================================================== */
-
-	const skewX = clamp(state.velocityX * 0.055, -3.5, 3.5);
-
-	const skewY = clamp(state.velocityY * 0.025, -2, 2);
-
-	/* =====================================================
-	   APPLY TRANSFORM
-	   ===================================================== */
-
-	cloth.style.setProperty("--move-x", `${state.x.toFixed(2)}px`);
-
-	cloth.style.setProperty("--move-y", `${state.y.toFixed(2)}px`);
-
-	cloth.style.setProperty("--rotate", `${state.rotation.toFixed(2)}deg`);
-
-	cloth.style.setProperty("--scale-x", scaleX.toFixed(4));
-
-	cloth.style.setProperty("--scale-y", scaleY.toFixed(4));
-
-	cloth.style.setProperty("--skew-x", `${skewX.toFixed(2)}deg`);
-
-	cloth.style.setProperty("--skew-y", `${skewY.toFixed(2)}deg`);
-
-	/* =====================================================
-	   FOLD
-	   ===================================================== */
-
-	if (state.dragging) {
-		fold.style.opacity = state.foldOpacity.toFixed(2);
-
-		const foldScale = 0.75 + Math.min(movement / 450, 0.8);
-
-		fold.style.transform = `translate(
-				${state.foldX}px,
-				${state.foldY}px
-			)
-			translate(-50%, -50%)
-			scale(
-				${foldScale.toFixed(2)}
-			)`;
-	} else {
-		state.foldOpacity = lerp(state.foldOpacity, 0, 0.12);
-
-		fold.style.opacity = state.foldOpacity.toFixed(2);
-	}
-
-	/* =====================================================
-	   RESET
-	   ===================================================== */
-
-	if (!state.dragging && Math.abs(state.x) < 0.15 && Math.abs(state.y) < 0.15 && Math.abs(state.velocityX) < 0.1 && Math.abs(state.velocityY) < 0.1) {
-		state.x = 0;
-
-		state.y = 0;
-
-		state.velocityX = 0;
-
-		state.velocityY = 0;
-
-		state.rotation = 0;
-
-		dragState.textContent = "READY";
-	}
-}
-
-/* =========================================================
-   ANIMATION LOOP
-   ========================================================= */
-
-function animate() {
-	updatePhysics();
-
-	requestAnimationFrame(animate);
-}
-
-requestAnimationFrame(animate);
-
-/* =========================================================
-   HOVER
-   ========================================================= */
-
-cloth.addEventListener("pointerenter", function () {
-	if (!state.pointerDown) {
-		dragState.textContent = "GRAB ME";
-	}
-});
-
-cloth.addEventListener("pointerleave", function () {
-	if (!state.pointerDown) {
-		dragState.textContent = "READY";
-	}
 });
