@@ -1,308 +1,87 @@
 <!doctype html>
-<html lang="en">
+<html lang="nl">
 	<head>
 		<meta charset="UTF-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-		<title>Siemen.dev</title>
-		<script src="https://cdn.tailwindcss.com"></script>
-		<style>
-			body {
-				background: #0b0a12;
-				color: white;
-				overflow-x: hidden;
-			}
 
-			/* Lava blobs */
-			.blob {
-				position: absolute;
-				border-radius: 9999px;
-				filter: blur(100px);
-				opacity: 0.5;
-				animation: float 25s infinite ease-in-out;
-			}
-			@keyframes float {
-				0% {
-					transform: translate(0, 0) scale(1);
-				}
-				25% {
-					transform: translate(120px, -100px) scale(1.2);
-				}
-				50% {
-					transform: translate(-120px, 120px) scale(0.9);
-				}
-				75% {
-					transform: translate(100px, 120px) scale(1.1);
-				}
-				100% {
-					transform: translate(0, 0) scale(1);
-				}
-			}
+		<title>Siemen.dev — Interactive Cloth</title>
 
-			/* Card animation */
-			.card {
-				position: absolute;
-				top: 50%;
-				left: 50%;
-				transform: translate(-50%, -50%);
-				transition:
-					transform 0.5s ease-in-out,
-					opacity 0.5s ease-in-out;
-				width: 90%;
-				max-width: 600px;
-			}
-			.off-left {
-				transform: translate(-150%, -50%);
-				opacity: 0;
-			}
-			.off-right {
-				transform: translate(150%, -50%);
-				opacity: 0;
-			}
-			.visible {
-				transform: translate(-50%, -50%);
-				opacity: 1;
-			}
-
-			/* Experience dropdown */
-			.experience-section button {
-				width: 100%;
-				background: rgba(255, 255, 255, 0.1);
-				border: 1px solid rgba(255, 255, 255, 0.2);
-				border-radius: 0.75rem;
-				padding: 0.5rem 1rem;
-				text-align: left;
-				font-weight: bold;
-				cursor: pointer;
-				display: flex;
-				justify-content: space-between;
-				align-items: center;
-				margin-top: 0.5rem;
-				color: white;
-				transition:
-					background 0.3s,
-					color 0.3s;
-			}
-			.experience-section button:hover {
-				background: rgba(255, 255, 255, 0.2);
-			}
-			.experience-section button.active {
-				background: white;
-				color: black;
-			}
-
-			.experience-grid {
-				max-height: 0;
-				overflow: hidden;
-				transition: max-height 0.5s ease;
-				margin-top: 0.5rem;
-			}
-
-			/* Grid items */
-			.experience-grid .grid-item {
-				background: rgba(255, 255, 255, 0.1);
-				border: 1px solid rgba(255, 255, 255, 0.2);
-				border-radius: 1rem;
-				height: 120px;
-				display: flex;
-				flex-direction: column;
-				align-items: center;
-				justify-content: center;
-				padding: 0.5rem;
-				transition:
-					transform 0.3s ease,
-					background 0.3s ease;
-			}
-			.experience-grid .grid-item:hover {
-				transform: scale(1.05);
-				background: rgba(255, 255, 255, 0.2);
-			}
-			.experience-grid img {
-				max-height: 60px;
-				object-fit: contain;
-			}
-			.experience-grid p {
-				margin-top: 0.5rem;
-				font-weight: bold;
-				text-align: center;
-			}
-
-			.text-box {
-				background: rgba(255, 255, 255, 0.1);
-				border: 1px solid rgba(255, 255, 255, 0.2);
-				border-radius: 1rem;
-				padding: 1rem;
-				text-align: left;
-				font-size: 1rem;
-				color: white;
-			}
-		</style>
+		<link rel="stylesheet" href="styles/styles.css" />
 	</head>
+
 	<body>
-		<!-- Lava blobs -->
-		<div class="fixed inset-0 -z-10">
-			<div class="blob bg-purple-500 w-80 h-80 top-10 left-10"></div>
-			<div class="blob bg-indigo-500 w-96 h-96 bottom-10 right-10" style="animation-delay: 6s"></div>
-			<div class="blob bg-fuchsia-400 w-72 h-72 top-1/2 left-1/3" style="animation-delay: 12s"></div>
+		<div class="site">
+			<header class="topbar">
+				<a class="logo" href="#"> siemen<span>.dev</span> </a>
+			</header>
+
+			<main class="scene">
+				<section id="cloth" class="cloth" aria-label="Interactive cloth">
+					<div class="cloth-light"></div>
+
+					<div class="cloth-texture"></div>
+
+					<div id="clothFold" class="cloth-fold"></div>
+
+					<div class="cloth-content">
+						<div class="cloth-meta">
+							<span></span>
+
+							<button id="catButton" class="hidden-cat" type="button" aria-label="Mysterious cat">🐈</button>
+
+							<span id="meow" class="meow" aria-live="polite"></span>
+						</div>
+
+						<div class="content-grid">
+							<section class="intro">
+								<p class="eyebrow">Welcome to</p>
+
+								<h1>Siemen<span>.dev</span></h1>
+
+								<p class="hello">Welcome :)</p>
+
+								<p class="intro-text">Medior software engineer. based in the Netherlands</p>
+							</section>
+
+							<section class="contact">
+								<div class="section-label">
+									<span> CONTACT </span>
+
+									<span class="version"> v1.03 </span>
+								</div>
+
+								<h2>
+									Where to
+									<br />
+									<em>Contact me</em>
+								</h2>
+
+								<div class="contact-list">
+									<a class="contact-row" href="https://www.linkedin.com/" target="_blank" rel="noopener noreferrer">
+										<span> LinkedIn </span>
+
+										<span> ↗ </span>
+									</a>
+
+									<div class="contact-row">
+										<span> Location </span>
+
+										<span> Kerkdriel, NL </span>
+									</div>
+								</div>
+							</section>
+						</div>
+
+						<div class="cloth-footer"></div>
+					</div>
+				</section>
+			</main>
+
+			<footer class="page-footer">
+				<span id="dragState"> READY </span>
+			</footer>
 		</div>
 
-		<!-- Homepage Card -->
-		<div id="homeCard" class="card visible backdrop-blur-2xl bg-white/10 p-12 rounded-2xl border border-white/20 shadow-2xl text-center">
-			<h1 class="text-5xl font-bold">Siemen<span class="text-purple-300">.dev</span></h1>
-			<p class="mt-4 text-gray-300 text-lg">Welcome :)</p>
-			<div class="mt-8 flex gap-4 justify-center">
-				<button id="experienceBtn" class="bg-purple-400 text-black px-6 py-3 rounded-lg font-semibold hover:scale-110 transition">Experience</button>
-				<button id="contactBtn" class="border border-white px-6 py-3 rounded-lg hover:bg-white hover:text-black transition">Contact</button>
-			</div>
-		</div>
-
-		<!-- Contact Card -->
-		<div id="contactCard" class="card off-right backdrop-blur-2xl bg-white/10 p-12 rounded-2xl border border-white/20 shadow-2xl text-center">
-			<h1 class="text-5xl font-bold">Contact</h1>
-			<div class="mt-4 text-gray-300 text-lg">
-				<p class="mt-2 font-semibold">
-					LinkedIn:
-					<a href="https://www.linkedin.com/in/siemen-van-de-braak-a871a8339/" target="_blank" rel="noopener noreferrer" class="text-purple-400 hover:text-purple-600 underline">Visit profile</a>
-				</p>
-				<p class="mt-2 font-semibold">Location: Kerkdriel, Netherlands</p>
-			</div>
-			<div class="mt-8 flex gap-4 justify-center">
-				<button id="backFromContact" class="border border-white px-6 py-3 rounded-lg hover:bg-white hover:text-black transition">Back</button>
-			</div>
-		</div>
-
-		<!-- Experience Card -->
-		<div id="experienceCard" class="card off-left backdrop-blur-2xl bg-white/10 p-12 rounded-2xl border border-white/20 shadow-2xl text-center">
-			<h1 class="text-5xl font-bold">Experience & Skills</h1>
-
-			<div class="experience-section mt-6">
-				<!-- Coding -->
-				<button data-target="section1"><span>Coding</span> <span class="indicator">></span></button>
-				<div id="section1" class="experience-grid grid grid-cols-2 md:grid-cols-3 gap-4">
-					<div class="grid-item">
-						<img src="icons/icons8-html-5.svg" alt="HTML5" />
-						<p>HTML</p>
-					</div>
-					<div class="grid-item">
-						<img src="icons/css3.svg" alt="CSS3" />
-						<p>CSS</p>
-					</div>
-					<div class="grid-item">
-						<img src="icons/javascript.svg" alt="JavaScript" />
-						<p>JavaScript</p>
-					</div>
-					<div class="grid-item">
-						<img src="icons/php.svg" alt="PHP" />
-						<p>PHP</p>
-					</div>
-					<div class="grid-item">
-						<img src="icons/microsoftsqlserver.svg" alt="MSSQL" />
-						<p>MSSQL</p>
-					</div>
-					<div class="grid-item">
-						<img src="icons/csharp (1).svg" alt="C#" />
-						<p>C#</p>
-					</div>
-				</div>
-
-				<!-- Creative -->
-				<button data-target="section2"><span>Creative</span> <span class="indicator">></span></button>
-				<div id="section2" class="experience-grid grid grid-cols-2 md:grid-cols-3 gap-4">
-					<div class="grid-item">
-						<img src="icons/icons8-final-cut-pro-x.svg" alt="Final Cut Pro" />
-						<p>Final Cut Pro</p>
-					</div>
-					<div class="grid-item">
-						<img src="icons/adobephotoshop.svg" alt="PhotoShop" />
-						<p>PhotoShop</p>
-					</div>
-					<div class="grid-item">
-						<img src="icons/adobepremierepro.svg" alt="Premiere Pro" />
-						<p>Premiere Pro</p>
-					</div>
-					<div class="grid-item">
-						<img src="icons/adobeaftereffects.svg" alt="After Effects" />
-						<p>After Effects</p>
-					</div>
-					<div class="grid-item">
-						<img src="icons/adobeillustrator.svg" alt="Illustrator" />
-						<p>Illustrator</p>
-					</div>
-					<div class="grid-item">
-						<img src="icons/adobexd.svg" alt="Adobe Xd" />
-						<p>Adobe Xd</p>
-					</div>
-					<div class="grid-item">
-						<img src="icons/adobeindesign.svg" alt="InDesign" />
-						<p>InDesign</p>
-					</div>
-				</div>
-
-				<!-- Other -->
-				<button data-target="section3"><span>Other</span> <span class="indicator">></span></button>
-				<div id="section3" class="experience-grid">
-					<div class="text-box">
-						<ul class="list-disc pl-5">
-							<li>Creating apps</li>
-							<li>Experience working with APIs</li>
-							<li>Good with team/customer communication</li>
-							<li>Problem solving</li>
-						</ul>
-					</div>
-				</div>
-			</div>
-
-			<div class="mt-8 flex gap-4 justify-center">
-				<button id="backFromExperience" class="border border-white px-6 py-3 rounded-lg hover:bg-white hover:text-black transition">Back</button>
-			</div>
-		</div>
-
-		<script>
-			// Card references
-			const homeCard = document.getElementById("homeCard");
-			const contactCard = document.getElementById("contactCard");
-			const experienceCard = document.getElementById("experienceCard");
-
-			// Button references
-			const contactBtn = document.getElementById("contactBtn");
-			const backFromContact = document.getElementById("backFromContact");
-			const experienceBtn = document.getElementById("experienceBtn");
-			const backFromExperience = document.getElementById("backFromExperience");
-
-			// Card swipe logi c
-			function showCard(show, hide1, hide2, directionShow, directionHide1, directionHide2) {
-				hide1.classList.add(directionHide1);
-				hide1.classList.remove("visible");
-				hide2.classList.add(directionHide2);
-				hide2.classList.remove("visible");
-				show.classList.add("visible");
-				show.classList.remove(directionShow);
-			}
-
-			contactBtn.addEventListener("click", () => showCard(contactCard, homeCard, experienceCard, "", "off-left", "off-left"));
-			backFromContact.addEventListener("click", () => showCard(homeCard, contactCard, experienceCard, "", "off-right", "off-left"));
-
-			experienceBtn.addEventListener("click", () => showCard(experienceCard, homeCard, contactCard, "", "off-right", "off-right"));
-			backFromExperience.addEventListener("click", () => showCard(homeCard, experienceCard, contactCard, "", "off-left", "off-right"));
-
-			// Dropdown logic
-			document.querySelectorAll(".experience-section button").forEach((btn) => {
-				btn.addEventListener("click", () => {
-					const target = document.getElementById(btn.dataset.target);
-					const isOpen = target.style.maxHeight && target.style.maxHeight !== "0px";
-
-					document.querySelectorAll(".experience-grid").forEach((grid) => (grid.style.maxHeight = "0"));
-					document.querySelectorAll(".experience-section button").forEach((b) => {
-						b.classList.remove("active");
-						b.querySelector(".indicator").textContent = ">";
-					});
-
-					if (!isOpen) {
-						target.style.maxHeight = target.scrollHeight + "px";
-						btn.classList.add("active");
-						btn.querySelector(".indicator").textContent = "v";
-					}
-				});
-			});
-		</script>
+		<script src="scripts/app.js"></script>
 	</body>
 </html>
