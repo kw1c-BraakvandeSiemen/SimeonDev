@@ -6,8 +6,7 @@ const dragState = document.getElementById("dragState");
 
 const catButton = document.getElementById("catButton");
 const meow = document.getElementById("meow");
-// todo make the cloth automatically reset itself after 5 seconds or so to prevent getting stuck
-// add easter egg after the dialogue with cat to enable a random theme like prismatic/holographic or so
+
 const CONFIG = {
 	spacing: 20,
 	iterations: 12,
@@ -19,6 +18,13 @@ const CONFIG = {
 	maxPull: 380,
 	dragThreshold: 6,
 	perspective: 1200,
+	resetDelay: 5000,
+	resetDuration: 2200,
+	resetRestMultiplier: 5,
+	resetDamping: 0.92,
+	themeDelay: 700,
+	themeFade: 0.025,
+	textColorEvery: 3,
 };
 
 const LIGHT = (() => {
@@ -46,6 +52,9 @@ const state = {
 
 	dx: 0,
 	dy: 0,
+
+	resetAt: 0,
+	resetStart: 0,
 };
 
 let cols = 0;
@@ -60,6 +69,8 @@ let offsetY = 0;
 
 let dpr = 1;
 
+let frameCount = 0;
+
 let rx;
 let ry;
 let x;
@@ -71,6 +82,8 @@ let qz;
 let sx;
 let sy;
 let shade;
+let nxs;
+let nys;
 let pinned;
 
 let cA;
@@ -84,6 +97,158 @@ let anchors = null;
 
 function clamp(value, min, max) {
 	return Math.max(min, Math.min(max, value));
+}
+
+function lerp(a, b, t) {
+	return a + (b - a) * t;
+}
+
+function hslToRgb(h, s, l) {
+	const hue = ((h % 360) + 360) % 360;
+	const a = s * Math.min(l, 1 - l);
+
+	const f = (n) => {
+		const k = (n + hue / 30) % 12;
+
+		return (l - a * Math.max(-1, Math.min(k - 3, 9 - k, 1))) * 255;
+	};
+
+	return [f(0), f(8), f(4)];
+}
+
+function rgbToHue(r, g, b) {
+	const rn = r / 255;
+	const gn = g / 255;
+	const bn = b / 255;
+
+	const max = Math.max(rn, gn, bn);
+	const min = Math.min(rn, gn, bn);
+
+	const delta = max - min;
+
+	if (delta === 0) {
+		return 0;
+	}
+
+	let hue;
+
+	if (max === rn) {
+		hue = ((gn - bn) / delta) % 6;
+	} else if (max === gn) {
+		hue = (bn - rn) / delta + 2;
+	} else {
+		hue = (rn - gn) / delta + 4;
+	}
+
+	return hue * 60;
+}
+
+function baseColor(t) {
+	if (t < 0.52) {
+		const u = t / 0.52;
+
+		return [226 + 21 * u, 220 + 23 * u, 211 + 25 * u];
+	}
+
+	const u = (t - 0.52) / 0.48;
+
+	return [247 - 49 * u, 243 - 53 * u, 236 - 58 * u];
+}
+
+const THEMES = [
+	{
+		name: "holographic",
+		color(t, nx, ny, s, time) {
+			const hue = t * 200 + nx * 160 + ny * 120 + time * 18;
+
+			return hslToRgb(hue, 0.65, clamp(0.8 * s, 0.4, 0.93));
+		},
+	},
+
+	{
+		name: "prismatic",
+		color(t, nx, ny, s, time) {
+			const u = t * 2.2 + (nx * 0.9 + ny * 0.7) * 2.2 + time * 0.03;
+
+			return hslToRgb((u - Math.floor(u)) * 360, 0.8, clamp(0.72 * s, 0.35, 0.88));
+		},
+	},
+
+	{
+		name: "aurora",
+		color(t, nx, ny, s, time) {
+			const wave = 0.5 + 0.5 * Math.sin(t * 5 + nx * 4 + ny * 3 + time * 0.4);
+
+			return hslToRgb(140 + 130 * wave, 0.55, clamp(0.8 * s, 0.4, 0.92));
+		},
+	},
+];
+
+const themeState = {
+	current: null,
+	previous: null,
+	mix: 1,
+};
+
+function themeColor(theme, t, nx, ny, s, time) {
+	if (!theme) {
+		const base = baseColor(t);
+
+		return [Math.min(255, base[0] * s), Math.min(255, base[1] * s), Math.min(255, base[2] * s)];
+	}
+
+	return theme.color(t, nx, ny, s, time);
+}
+
+function updateTextColors(time) {
+	if (!themeState.current) {
+		return;
+	}
+
+	const row = (rows - 1) >> 1;
+
+	const fractions = [0.2, 0.55, 0.9];
+
+	const colors = fractions.map((fraction) => {
+		const col = Math.round((cols - 1) * fraction);
+		const k = row * cols + col;
+
+		const t = (col / (cols - 1) + row / (rows - 1)) / 2;
+
+		const rgb = themeState.current.color(t, nxs[k], nys[k], shade[k], time);
+
+		const vivid = hslToRgb(rgbToHue(rgb[0], rgb[1], rgb[2]), 1, 0.5);
+
+		return `${vivid[0] | 0},${vivid[1] | 0},${vivid[2] | 0}`;
+	});
+
+	const root = document.documentElement.style;
+
+	root.setProperty("--text-a", `rgb(${colors[0]})`);
+	root.setProperty("--text-b", `rgb(${colors[1]})`);
+	root.setProperty("--text-c", `rgb(${colors[2]})`);
+
+	root.setProperty("--text-a-soft", `rgba(${colors[0]}, 0.55)`);
+	root.setProperty("--text-b-soft", `rgba(${colors[1]}, 0.55)`);
+	root.setProperty("--text-c-soft", `rgba(${colors[2]}, 0.55)`);
+}
+
+function changeTheme() {
+	const options = THEMES.filter((theme) => theme !== themeState.current);
+
+	themeState.previous = themeState.current;
+	themeState.current = options[Math.floor(Math.random() * options.length)];
+	themeState.mix = 0;
+
+	document.documentElement.dataset.theme = themeState.current.name;
+
+	updateTextColors(performance.now() / 1000);
+
+	for (let k = 0; k < count; k++) {
+		if (!pinned[k]) {
+			z[k] += (Math.random() - 0.5) * 6;
+		}
+	}
 }
 
 function build() {
@@ -124,10 +289,15 @@ function build() {
 	sy = new Float32Array(ry);
 
 	shade = new Float32Array(count).fill(1);
+	nxs = new Float32Array(count);
+	nys = new Float32Array(count);
 
 	pinned = new Uint8Array(count);
 
 	cluster = [];
+
+	state.resetAt = 0;
+	state.resetStart = 0;
 
 	const list = [];
 
@@ -191,6 +361,30 @@ function resizeCanvas() {
 	canvas.height = Math.round(window.innerHeight * dpr);
 }
 
+function snapToRest() {
+	x.set(rx);
+	y.set(ry);
+	z.fill(0);
+
+	qx.set(rx);
+	qy.set(ry);
+	qz.fill(0);
+}
+
+function maxDisplacement() {
+	let max = 0;
+
+	for (let k = 0; k < count; k++) {
+		const d = Math.max(Math.abs(x[k] - rx[k]), Math.abs(y[k] - ry[k]), Math.abs(z[k]));
+
+		if (d > max) {
+			max = d;
+		}
+	}
+
+	return max;
+}
+
 function pick(localX, localY) {
 	let best = -1;
 	let bestDistance = CONFIG.spacing * 1.6;
@@ -245,6 +439,9 @@ function startDrag() {
 	state.targetDx = 0;
 	state.targetDy = 0;
 
+	state.resetAt = 0;
+	state.resetStart = 0;
+
 	return true;
 }
 
@@ -256,10 +453,7 @@ function endDrag() {
 	cluster = [];
 }
 
-function integrate() {
-	const damping = CONFIG.damping;
-	const rest = CONFIG.restStiffness;
-
+function integrate(damping, rest) {
 	for (let k = 0; k < count; k++) {
 		if (pinned[k]) {
 			continue;
@@ -367,23 +561,18 @@ function computeShading() {
 			const d = (nx * LIGHT.x + ny * LIGHT.y + nz * LIGHT.z) / length;
 
 			shade[k] = clamp(1 + (d - LIGHT.z) * 1.7, 0.4, 1.22);
+
+			nxs[k] = nx / length;
+			nys[k] = ny / length;
 		}
 	}
 }
 
-function baseColor(t) {
-	if (t < 0.52) {
-		const u = t / 0.52;
+function draw(time) {
+	themeState.mix = Math.min(1, themeState.mix + CONFIG.themeFade);
 
-		return [226 + 21 * u, 220 + 23 * u, 211 + 25 * u];
-	}
+	const blending = themeState.mix < 1;
 
-	const u = (t - 0.52) / 0.48;
-
-	return [247 - 49 * u, 243 - 53 * u, 236 - 58 * u];
-}
-
-function draw() {
 	ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
 	ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
 
@@ -400,12 +589,21 @@ function draw() {
 			const d = c + 1;
 
 			const s = (shade[a] + shade[b] + shade[c] + shade[d]) * 0.25;
+			const nx = (nxs[a] + nxs[b] + nxs[c] + nxs[d]) * 0.25;
+			const ny = (nys[a] + nys[b] + nys[c] + nys[d]) * 0.25;
 
 			const t = (i / (cols - 1) + j / (rows - 1)) / 2;
 
-			const base = baseColor(t);
+			let rgb = themeColor(themeState.current, t, nx, ny, s, time);
 
-			const color = `rgb(${Math.min(255, base[0] * s) | 0},${Math.min(255, base[1] * s) | 0},${Math.min(255, base[2] * s) | 0})`;
+			if (blending) {
+				const previous = themeColor(themeState.previous, t, nx, ny, s, time);
+				const m = themeState.mix;
+
+				rgb = [lerp(previous[0], rgb[0], m), lerp(previous[1], rgb[1], m), lerp(previous[2], rgb[2], m)];
+			}
+
+			const color = `rgb(${rgb[0] | 0},${rgb[1] | 0},${rgb[2] | 0})`;
 
 			ctx.fillStyle = color;
 			ctx.strokeStyle = color;
@@ -470,7 +668,51 @@ function updateContent() {
 	clothContent.style.transform = `translate(${cx - restCx}px, ${cy - restCy}px) matrix(${exX}, ${exY}, ${eyX}, ${eyY}, 0, 0)`;
 }
 
+function updateReset(now) {
+	if (!state.dragging && state.resetAt && now >= state.resetAt) {
+		state.resetAt = 0;
+		state.resetStart = now;
+
+		dragState.textContent = "RESETTING";
+	}
+
+	if (state.resetStart) {
+		const elapsed = now - state.resetStart;
+
+		const finished = elapsed > CONFIG.resetDuration && maxDisplacement() < 0.4;
+		const timedOut = elapsed > CONFIG.resetDuration * 2;
+
+		if (finished || timedOut) {
+			state.resetStart = 0;
+
+			snapToRest();
+
+			dragState.textContent = "READY";
+		}
+	}
+
+	if (!Number.isFinite(x[anchors.left] + y[anchors.top] + z[anchors.bottom])) {
+		snapToRest();
+	}
+}
+
 function animate() {
+	const now = performance.now();
+	const time = now / 1000;
+
+	updateReset(now);
+
+	let damping = CONFIG.damping;
+	let rest = CONFIG.restStiffness;
+
+	if (state.resetStart) {
+		const p = clamp((now - state.resetStart) / CONFIG.resetDuration, 0, 1);
+		const ease = p * p * (3 - 2 * p);
+
+		rest = lerp(CONFIG.restStiffness, CONFIG.restStiffness * CONFIG.resetRestMultiplier, ease);
+		damping = lerp(CONFIG.damping, CONFIG.resetDamping, ease);
+	}
+
 	state.dx += (state.targetDx - state.dx) * 0.5;
 	state.dy += (state.targetDy - state.dy) * 0.5;
 
@@ -482,7 +724,7 @@ function animate() {
 		qz[item.index] = z[item.index];
 	}
 
-	integrate();
+	integrate(damping, rest);
 
 	applyPins();
 
@@ -492,9 +734,15 @@ function animate() {
 
 	computeShading();
 
-	draw();
+	draw(time);
 
 	updateContent();
+
+	frameCount++;
+
+	if (frameCount % CONFIG.textColorEvery === 0) {
+		updateTextColors(time);
+	}
 
 	requestAnimationFrame(animate);
 }
@@ -586,12 +834,14 @@ function releaseCloth(event) {
 
 		endDrag();
 
+		state.resetAt = performance.now() + CONFIG.resetDelay;
+
 		canvas.style.cursor = "grab";
 
 		dragState.textContent = "RELAXING";
 
 		setTimeout(() => {
-			if (!state.dragging) {
+			if (!state.dragging && !state.resetStart) {
 				dragState.textContent = "READY";
 			}
 		}, 650);
@@ -710,4 +960,10 @@ catButton.addEventListener("click", (event) => {
 		},
 		1200 + index * 250,
 	);
+
+	if (index === catMessages.length - 1) {
+		clearTimeout(catButton.themeTimeout);
+
+		catButton.themeTimeout = setTimeout(changeTheme, CONFIG.themeDelay);
+	}
 });
