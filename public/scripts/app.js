@@ -6,7 +6,8 @@ const dragState = document.getElementById("dragState");
 
 const catButton = document.getElementById("catButton");
 const meow = document.getElementById("meow");
-
+// todo make the cloth automatically reset itself after 5 seconds or so to prevent getting stuck
+// add easter egg after the dialogue with cat to enable a random theme like prismatic/holographic or so
 const CONFIG = {
 	spacing: 20,
 	iterations: 12,
