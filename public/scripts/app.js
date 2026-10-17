@@ -207,7 +207,7 @@ const themeState = {
 	mix: 1,
 };
 
-const CAT_FACES = ["🐈", "🐈‍⬛", "🐱", "😺", "😸", "🐈"];
+const CAT_FACES = ["🐈", "🐈‍⬛", "🐈", "🐈‍⬛", "🐈", "🐈‍⬛"];
 
 const OPENERS = ["meow", "meow?", "miauw", "meow meow", "mew"];
 
