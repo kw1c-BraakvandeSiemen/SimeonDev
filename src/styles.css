@@ -3486,3 +3486,141 @@ html[data-theme="gems"] .site .skill.active {
 		inset 0 0 0 1.5px #fff,
 		0 0 10px rgba(255, 255, 255, 0.5);
 }
+
+/* =========================================================
+   CASINO
+   ========================================================= */
+
+html[data-theme="casino"] .bd-casino,
+html[data-theme="casino"] .fx-canvas {
+	opacity: 1;
+}
+
+.bd-casino {
+	background:
+		repeating-linear-gradient(45deg, rgba(255, 215, 90, 0.06) 0 2px, transparent 2px 36px),
+		repeating-linear-gradient(-45deg, rgba(255, 215, 90, 0.06) 0 2px, transparent 2px 36px),
+		radial-gradient(ellipse at center, #5a0a1a 0%, #1c0309 100%);
+}
+
+html[data-theme="casino"] .site :is(.intro h1, .contact h2, .contact h2 em, .hello) {
+	background: none;
+
+	-webkit-text-fill-color: currentColor;
+
+	filter: none;
+
+	animation: none;
+}
+
+html[data-theme="casino"] .site .intro h1 span {
+	-webkit-text-fill-color: currentColor;
+
+	opacity: 1;
+}
+
+html[data-theme="casino"] {
+	--accent: #ffd35a;
+	--line: rgba(255, 215, 90, 0.45);
+}
+
+html[data-theme="casino"] .site .cloth-content,
+html[data-theme="casino"] .site .cloth-content * {
+	font-family: Georgia, "Times New Roman", serif;
+}
+
+html[data-theme="casino"] .site .intro h1 {
+	color: #ffd35a;
+
+	font-weight: 900;
+	font-style: italic;
+
+	letter-spacing: -0.03em;
+
+	text-shadow:
+		0 2px 0 #7a4a00,
+		0 0 16px rgba(255, 211, 90, 0.5);
+}
+
+html[data-theme="casino"] .site .intro h1 span {
+	color: #ff3b3b;
+}
+
+html[data-theme="casino"] .site .contact h2 {
+	color: #fff;
+
+	font-weight: 900;
+	font-style: italic;
+
+	letter-spacing: -0.03em;
+
+	text-shadow: 0 0 12px rgba(255, 255, 255, 0.3);
+}
+
+html[data-theme="casino"] .site .contact h2 em {
+	color: #ffd35a;
+
+	text-shadow: 0 0 14px rgba(255, 211, 90, 0.55);
+}
+
+html[data-theme="casino"] .site .hello {
+	color: #ffe9a8;
+
+	font-style: italic;
+}
+
+html[data-theme="casino"] .site .intro-text {
+	color: rgba(255, 255, 255, 0.88);
+}
+
+html[data-theme="casino"] .site :is(.eyebrow, .section-label span:first-child, .skills-caption) {
+	color: #ff3b3b;
+
+	letter-spacing: 0.3em;
+
+	text-shadow: 0 0 8px rgba(255, 59, 59, 0.5);
+}
+
+html[data-theme="casino"] .site .section-label .version {
+	color: rgba(255, 215, 90, 0.6);
+}
+
+html[data-theme="casino"] .site .contact-row {
+	color: #fff;
+}
+
+html[data-theme="casino"] .site .contact-row:hover {
+	color: #ffd35a;
+}
+
+html[data-theme="casino"] .site .contact-row span:last-child {
+	color: #ffd35a;
+}
+
+html[data-theme="casino"] .site .skill-group {
+	color: rgba(255, 233, 168, 0.8);
+}
+
+html[data-theme="casino"] .site .skill-sep {
+	background: #ff3b3b;
+}
+
+html[data-theme="casino"] .site .skill {
+	background: rgba(0, 0, 0, 0.3);
+
+	box-shadow: inset 0 0 0 1px rgba(255, 215, 90, 0.5);
+}
+
+html[data-theme="casino"] .site .skill img {
+	opacity: 0.95;
+
+	filter: brightness(0) invert(1);
+}
+
+html[data-theme="casino"] .site .skill.active {
+	background: rgba(255, 215, 90, 0.2);
+
+	box-shadow:
+		inset 0 0 0 1.5px #ffd35a,
+		0 0 10px rgba(255, 215, 90, 0.5);
+}

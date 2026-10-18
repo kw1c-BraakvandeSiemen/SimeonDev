@@ -690,7 +690,85 @@ const GEMS = {
 	grid: { step: 3, color: "255,255,255", alpha: 0.14 },
 };
 
-const ALL_THEMES = [...THEMES, RETRO, TERMINAL, GAMEBOY, BLUEPRINT, NEWSPAPER, FALLOUT, KEYBOARD, VIRTUALBOY, WATER, MINECRAFT, LEGO, TETRIS, CLOCK, RUNESCAPE, GEMS];
+const marqueePoint = { x: 0, y: 0 };
+
+function marqueeAt(distance, inset) {
+	const w = width - inset * 2;
+	const h = height - inset * 2;
+
+	let d = distance;
+
+	if (d < w) {
+		sampleMesh(inset + d, inset, marqueePoint);
+
+		return;
+	}
+
+	d -= w;
+
+	if (d < h) {
+		sampleMesh(inset + w, inset + d, marqueePoint);
+
+		return;
+	}
+
+	d -= h;
+
+	if (d < w) {
+		sampleMesh(inset + w - d, inset + h, marqueePoint);
+
+		return;
+	}
+
+	d -= w;
+
+	sampleMesh(inset, inset + h - d, marqueePoint);
+}
+
+function drawMarquee(strength, time) {
+	const inset = 12;
+
+	const perimeter = 2 * (width - inset * 2 + (height - inset * 2));
+	const bulbs = Math.floor(perimeter / 30);
+
+	const step = Math.floor(time * 4);
+
+	for (let n = 0; n < bulbs; n++) {
+		marqueeAt((n / bulbs) * perimeter, inset);
+
+		const on = (n + step) % 3 !== 0;
+
+		if (on) {
+			ctx.fillStyle = "rgba(255, 215, 90, " + 0.25 * strength + ")";
+			ctx.beginPath();
+			ctx.arc(marqueePoint.x, marqueePoint.y, 7, 0, Math.PI * 2);
+			ctx.fill();
+		}
+
+		ctx.fillStyle = on ? "rgba(255, 236, 150, " + strength + ")" : "rgba(160, 120, 40, " + 0.55 * strength + ")";
+		ctx.beginPath();
+		ctx.arc(marqueePoint.x, marqueePoint.y, 3.2, 0, Math.PI * 2);
+		ctx.fill();
+	}
+}
+
+const CASINO = {
+	name: "casino",
+	fixed: ["255,211,90", "255,59,59", "255,255,255"],
+	edge: "rgba(255, 215, 90, 0.95)",
+	draw: drawMarquee,
+	color(t, nx, ny, s, time, i, j) {
+		const grain = 0.94 + 0.12 * hash2(i, j);
+
+		const r = lerp(10, 6, t) * grain * s + Math.max(0, s - 1.05) * 40;
+		const g = lerp(98, 72, t) * grain * s + Math.max(0, s - 1.05) * 60;
+		const b = lerp(56, 40, t) * grain * s + Math.max(0, s - 1.05) * 40;
+
+		return [clamp(r, 0, 255), clamp(g, 0, 255), clamp(b, 0, 255)];
+	},
+};
+
+const ALL_THEMES = [...THEMES, RETRO, TERMINAL, GAMEBOY, BLUEPRINT, NEWSPAPER, FALLOUT, KEYBOARD, VIRTUALBOY, WATER, MINECRAFT, LEGO, TETRIS, CLOCK, RUNESCAPE, GEMS, CASINO];
 
 const BASICS_LINES = {
 	ask: "Meow ik heb geen verdere thema inspiratie meer,\nterug naar de basics",
@@ -771,6 +849,7 @@ const THEME_LINES = {
 	clock: { ask: "Meow ik wil weten hoe laat het is", after: "meow. etenstijd" },
 	runescape: { ask: "Meow ik wil de grind zien", after: "meow. level 99 miauwen" },
 	gems: { ask: "Meow ik wil iets glimmends zien", after: "meow. ik ben rijk" },
+	casino: { ask: "Meow ik wil gokken", after: "meow. alles op rood" },
 };
 
 
@@ -1670,7 +1749,58 @@ function drawPieces(now) {
 	});
 }
 
+const SUITS = { items: [], last: 0 };
+
+const SUIT_GLYPHS = ["♠", "♥", "♦", "♣", "♥", "♦", "$"];
+
+function drawSuits(now) {
+	fxCtx.setTransform(dpr, 0, 0, dpr, 0, 0);
+	fxCtx.clearRect(0, 0, window.innerWidth, window.innerHeight);
+
+	if (fxReduced()) {
+		return;
+	}
+
+	if (now - SUITS.last > 300 && SUITS.items.length < 30) {
+		SUITS.last = now;
+
+		SUITS.items.push({
+			x: Math.random() * window.innerWidth,
+			y: -30,
+			vy: 0.8 + Math.random() * 1.2,
+			size: 22 + Math.random() * 22,
+			glyph: pickRandom(SUIT_GLYPHS),
+			sway: Math.random() * Math.PI * 2,
+			swaySpeed: 0.01 + Math.random() * 0.02,
+			alpha: 0.25 + Math.random() * 0.3,
+		});
+	}
+
+	fxCtx.textBaseline = "middle";
+
+	SUITS.items = SUITS.items.filter((item) => {
+		item.y += item.vy;
+		item.sway += item.swaySpeed;
+
+		let color = "255, 255, 255";
+
+		if (item.glyph === "♥" || item.glyph === "♦") {
+			color = "255, 70, 70";
+		} else if (item.glyph === "$") {
+			color = "255, 215, 90";
+		}
+
+		fxCtx.font = "bold " + item.size + "px serif";
+		fxCtx.fillStyle = "rgba(" + color + "," + item.alpha + ")";
+
+		fxCtx.fillText(item.glyph, item.x + Math.sin(item.sway) * 20, item.y);
+
+		return item.y < window.innerHeight + 40;
+	});
+}
+
 const FX_THEMES = {
+	casino: drawSuits,
 	terminal: drawRain,
 	keyboard: drawNotes,
 	tetris: drawPieces,
