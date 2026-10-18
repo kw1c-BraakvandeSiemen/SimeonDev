@@ -35,6 +35,12 @@ const CONFIG = {
 	partySpawnEvery: 450,
 	partyLineGap: [1100, 1700],
 	partyPause: [2500, 4500],
+	partyDuration: [70000, 100000],
+	rareChance: 0.05,
+	dragReactWindow: 25000,
+	dragReactHits: 3,
+	dragReactTravel: 2500,
+	dragReactCooldown: 30000,
 };
 
 const LIGHT = (() => {
@@ -68,6 +74,8 @@ const state = {
 
 	grabX: 0,
 	grabY: 0,
+
+	travel: 0,
 };
 
 let cols = 0;
@@ -225,11 +233,48 @@ const ANSWERS_TO_SHOUT = ["meow?!", "kat geluid", "meow meow?"];
 
 const ANSWERS_GENERIC = ["meow", "meow?", "mew", "meow meow meow", "MEOW!"];
 
+const GOODBYES = ["meow. doei", "meow, doei", "meow. tot later", "meow. ik ga", "meow, dag"];
+
+const BRABANTS_GOODBYES = ["meowdoe!", "meowdoe, hè", "meowdoe, en tot gauw"];
+
+const DRAG_LINES = ["meow. ik zat hier net", "meow, kan dit wat rustiger", "meow. weer?", "meow, ik had net een plek", "meow. ga maar door, ik wacht"];
+
+const CHORUS_LINES = ["MEOW", "meow.", "meow meow meow"];
+
+const STARE_LINES = ["meow. wat?", "meow. ja?", "meow. niks"];
+
+const PERSONAL_LINES = [
+	() => "meow. je bent er nog",
+	() => "meow. je kijkt al een tijdje naar een papiertje",
+	() => {
+		const minutes = Math.floor(performance.now() / 60000);
+
+		return minutes >= 1 ? `meow. al ${minutes} minuut${minutes > 1 ? "en" : ""} hier` : "meow. ik zeg niks, maar ik zie je wel";
+	},
+];
+
 const party = {
 	element: null,
 	cats: [],
 	active: false,
+	ending: false,
+	timers: [],
+	dragHits: [],
+	travel: 0,
+	lastReact: 0,
 };
+
+const mouse = { x: 0, y: 0, seen: false };
+
+window.addEventListener("pointermove", (event) => {
+	mouse.x = event.clientX;
+	mouse.y = event.clientY;
+	mouse.seen = true;
+});
+
+function partyLive() {
+	return party.active && !party.ending;
+}
 
 function placeCat(cat) {
 	let best = null;
@@ -259,9 +304,6 @@ function placeCat(cat) {
 
 	cat.px = best.px;
 	cat.py = best.py;
-
-	cat.element.style.left = `${best.px}%`;
-	cat.element.style.top = `${best.py}%`;
 }
 
 function spawnCat() {
@@ -271,24 +313,16 @@ function spawnCat() {
 	const flip = document.createElement("span");
 	flip.className = "party-flip";
 
-	if (Math.random() < 0.5) {
-		flip.style.transform = "scaleX(-1)";
-	}
-
 	const face = document.createElement("span");
 	face.className = "party-face";
 	face.textContent = pickRandom(CAT_FACES);
 
-	const bubble = document.createElement("div");
-	bubble.className = "party-bubble";
-
 	flip.appendChild(face);
 	element.appendChild(flip);
-	element.appendChild(bubble);
 
 	party.element.appendChild(element);
 
-	const cat = { element, bubble, px: 50, py: 50, timeout: null };
+	const cat = { element, flip, px: 50, py: 50, dir: 1 };
 
 	party.cats.push(cat);
 
@@ -301,19 +335,43 @@ function spawnCat() {
 	return cat;
 }
 
+function orientCats() {
+	if (!partyLive() || !mouse.seen) {
+		return;
+	}
+
+	party.cats.forEach((cat) => {
+		const rect = cat.element.getBoundingClientRect();
+
+		const dx = mouse.x - (rect.left + rect.width / 2);
+		const dy = mouse.y - (rect.top + rect.height / 2);
+
+		if (Math.abs(dx) > 14) {
+			cat.dir = dx > 0 ? -1 : 1;
+		}
+
+		const tilt = clamp((-dy / (Math.abs(dx) + 60)) * 30, -14, 14);
+
+		cat.flip.style.transform = `scaleX(${cat.dir}) rotate(${tilt}deg)`;
+	});
+}
+
 function say(cat, text) {
-	cat.bubble.textContent = text;
-	cat.bubble.classList.add("show");
+	const float = document.createElement("span");
+	float.className = "party-float";
+	float.textContent = text;
+
+	float.style.setProperty("--drift", `${Math.round((Math.random() - 0.5) * 24)}px`);
+
+	float.addEventListener("animationend", () => float.remove());
+
+	cat.element.appendChild(float);
 
 	cat.element.classList.remove("talking");
 
 	void cat.element.offsetWidth;
 
 	cat.element.classList.add("talking");
-
-	clearTimeout(cat.timeout);
-
-	cat.timeout = setTimeout(() => cat.bubble.classList.remove("show"), 1500);
 }
 
 function replyTo(previous) {
@@ -329,28 +387,94 @@ function replyTo(previous) {
 }
 
 async function hop(cat) {
+	if (!partyLive()) {
+		return;
+	}
+
 	cat.element.classList.remove("in");
 
 	await sleep(420);
+
+	if (!partyLive()) {
+		return;
+	}
 
 	placeCat(cat);
 
 	await sleep(60);
 
-	cat.element.classList.add("in");
+	if (partyLive()) {
+		cat.element.classList.add("in");
+	}
+}
+
+async function rareEvent() {
+	const kind = pickRandom(["chorus", "giant", "stare"]);
+
+	if (kind === "chorus") {
+		const text = pickRandom(CHORUS_LINES);
+
+		party.cats.forEach((cat) => say(cat, text));
+
+		await sleep(3000);
+
+		return;
+	}
+
+	if (kind === "giant") {
+		const cat = pickRandom(party.cats);
+
+		cat.element.classList.add("giant");
+
+		await sleep(700);
+
+		say(cat, "meow.");
+
+		await sleep(3800);
+
+		cat.element.classList.remove("giant");
+
+		await sleep(800);
+
+		return;
+	}
+
+	party.cats.forEach((cat) => cat.element.classList.add("stare"));
+
+	await sleep(3800);
+
+	party.cats.forEach((cat) => cat.element.classList.remove("stare"));
+
+	if (partyLive()) {
+		say(pickRandom(party.cats), pickRandom(STARE_LINES));
+	}
+
+	await sleep(2200);
 }
 
 async function conversation() {
-	while (party.active) {
+	while (partyLive()) {
+		if (Math.random() < CONFIG.rareChance) {
+			await rareEvent();
+
+			await sleep(randomBetween(CONFIG.partyPause));
+
+			continue;
+		}
+
 		const lines = 2 + Math.floor(Math.random() * 4);
 
 		let speaker = pickRandom(party.cats);
 		let text = pickRandom(OPENERS);
 
-		for (let line = 0; line < lines && party.active; line++) {
+		for (let line = 0; line < lines && partyLive(); line++) {
 			say(speaker, text);
 
 			await sleep(randomBetween(CONFIG.partyLineGap));
+
+			if (!partyLive()) {
+				return;
+			}
 
 			const others = party.cats.filter((cat) => cat !== speaker);
 
@@ -362,7 +486,7 @@ async function conversation() {
 
 		const hops = 1 + Math.floor(Math.random() * 2);
 
-		for (let n = 0; n < hops; n++) {
+		for (let n = 0; n < hops && partyLive(); n++) {
 			hop(pickRandom(party.cats));
 
 			await sleep(250);
@@ -372,19 +496,128 @@ async function conversation() {
 	}
 }
 
+async function dragReaction() {
+	party.lastReact = performance.now();
+	party.dragHits = [];
+	party.travel = 0;
+
+	const cats = [...party.cats].sort(() => Math.random() - 0.5);
+
+	say(cats[0], pickRandom(DRAG_LINES));
+
+	await sleep(500);
+
+	for (const cat of cats.slice(0, 3)) {
+		hop(cat);
+
+		await sleep(220);
+	}
+}
+
+function noteDrag(travel) {
+	if (!partyLive()) {
+		return;
+	}
+
+	const now = performance.now();
+
+	party.dragHits = party.dragHits.filter((time) => now - time < CONFIG.dragReactWindow);
+
+	if (party.dragHits.length === 0) {
+		party.travel = 0;
+	}
+
+	party.dragHits.push(now);
+	party.travel += travel;
+
+	if (now - party.lastReact < CONFIG.dragReactCooldown) {
+		return;
+	}
+
+	if (party.dragHits.length >= CONFIG.dragReactHits || party.travel >= CONFIG.dragReactTravel) {
+		dragReaction();
+	}
+}
+
+function schedulePersonal() {
+	[18000, 40000, 62000].forEach((delay, index) => {
+		party.timers.push(
+			setTimeout(async () => {
+				if (!partyLive()) {
+					return;
+				}
+
+				const cat = pickRandom(party.cats);
+
+				cat.element.classList.add("stare");
+
+				await sleep(600);
+
+				if (partyLive()) {
+					say(cat, PERSONAL_LINES[index]());
+				}
+
+				await sleep(2600);
+
+				cat.element.classList.remove("stare");
+			}, delay),
+		);
+	});
+}
+
+async function endCatParty() {
+	if (!partyLive()) {
+		return;
+	}
+
+	party.ending = true;
+
+	party.timers.forEach((id) => clearTimeout(id));
+	party.timers = [];
+
+	const order = [...party.cats].sort(() => Math.random() - 0.5);
+
+	for (const cat of order) {
+		cat.element.classList.remove("stare", "giant");
+
+		say(cat, Math.random() < 0.4 ? pickRandom(BRABANTS_GOODBYES) : pickRandom(GOODBYES));
+
+		await sleep(900 + Math.random() * 500);
+
+		cat.element.classList.remove("in");
+
+		await sleep(350);
+	}
+
+	await sleep(3400);
+
+	party.element.remove();
+
+	party.element = null;
+	party.cats = [];
+
+	party.ending = false;
+	party.active = false;
+}
+
 async function startCatParty() {
 	if (party.active) {
 		return;
 	}
 
 	party.active = true;
+	party.ending = false;
+
+	party.dragHits = [];
+	party.travel = 0;
+	party.lastReact = 0;
 
 	party.element = document.createElement("div");
 	party.element.className = "cat-party";
 
 	clothContent.appendChild(party.element);
 
-	registerWarp(party.element);
+	party.timers.push(setInterval(orientCats, 120));
 
 	for (let n = 0; n < CONFIG.partyCats; n++) {
 		spawnCat();
@@ -393,6 +626,10 @@ async function startCatParty() {
 	}
 
 	await sleep(700);
+
+	schedulePersonal();
+
+	party.timers.push(setTimeout(endCatParty, randomBetween(CONFIG.partyDuration)));
 
 	conversation();
 }
@@ -690,6 +927,8 @@ function startDrag() {
 		z[k] += (Math.random() - 0.5) * 1.5;
 	}
 
+	state.travel = 0;
+
 	state.dx = 0;
 	state.dy = 0;
 	state.targetDx = 0;
@@ -913,12 +1152,6 @@ const WARP_SELECTOR = [".cloth-meta", ".eyebrow", ".intro h1", ".hello", ".intro
 
 let warpTargets = [];
 
-function registerWarp(element) {
-	warpTargets.push({ element, left: 0, top: 0, w: 1, h: 1 });
-
-	measureWarpTargets();
-}
-
 function measureWarpTargets() {
 	const known = new Set(warpTargets.map((target) => target.element));
 
@@ -984,6 +1217,28 @@ function updateContent() {
 		const d = (warpC.y - warpA.y) / t.h;
 
 		t.element.style.transform = `translate(${warpA.x - t.left}px, ${warpA.y - t.top}px) matrix(${a}, ${b}, ${c}, ${d}, 0, 0)`;
+	}
+
+	if (party.active) {
+		const basis = 20;
+
+		for (let n = 0; n < party.cats.length; n++) {
+			const cat = party.cats[n];
+
+			const restX = (cat.px / 100) * width;
+			const restY = (cat.py / 100) * height;
+
+			sampleMesh(restX, restY, warpA);
+			sampleMesh(restX + basis, restY, warpB);
+			sampleMesh(restX, restY + basis, warpC);
+
+			const a = (warpB.x - warpA.x) / basis;
+			const b = (warpB.y - warpA.y) / basis;
+			const c = (warpC.x - warpA.x) / basis;
+			const d = (warpC.y - warpA.y) / basis;
+
+			cat.element.style.transform = `translate(${warpA.x}px, ${warpA.y}px) matrix(${a}, ${b}, ${c}, ${d}, 0, 0) translate(-50%, -50%)`;
+		}
 	}
 }
 
@@ -1135,6 +1390,8 @@ canvas.addEventListener("pointermove", (event) => {
 		return;
 	}
 
+	state.travel += Math.hypot(event.movementX || 0, event.movementY || 0);
+
 	const length = Math.hypot(dx, dy);
 	const scale = length > 0 ? (CONFIG.maxPull * Math.tanh(length / CONFIG.maxPull)) / length : 1;
 
@@ -1157,6 +1414,8 @@ function releaseCloth(event) {
 		state.dragging = false;
 
 		endDrag();
+
+		noteDrag(state.travel);
 
 		state.resetAt = performance.now() + CONFIG.resetDelay;
 
