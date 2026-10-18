@@ -9,19 +9,24 @@ const meow = document.getElementById("meow");
 
 const CONFIG = {
 	spacing: 20,
-	iterations: 12,
+	iterations: 16,
 	damping: 0.985,
 	restStiffness: 0.01,
 	shearStiffness: 0.7,
-	bendStiffness: 0.25,
+	bendStiffness: 0.4,
 	grabRadius: 40,
-	maxPull: 380,
+	maxPull: 220,
+	dragRestStiffness: 0.02,
+	shapeSigma: 190,
+	shapeStrength: 0.05,
+	maxDepth: 110,
+	depthSoftness: 0.3,
 	dragThreshold: 6,
 	perspective: 1200,
 	resetDelay: 5000,
-	resetDuration: 2200,
-	resetRestMultiplier: 5,
-	resetDamping: 0.92,
+	resetDuration: 4000,
+	resetStrength: 0.045,
+	resetDamping: 0.9,
 	themeDelay: 700,
 	themeFade: 0.025,
 	textColorEvery: 3,
@@ -60,6 +65,9 @@ const state = {
 
 	resetAt: 0,
 	resetStart: 0,
+
+	grabX: 0,
+	grabY: 0,
 };
 
 let cols = 0;
@@ -376,6 +384,8 @@ async function startCatParty() {
 
 	clothContent.appendChild(party.element);
 
+	registerWarp(party.element);
+
 	for (let n = 0; n < CONFIG.partyCats; n++) {
 		spawnCat();
 
@@ -550,7 +560,7 @@ function build() {
 		spanY: ry[bottom] - ry[top],
 	};
 
-	clothContent.style.transformOrigin = `${anchors.restCx}px ${anchors.restCy}px`;
+	measureWarpTargets();
 }
 
 function resizeCanvas() {
@@ -570,18 +580,62 @@ function snapToRest() {
 	qz.fill(0);
 }
 
-function maxDisplacement() {
-	let max = 0;
+function settleTowardRest(amount) {
+	const keep = 1 - amount;
 
 	for (let k = 0; k < count; k++) {
-		const d = Math.max(Math.abs(x[k] - rx[k]), Math.abs(y[k] - ry[k]), Math.abs(z[k]));
+		if (pinned[k]) {
+			continue;
+		}
 
-		if (d > max) {
-			max = d;
+		x[k] = rx[k] + (x[k] - rx[k]) * keep;
+		y[k] = ry[k] + (y[k] - ry[k]) * keep;
+		z[k] *= keep;
+
+		qx[k] = rx[k] + (qx[k] - rx[k]) * keep;
+		qy[k] = ry[k] + (qy[k] - ry[k]) * keep;
+		qz[k] *= keep;
+	}
+}
+
+function guideShape() {
+	const sigma2 = CONFIG.shapeSigma * CONFIG.shapeSigma;
+	const strength = CONFIG.shapeStrength;
+
+	for (let k = 0; k < count; k++) {
+		if (pinned[k]) {
+			continue;
+		}
+
+		const ddx = rx[k] - state.grabX;
+		const ddy = ry[k] - state.grabY;
+
+		const w = Math.exp(-(ddx * ddx + ddy * ddy) / sigma2);
+
+		const moveX = (rx[k] + state.dx * w - x[k]) * strength;
+		const moveY = (ry[k] + state.dy * w - y[k]) * strength;
+		const moveZ = -z[k] * strength;
+
+		x[k] += moveX;
+		y[k] += moveY;
+		z[k] += moveZ;
+
+		qx[k] += moveX;
+		qy[k] += moveY;
+		qz[k] += moveZ;
+	}
+}
+
+function limitDepth() {
+	const max = CONFIG.maxDepth;
+
+	for (let k = 0; k < count; k++) {
+		if (z[k] > max) {
+			z[k] = max + (z[k] - max) * CONFIG.depthSoftness;
+		} else if (z[k] < -max) {
+			z[k] = -max + (z[k] + max) * CONFIG.depthSoftness;
 		}
 	}
-
-	return max;
 }
 
 function pick(localX, localY) {
@@ -618,6 +672,9 @@ function startDrag() {
 
 	const cx = x[center];
 	const cy = y[center];
+
+	state.grabX = rx[center];
+	state.grabY = ry[center];
 
 	cluster = [];
 
@@ -852,19 +909,82 @@ function draw(time) {
 	ctx.stroke();
 }
 
+const WARP_SELECTOR = [".cloth-meta", ".eyebrow", ".intro h1", ".hello", ".intro-text", ".section-label", ".contact h2", ".contact-row", ".cloth-footer"].join(",");
+
+let warpTargets = [];
+
+function registerWarp(element) {
+	warpTargets.push({ element, left: 0, top: 0, w: 1, h: 1 });
+
+	measureWarpTargets();
+}
+
+function measureWarpTargets() {
+	const known = new Set(warpTargets.map((target) => target.element));
+
+	warpTargets = warpTargets.filter((target) => target.element.isConnected);
+
+	cloth.querySelectorAll(WARP_SELECTOR).forEach((element) => {
+		if (!known.has(element)) {
+			warpTargets.push({ element, left: 0, top: 0, w: 1, h: 1 });
+		}
+	});
+
+	warpTargets.forEach((target) => {
+		target.element.style.transform = "";
+		target.element.style.transformOrigin = "0 0";
+	});
+
+	const origin = cloth.getBoundingClientRect();
+
+	warpTargets.forEach((target) => {
+		const rect = target.element.getBoundingClientRect();
+
+		target.left = rect.left - origin.left;
+		target.top = rect.top - origin.top;
+		target.w = Math.max(rect.width, 1);
+		target.h = Math.max(rect.height, 1);
+	});
+}
+
+function sampleMesh(px, py, out) {
+	const gi = clamp((px / width) * (cols - 1), 0, cols - 1);
+	const gj = clamp((py / height) * (rows - 1), 0, rows - 1);
+
+	const i0 = Math.min(Math.floor(gi), cols - 2);
+	const j0 = Math.min(Math.floor(gj), rows - 2);
+
+	const fi = gi - i0;
+	const fj = gj - j0;
+
+	const a = j0 * cols + i0;
+	const b = a + 1;
+	const c = a + cols;
+	const d = c + 1;
+
+	out.x = (sx[a] * (1 - fi) + sx[b] * fi) * (1 - fj) + (sx[c] * (1 - fi) + sx[d] * fi) * fj;
+	out.y = (sy[a] * (1 - fi) + sy[b] * fi) * (1 - fj) + (sy[c] * (1 - fi) + sy[d] * fi) * fj;
+}
+
+const warpA = { x: 0, y: 0 };
+const warpB = { x: 0, y: 0 };
+const warpC = { x: 0, y: 0 };
+
 function updateContent() {
-	const { left, right, top, bottom, restCx, restCy, spanX, spanY } = anchors;
+	for (let n = 0; n < warpTargets.length; n++) {
+		const t = warpTargets[n];
 
-	const exX = (sx[right] - sx[left]) / spanX;
-	const exY = (sy[right] - sy[left]) / spanX;
+		sampleMesh(t.left, t.top, warpA);
+		sampleMesh(t.left + t.w, t.top, warpB);
+		sampleMesh(t.left, t.top + t.h, warpC);
 
-	const eyX = (sx[bottom] - sx[top]) / spanY;
-	const eyY = (sy[bottom] - sy[top]) / spanY;
+		const a = (warpB.x - warpA.x) / t.w;
+		const b = (warpB.y - warpA.y) / t.w;
+		const c = (warpC.x - warpA.x) / t.h;
+		const d = (warpC.y - warpA.y) / t.h;
 
-	const cx = (sx[left] + sx[right] + sx[top] + sx[bottom]) / 4;
-	const cy = (sy[left] + sy[right] + sy[top] + sy[bottom]) / 4;
-
-	clothContent.style.transform = `translate(${cx - restCx}px, ${cy - restCy}px) matrix(${exX}, ${exY}, ${eyX}, ${eyY}, 0, 0)`;
+		t.element.style.transform = `translate(${warpA.x - t.left}px, ${warpA.y - t.top}px) matrix(${a}, ${b}, ${c}, ${d}, 0, 0)`;
+	}
 }
 
 function updateReset(now) {
@@ -876,12 +996,7 @@ function updateReset(now) {
 	}
 
 	if (state.resetStart) {
-		const elapsed = now - state.resetStart;
-
-		const finished = elapsed > CONFIG.resetDuration && maxDisplacement() < 0.4;
-		const timedOut = elapsed > CONFIG.resetDuration * 2;
-
-		if (finished || timedOut) {
+		if (now - state.resetStart >= CONFIG.resetDuration) {
 			state.resetStart = 0;
 
 			snapToRest();
@@ -902,14 +1017,14 @@ function animate() {
 	updateReset(now);
 
 	let damping = CONFIG.damping;
-	let rest = CONFIG.restStiffness;
+	let settle = 0;
 
 	if (state.resetStart) {
 		const p = clamp((now - state.resetStart) / CONFIG.resetDuration, 0, 1);
 		const ease = p * p * (3 - 2 * p);
 
-		rest = lerp(CONFIG.restStiffness, CONFIG.restStiffness * CONFIG.resetRestMultiplier, ease);
 		damping = lerp(CONFIG.damping, CONFIG.resetDamping, ease);
+		settle = clamp(p / 0.35, 0, 1) ** 2 * CONFIG.resetStrength;
 	}
 
 	state.dx += (state.targetDx - state.dx) * 0.5;
@@ -923,11 +1038,21 @@ function animate() {
 		qz[item.index] = z[item.index];
 	}
 
-	integrate(damping, rest);
+	integrate(damping, state.dragging ? CONFIG.dragRestStiffness : CONFIG.restStiffness);
 
 	applyPins();
 
 	solve();
+
+	if (state.dragging) {
+		guideShape();
+	}
+
+	limitDepth();
+
+	if (settle > 0) {
+		settleTowardRest(settle);
+	}
 
 	project();
 
@@ -1011,7 +1136,7 @@ canvas.addEventListener("pointermove", (event) => {
 	}
 
 	const length = Math.hypot(dx, dy);
-	const scale = length > CONFIG.maxPull ? CONFIG.maxPull / length : 1;
+	const scale = length > 0 ? (CONFIG.maxPull * Math.tanh(length / CONFIG.maxPull)) / length : 1;
 
 	state.targetDx = dx * scale;
 	state.targetDy = dy * scale;
@@ -1071,6 +1196,12 @@ resizeCanvas();
 build();
 
 animate();
+
+if (document.fonts && document.fonts.ready) {
+	document.fonts.ready.then(measureWarpTargets);
+}
+
+window.addEventListener("load", measureWarpTargets);
 
 const catMessages = ["meow", "meow meow?", "meow meow meow...", "MEOW?!", "MEOOOOOOOOOOOOOOW!"];
 

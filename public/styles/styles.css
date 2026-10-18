@@ -1,17 +1,586 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+/*
+! tailwindcss v3.4.1 | MIT License | https://tailwindcss.com
+*/
+
+/*
+1. Prevent padding and border from affecting element width. (https://github.com/mozdevs/cssremedy/issues/4)
+2. Allow adding a border to an element by just adding a border-width. (https://github.com/tailwindcss/tailwindcss/pull/116)
+*/
+
+*,
+::before,
+::after {
+  box-sizing: border-box;
+  /* 1 */
+  border-width: 0;
+  /* 2 */
+  border-style: solid;
+  /* 2 */
+  border-color: #e5e7eb;
+  /* 2 */
+}
+
+::before,
+::after {
+  --tw-content: '';
+}
+
+/*
+1. Use a consistent sensible line-height in all browsers.
+2. Prevent adjustments of font size after orientation changes in iOS.
+3. Use a more readable tab size.
+4. Use the user's configured `sans` font-family by default.
+5. Use the user's configured `sans` font-feature-settings by default.
+6. Use the user's configured `sans` font-variation-settings by default.
+7. Disable tap highlights on iOS
+*/
+
+html,
+:host {
+  line-height: 1.5;
+  /* 1 */
+  -webkit-text-size-adjust: 100%;
+  /* 2 */
+  -moz-tab-size: 4;
+  /* 3 */
+  -o-tab-size: 4;
+     tab-size: 4;
+  /* 3 */
+  font-family: ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+  /* 4 */
+  font-feature-settings: normal;
+  /* 5 */
+  font-variation-settings: normal;
+  /* 6 */
+  -webkit-tap-highlight-color: transparent;
+  /* 7 */
+}
+
+/*
+1. Remove the margin in all browsers.
+2. Inherit line-height from `html` so users can set them as a class directly on the `html` element.
+*/
+
+body {
+  margin: 0;
+  /* 1 */
+  line-height: inherit;
+  /* 2 */
+}
+
+/*
+1. Add the correct height in Firefox.
+2. Correct the inheritance of border color in Firefox. (https://bugzilla.mozilla.org/show_bug.cgi?id=190655)
+3. Ensure horizontal rules are visible by default.
+*/
+
+hr {
+  height: 0;
+  /* 1 */
+  color: inherit;
+  /* 2 */
+  border-top-width: 1px;
+  /* 3 */
+}
+
+/*
+Add the correct text decoration in Chrome, Edge, and Safari.
+*/
+
+abbr:where([title]) {
+  -webkit-text-decoration: underline dotted;
+          text-decoration: underline dotted;
+}
+
+/*
+Remove the default font size and weight for headings.
+*/
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-size: inherit;
+  font-weight: inherit;
+}
+
+/*
+Reset links to optimize for opt-in styling instead of opt-out.
+*/
+
+a {
+  color: inherit;
+  text-decoration: inherit;
+}
+
+/*
+Add the correct font weight in Edge and Safari.
+*/
+
+b,
+strong {
+  font-weight: bolder;
+}
+
+/*
+1. Use the user's configured `mono` font-family by default.
+2. Use the user's configured `mono` font-feature-settings by default.
+3. Use the user's configured `mono` font-variation-settings by default.
+4. Correct the odd `em` font sizing in all browsers.
+*/
+
+code,
+kbd,
+samp,
+pre {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  /* 1 */
+  font-feature-settings: normal;
+  /* 2 */
+  font-variation-settings: normal;
+  /* 3 */
+  font-size: 1em;
+  /* 4 */
+}
+
+/*
+Add the correct font size in all browsers.
+*/
+
+small {
+  font-size: 80%;
+}
+
+/*
+Prevent `sub` and `sup` elements from affecting the line height in all browsers.
+*/
+
+sub,
+sup {
+  font-size: 75%;
+  line-height: 0;
+  position: relative;
+  vertical-align: baseline;
+}
+
+sub {
+  bottom: -0.25em;
+}
+
+sup {
+  top: -0.5em;
+}
+
+/*
+1. Remove text indentation from table contents in Chrome and Safari. (https://bugs.chromium.org/p/chromium/issues/detail?id=999088, https://bugs.webkit.org/show_bug.cgi?id=201297)
+2. Correct table border color inheritance in all Chrome and Safari. (https://bugs.chromium.org/p/chromium/issues/detail?id=935729, https://bugs.webkit.org/show_bug.cgi?id=195016)
+3. Remove gaps between table borders by default.
+*/
+
+table {
+  text-indent: 0;
+  /* 1 */
+  border-color: inherit;
+  /* 2 */
+  border-collapse: collapse;
+  /* 3 */
+}
+
+/*
+1. Change the font styles in all browsers.
+2. Remove the margin in Firefox and Safari.
+3. Remove default padding in all browsers.
+*/
+
+button,
+input,
+optgroup,
+select,
+textarea {
+  font-family: inherit;
+  /* 1 */
+  font-feature-settings: inherit;
+  /* 1 */
+  font-variation-settings: inherit;
+  /* 1 */
+  font-size: 100%;
+  /* 1 */
+  font-weight: inherit;
+  /* 1 */
+  line-height: inherit;
+  /* 1 */
+  color: inherit;
+  /* 1 */
+  margin: 0;
+  /* 2 */
+  padding: 0;
+  /* 3 */
+}
+
+/*
+Remove the inheritance of text transform in Edge and Firefox.
+*/
+
+button,
+select {
+  text-transform: none;
+}
+
+/*
+1. Correct the inability to style clickable types in iOS and Safari.
+2. Remove default button styles.
+*/
+
+button,
+[type='button'],
+[type='reset'],
+[type='submit'] {
+  -webkit-appearance: button;
+  /* 1 */
+  background-color: transparent;
+  /* 2 */
+  background-image: none;
+  /* 2 */
+}
+
+/*
+Use the modern Firefox focus style for all focusable elements.
+*/
+
+:-moz-focusring {
+  outline: auto;
+}
+
+/*
+Remove the additional `:invalid` styles in Firefox. (https://github.com/mozilla/gecko-dev/blob/2f9eacd9d3d995c937b4251a5557d95d494c9be1/layout/style/res/forms.css#L728-L737)
+*/
+
+:-moz-ui-invalid {
+  box-shadow: none;
+}
+
+/*
+Add the correct vertical alignment in Chrome and Firefox.
+*/
+
+progress {
+  vertical-align: baseline;
+}
+
+/*
+Correct the cursor style of increment and decrement buttons in Safari.
+*/
+
+::-webkit-inner-spin-button,
+::-webkit-outer-spin-button {
+  height: auto;
+}
+
+/*
+1. Correct the odd appearance in Chrome and Safari.
+2. Correct the outline style in Safari.
+*/
+
+[type='search'] {
+  -webkit-appearance: textfield;
+  /* 1 */
+  outline-offset: -2px;
+  /* 2 */
+}
+
+/*
+Remove the inner padding in Chrome and Safari on macOS.
+*/
+
+::-webkit-search-decoration {
+  -webkit-appearance: none;
+}
+
+/*
+1. Correct the inability to style clickable types in iOS and Safari.
+2. Change font properties to `inherit` in Safari.
+*/
+
+::-webkit-file-upload-button {
+  -webkit-appearance: button;
+  /* 1 */
+  font: inherit;
+  /* 2 */
+}
+
+/*
+Add the correct display in Chrome and Safari.
+*/
+
+summary {
+  display: list-item;
+}
+
+/*
+Removes the default spacing and border for appropriate elements.
+*/
+
+blockquote,
+dl,
+dd,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+hr,
+figure,
+p,
+pre {
+  margin: 0;
+}
+
+fieldset {
+  margin: 0;
+  padding: 0;
+}
+
+legend {
+  padding: 0;
+}
+
+ol,
+ul,
+menu {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+/*
+Reset default styling for dialogs.
+*/
+
+dialog {
+  padding: 0;
+}
+
+/*
+Prevent resizing textareas horizontally by default.
+*/
+
+textarea {
+  resize: vertical;
+}
+
+/*
+1. Reset the default placeholder opacity in Firefox. (https://github.com/tailwindlabs/tailwindcss/issues/3300)
+2. Set the default placeholder color to the user's configured gray 400 color.
+*/
+
+input::-moz-placeholder, textarea::-moz-placeholder {
+  opacity: 1;
+  /* 1 */
+  color: #9ca3af;
+  /* 2 */
+}
+
+input::placeholder,
+textarea::placeholder {
+  opacity: 1;
+  /* 1 */
+  color: #9ca3af;
+  /* 2 */
+}
+
+/*
+Set the default cursor for buttons.
+*/
+
+button,
+[role="button"] {
+  cursor: pointer;
+}
+
+/*
+Make sure disabled buttons don't get the pointer cursor.
+*/
+
+:disabled {
+  cursor: default;
+}
+
+/*
+1. Make replaced elements `display: block` by default. (https://github.com/mozdevs/cssremedy/issues/14)
+2. Add `vertical-align: middle` to align replaced elements more sensibly by default. (https://github.com/jensimmons/cssremedy/issues/14#issuecomment-634934210)
+   This can trigger a poorly considered lint error in some tools but is included by design.
+*/
+
+img,
+svg,
+video,
+canvas,
+audio,
+iframe,
+embed,
+object {
+  display: block;
+  /* 1 */
+  vertical-align: middle;
+  /* 2 */
+}
+
+/*
+Constrain images and videos to the parent width and preserve their intrinsic aspect ratio. (https://github.com/mozdevs/cssremedy/issues/14)
+*/
+
+img,
+video {
+  max-width: 100%;
+  height: auto;
+}
+
+/* Make elements with the HTML hidden attribute stay hidden by default */
+
+[hidden] {
+  display: none;
+}
+
+*, ::before, ::after {
+  --tw-border-spacing-x: 0;
+  --tw-border-spacing-y: 0;
+  --tw-translate-x: 0;
+  --tw-translate-y: 0;
+  --tw-rotate: 0;
+  --tw-skew-x: 0;
+  --tw-skew-y: 0;
+  --tw-scale-x: 1;
+  --tw-scale-y: 1;
+  --tw-pan-x:  ;
+  --tw-pan-y:  ;
+  --tw-pinch-zoom:  ;
+  --tw-scroll-snap-strictness: proximity;
+  --tw-gradient-from-position:  ;
+  --tw-gradient-via-position:  ;
+  --tw-gradient-to-position:  ;
+  --tw-ordinal:  ;
+  --tw-slashed-zero:  ;
+  --tw-numeric-figure:  ;
+  --tw-numeric-spacing:  ;
+  --tw-numeric-fraction:  ;
+  --tw-ring-inset:  ;
+  --tw-ring-offset-width: 0px;
+  --tw-ring-offset-color: #fff;
+  --tw-ring-color: rgb(59 130 246 / 0.5);
+  --tw-ring-offset-shadow: 0 0 #0000;
+  --tw-ring-shadow: 0 0 #0000;
+  --tw-shadow: 0 0 #0000;
+  --tw-shadow-colored: 0 0 #0000;
+  --tw-blur:  ;
+  --tw-brightness:  ;
+  --tw-contrast:  ;
+  --tw-grayscale:  ;
+  --tw-hue-rotate:  ;
+  --tw-invert:  ;
+  --tw-saturate:  ;
+  --tw-sepia:  ;
+  --tw-drop-shadow:  ;
+  --tw-backdrop-blur:  ;
+  --tw-backdrop-brightness:  ;
+  --tw-backdrop-contrast:  ;
+  --tw-backdrop-grayscale:  ;
+  --tw-backdrop-hue-rotate:  ;
+  --tw-backdrop-invert:  ;
+  --tw-backdrop-opacity:  ;
+  --tw-backdrop-saturate:  ;
+  --tw-backdrop-sepia:  ;
+}
+
+::backdrop {
+  --tw-border-spacing-x: 0;
+  --tw-border-spacing-y: 0;
+  --tw-translate-x: 0;
+  --tw-translate-y: 0;
+  --tw-rotate: 0;
+  --tw-skew-x: 0;
+  --tw-skew-y: 0;
+  --tw-scale-x: 1;
+  --tw-scale-y: 1;
+  --tw-pan-x:  ;
+  --tw-pan-y:  ;
+  --tw-pinch-zoom:  ;
+  --tw-scroll-snap-strictness: proximity;
+  --tw-gradient-from-position:  ;
+  --tw-gradient-via-position:  ;
+  --tw-gradient-to-position:  ;
+  --tw-ordinal:  ;
+  --tw-slashed-zero:  ;
+  --tw-numeric-figure:  ;
+  --tw-numeric-spacing:  ;
+  --tw-numeric-fraction:  ;
+  --tw-ring-inset:  ;
+  --tw-ring-offset-width: 0px;
+  --tw-ring-offset-color: #fff;
+  --tw-ring-color: rgb(59 130 246 / 0.5);
+  --tw-ring-offset-shadow: 0 0 #0000;
+  --tw-ring-shadow: 0 0 #0000;
+  --tw-shadow: 0 0 #0000;
+  --tw-shadow-colored: 0 0 #0000;
+  --tw-blur:  ;
+  --tw-brightness:  ;
+  --tw-contrast:  ;
+  --tw-grayscale:  ;
+  --tw-hue-rotate:  ;
+  --tw-invert:  ;
+  --tw-saturate:  ;
+  --tw-sepia:  ;
+  --tw-drop-shadow:  ;
+  --tw-backdrop-blur:  ;
+  --tw-backdrop-brightness:  ;
+  --tw-backdrop-contrast:  ;
+  --tw-backdrop-grayscale:  ;
+  --tw-backdrop-hue-rotate:  ;
+  --tw-backdrop-invert:  ;
+  --tw-backdrop-opacity:  ;
+  --tw-backdrop-saturate:  ;
+  --tw-backdrop-sepia:  ;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
+.transform {
+  transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
+}
+
+.resize {
+  resize: both;
+}
+
+.filter {
+  filter: var(--tw-blur) var(--tw-brightness) var(--tw-contrast) var(--tw-grayscale) var(--tw-hue-rotate) var(--tw-invert) var(--tw-saturate) var(--tw-sepia) var(--tw-drop-shadow);
+}
+
+.ease-out {
+  transition-timing-function: cubic-bezier(0, 0, 0.2, 1);
+}
 
 /* =========================================================
    VARIABLES
    ========================================================= */
 
 :root {
-	--ink: #151412;
-	--muted: rgba(21, 20, 18, 0.52);
-	--line: rgba(21, 20, 18, 0.15);
-
-	--accent: #ff6543;
+  --ink: #151412;
+  --muted: rgba(21, 20, 18, 0.52);
+  --line: rgba(21, 20, 18, 0.15);
+  --accent: #ff6543;
 }
 
 /* =========================================================
@@ -19,24 +588,21 @@
    ========================================================= */
 
 * {
-	box-sizing: border-box;
+  box-sizing: border-box;
 }
 
 html,
 body {
-	width: 100%;
-	height: 100%;
-	margin: 0;
+  width: 100%;
+  height: 100%;
+  margin: 0;
 }
 
 body {
-	overflow: hidden;
-
-	background: #000;
-
-	color: #fff;
-
-	font-family:
+  overflow: hidden;
+  background: #000;
+  color: #fff;
+  font-family:
 		Inter,
 		ui-sans-serif,
 		system-ui,
@@ -44,8 +610,7 @@ body {
 		BlinkMacSystemFont,
 		"Segoe UI",
 		sans-serif;
-
-	-webkit-font-smoothing: antialiased;
+  -webkit-font-smoothing: antialiased;
 }
 
 /* =========================================================
@@ -53,14 +618,11 @@ body {
    ========================================================= */
 
 .site {
-	position: relative;
-
-	width: 100vw;
-	height: 100vh;
-
-	overflow: hidden;
-
-	background: #000;
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  background: #000;
 }
 
 /* =========================================================
@@ -68,43 +630,31 @@ body {
    ========================================================= */
 
 .topbar {
-	position: fixed;
-
-	z-index: 50;
-
-	top: 0;
-	left: 0;
-	right: 0;
-
-	display: flex;
-
-	align-items: center;
-	justify-content: space-between;
-
-	padding: 28px clamp(22px, 5vw, 70px);
-
-	pointer-events: none;
+  position: fixed;
+  z-index: 50;
+  top: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 28px clamp(22px, 5vw, 70px);
+  pointer-events: none;
 }
 
 .logo {
-	display: inline-flex;
-
-	align-items: center;
-
-	color: #fff;
-
-	font-size: 18px;
-	font-weight: 850;
-
-	letter-spacing: -0.05em;
-
-	text-decoration: none;
-
-	pointer-events: auto;
+  display: inline-flex;
+  align-items: center;
+  color: #fff;
+  font-size: 18px;
+  font-weight: 850;
+  letter-spacing: -0.05em;
+  text-decoration: none;
+  pointer-events: auto;
 }
 
 .logo span {
-	color: var(--accent);
+  color: var(--accent);
 }
 
 /* =========================================================
@@ -112,18 +662,15 @@ body {
    ========================================================= */
 
 .cloth-canvas {
-	position: fixed;
-
-	z-index: 1;
-
-	inset: 0;
-
-	width: 100%;
-	height: 100%;
-
-	touch-action: none;
-
-	user-select: none;
+  position: fixed;
+  z-index: 1;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  touch-action: none;
+  -webkit-user-select: none;
+     -moz-user-select: none;
+          user-select: none;
 }
 
 /* =========================================================
@@ -131,19 +678,13 @@ body {
    ========================================================= */
 
 .scene {
-	position: absolute;
-
-	z-index: 2;
-
-	inset: 0;
-
-	display: grid;
-
-	place-items: center;
-
-	padding: 90px 40px 70px;
-
-	pointer-events: none;
+  position: absolute;
+  z-index: 2;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  padding: 90px 40px 70px;
+  pointer-events: none;
 }
 
 /* =========================================================
@@ -151,13 +692,10 @@ body {
    ========================================================= */
 
 .cloth {
-	position: relative;
-
-	width: min(900px, calc(100vw - 80px));
-
-	height: min(560px, calc(100vh - 150px));
-
-	pointer-events: none;
+  position: relative;
+  width: min(900px, calc(100vw - 80px));
+  height: min(560px, calc(100vh - 150px));
+  pointer-events: none;
 }
 
 /* =========================================================
@@ -165,25 +703,19 @@ body {
    ========================================================= */
 
 .cloth-content {
-	position: relative;
-
-	display: flex;
-
-	flex-direction: column;
-
-	width: 100%;
-	height: 100%;
-
-	padding: clamp(26px, 4vw, 44px);
-
-	pointer-events: none;
-
-	will-change: transform;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  padding: clamp(26px, 4vw, 44px);
+  pointer-events: none;
+  will-change: transform;
 }
 
 .cloth-content a,
 .cloth-content button {
-	pointer-events: auto;
+  pointer-events: auto;
 }
 
 /* =========================================================
@@ -191,14 +723,11 @@ body {
    ========================================================= */
 
 .cloth-meta {
-	position: relative;
-
-	display: flex;
-
-	align-items: center;
-	justify-content: space-between;
-
-	min-height: 18px;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 18px;
 }
 
 /* =========================================================
@@ -206,41 +735,30 @@ body {
    ========================================================= */
 
 .hidden-cat {
-	position: absolute;
-
-	top: 0;
-	right: 0;
-
-	margin: 0;
-	padding: 0;
-
-	border: 0;
-
-	background: transparent;
-
-	font-size: 13px;
-
-	line-height: 1;
-
-	cursor: pointer;
-
-	opacity: 0.28;
-
-	filter: grayscale(1);
-
-	transition:
+  position: absolute;
+  top: 0;
+  right: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  font-size: 13px;
+  line-height: 1;
+  cursor: pointer;
+  opacity: 0.28;
+  filter: grayscale(1);
+  transition:
 		opacity 180ms ease,
 		filter 180ms ease;
 }
 
 .hidden-cat:hover {
-	opacity: 0.75;
-
-	filter: grayscale(0);
+  opacity: 0.75;
+  filter: grayscale(0);
 }
 
 .hidden-cat:active {
-	transform: scale(0.92);
+  transform: scale(0.92);
 }
 
 /* =========================================================
@@ -248,92 +766,82 @@ body {
    ========================================================= */
 
 .meow {
-	position: absolute;
-
-	top: 4px;
-	right: 46px;
-
-	white-space: nowrap;
-
-	color: var(--accent);
-
-	font-size: 10px;
-
-	font-weight: 900;
-
-	letter-spacing: 0.08em;
-
-	opacity: 0;
-
-	pointer-events: none;
-
-	transform: translateY(4px) rotate(-4deg);
+  position: absolute;
+  top: 4px;
+  right: 46px;
+  white-space: nowrap;
+  color: var(--accent);
+  font-size: 10px;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(4px) rotate(-4deg);
 }
 
 .meow.show {
-	opacity: 1;
-
-	animation:
+  opacity: 1;
+  animation:
 		meowWave 1.4s ease-in-out infinite,
 		meowColor 1.8s ease-in-out infinite;
 }
 
 @keyframes meowWave {
-	0% {
-		transform: translateY(-2px) rotate(-4deg);
-	}
+  0% {
+    transform: translateY(-2px) rotate(-4deg);
+  }
 
-	20% {
-		transform: translateY(-5px) rotate(-1deg);
-	}
+  20% {
+    transform: translateY(-5px) rotate(-1deg);
+  }
 
-	40% {
-		transform: translateY(1px) rotate(3deg);
-	}
+  40% {
+    transform: translateY(1px) rotate(3deg);
+  }
 
-	60% {
-		transform: translateY(-4px) rotate(-2deg);
-	}
+  60% {
+    transform: translateY(-4px) rotate(-2deg);
+  }
 
-	80% {
-		transform: translateY(1px) rotate(2deg);
-	}
+  80% {
+    transform: translateY(1px) rotate(2deg);
+  }
 
-	100% {
-		transform: translateY(-2px) rotate(-4deg);
-	}
+  100% {
+    transform: translateY(-2px) rotate(-4deg);
+  }
 }
 
 @keyframes meowColor {
-	0% {
-		color: #ff6543;
-		opacity: 1;
-	}
+  0% {
+    color: #ff6543;
+    opacity: 1;
+  }
 
-	25% {
-		color: #ff6543;
-		opacity: 0.55;
-	}
+  25% {
+    color: #ff6543;
+    opacity: 0.55;
+  }
 
-	45% {
-		color: rgba(21, 20, 18, 0.38);
-		opacity: 0.9;
-	}
+  45% {
+    color: rgba(21, 20, 18, 0.38);
+    opacity: 0.9;
+  }
 
-	65% {
-		color: #ff6543;
-		opacity: 0.55;
-	}
+  65% {
+    color: #ff6543;
+    opacity: 0.55;
+  }
 
-	82% {
-		color: rgba(21, 20, 18, 0.42);
-		opacity: 0.8;
-	}
+  82% {
+    color: rgba(21, 20, 18, 0.42);
+    opacity: 0.8;
+  }
 
-	100% {
-		color: #ff6543;
-		opacity: 1;
-	}
+  100% {
+    color: #ff6543;
+    opacity: 1;
+  }
 }
 
 /* =========================================================
@@ -341,24 +849,19 @@ body {
    ========================================================= */
 
 .content-grid {
-	display: grid;
-
-	grid-template-columns:
+  display: grid;
+  grid-template-columns:
 		minmax(0, 1fr)
 		minmax(0, 0.9fr);
-
-	gap: clamp(30px, 5vw, 70px);
-
-	flex: 1;
-
-	align-items: start;
-
-	padding-top: clamp(45px, 10vh, 90px);
+  gap: clamp(30px, 5vw, 70px);
+  flex: 1;
+  align-items: start;
+  padding-top: clamp(45px, 10vh, 90px);
 }
 
 .intro,
 .contact {
-	min-width: 0;
+  min-width: 0;
 }
 
 /* =========================================================
@@ -366,55 +869,39 @@ body {
    ========================================================= */
 
 .eyebrow {
-	margin: 0 0 17px;
-
-	color: #d94b2d;
-
-	font-size: 9px;
-
-	font-weight: 900;
-
-	letter-spacing: 0.2em;
+  margin: 0 0 17px;
+  color: #d94b2d;
+  font-size: 9px;
+  font-weight: 900;
+  letter-spacing: 0.2em;
 }
 
 .intro h1 {
-	margin: 0;
-
-	color: var(--ink);
-
-	font-size: clamp(48px, 6vw, 86px);
-
-	font-weight: 900;
-
-	line-height: 0.88;
-
-	letter-spacing: -0.075em;
+  margin: 0;
+  color: var(--ink);
+  font-size: clamp(48px, 6vw, 86px);
+  font-weight: 900;
+  line-height: 0.88;
+  letter-spacing: -0.075em;
 }
 
 .intro h1 span {
-	color: rgba(21, 20, 18, 0.3);
+  color: rgba(21, 20, 18, 0.3);
 }
 
 .hello {
-	margin: 20px 0 0;
-
-	color: rgba(21, 20, 18, 0.56);
-
-	font-size: 18px;
-
-	font-weight: 650;
+  margin: 20px 0 0;
+  color: rgba(21, 20, 18, 0.56);
+  font-size: 18px;
+  font-weight: 650;
 }
 
 .intro-text {
-	max-width: 390px;
-
-	margin: 24px 0 0;
-
-	color: var(--muted);
-
-	font-size: clamp(11px, 1vw, 13px);
-
-	line-height: 1.7;
+  max-width: 390px;
+  margin: 24px 0 0;
+  color: var(--muted);
+  font-size: clamp(11px, 1vw, 13px);
+  line-height: 1.7;
 }
 
 /* =========================================================
@@ -422,61 +909,42 @@ body {
    ========================================================= */
 
 .section-label {
-	display: flex;
-
-	align-items: center;
-
-	justify-content: space-between;
-
-	margin: 0 0 20px;
-
-	min-height: 11px;
-
-	color: rgba(21, 20, 18, 0.38);
-
-	font-size: 9px;
-
-	font-weight: 900;
-
-	letter-spacing: 0.18em;
-
-	text-transform: uppercase;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: 0 0 20px;
+  min-height: 11px;
+  color: rgba(21, 20, 18, 0.38);
+  font-size: 9px;
+  font-weight: 900;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
 }
 
 .section-label span:first-child {
-	color: #d94b2d;
+  color: #d94b2d;
 }
 
 .section-label .version {
-	color: rgba(21, 20, 18, 0.42);
-
-	font-size: 7px !important;
-
-	line-height: 1;
-
-	font-weight: 700;
-
-	letter-spacing: 0.12em;
+  color: rgba(21, 20, 18, 0.42);
+  font-size: 7px !important;
+  line-height: 1;
+  font-weight: 700;
+  letter-spacing: 0.12em;
 }
 
 .contact h2 {
-	margin: 0;
-
-	color: var(--ink);
-
-	font-size: clamp(32px, 3.8vw, 54px);
-
-	font-weight: 900;
-
-	line-height: 0.9;
-
-	letter-spacing: -0.07em;
+  margin: 0;
+  color: var(--ink);
+  font-size: clamp(32px, 3.8vw, 54px);
+  font-weight: 900;
+  line-height: 0.9;
+  letter-spacing: -0.07em;
 }
 
 .contact h2 em {
-	color: #d94b2d;
-
-	font-style: normal;
+  color: #d94b2d;
+  font-style: normal;
 }
 
 /* =========================================================
@@ -484,39 +952,32 @@ body {
    ========================================================= */
 
 .contact-list {
-	margin-top: 27px;
+  margin-top: 27px;
+}
 
-	border-top: 1px solid var(--line);
+.contact-row:first-child {
+  border-top: 1px solid var(--line);
 }
 
 .contact-row {
-	display: flex;
-
-	align-items: center;
-
-	justify-content: space-between;
-
-	gap: 20px;
-
-	padding: 13px 0;
-
-	border-bottom: 1px solid var(--line);
-
-	color: var(--ink);
-
-	font-size: 11px;
-
-	font-weight: 800;
-
-	text-decoration: none;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 13px 0;
+  border-bottom: 1px solid var(--line);
+  color: var(--ink);
+  font-size: 11px;
+  font-weight: 800;
+  text-decoration: none;
 }
 
 .contact-row:hover {
-	color: #d94b2d;
+  color: #d94b2d;
 }
 
 .contact-row span:last-child {
-	color: #d94b2d;
+  color: #d94b2d;
 }
 
 /* =========================================================
@@ -524,272 +985,22 @@ body {
    ========================================================= */
 
 .cloth-footer {
-	padding-top: 15px;
-
-	border-top: 1px solid var(--line);
+  padding-top: 17px;
+  border-top: 1px solid var(--line);
 }
 
 .page-footer {
-	position: fixed;
-
-	z-index: 20;
-
-	left: clamp(22px, 5vw, 70px);
-
-	right: clamp(22px, 5vw, 70px);
-
-	bottom: 25px;
-
-	color: rgba(255, 255, 255, 0.25);
-
-	font-size: 8px;
-
-	font-weight: 800;
-
-	letter-spacing: 0.18em;
-
-	pointer-events: none;
-}
-
-/* =========================================================
-   SKILLS
-   ========================================================= */
-
-.skills {
-	--skill-size: 32px;
-	--skill-gap: 8px;
-
-	min-width: 0;
-}
-
-.skills-caption {
-	margin: 0 0 8px;
-
-	min-height: 11px;
-
-	overflow: hidden;
-
-	color: #d94b2d;
-
-	font-size: 9px;
-
-	font-weight: 900;
-
-	letter-spacing: 0.2em;
-
-	text-overflow: ellipsis;
-
-	text-transform: uppercase;
-
-	white-space: nowrap;
-}
-
-.skills-caption.swap {
-	animation: captionIn 220ms ease-out;
-}
-
-@keyframes captionIn {
-	from {
-		opacity: 0;
-
-		transform: translateY(3px);
-	}
-
-	to {
-		opacity: 1;
-
-		transform: none;
-	}
-}
-
-.skills-fallback {
-	display: flex;
-
-	flex-wrap: wrap;
-
-	gap: 6px;
-
-	margin: 0;
-	padding: 0;
-
-	list-style: none;
-}
-
-.skills-fallback li {
-	padding: 5px 10px;
-
-	border: 1px solid var(--line);
-
-	border-radius: 999px;
-
-	color: var(--ink);
-
-	font-size: 10px;
-
-	font-weight: 800;
-}
-
-.skills.js .skills-fallback,
-.skills:not(.js) .skills-viewport {
-	display: none;
-}
-
-.skills-viewport {
-	padding: 4px 0;
-
-	overflow: hidden;
-
-	-webkit-mask-image: linear-gradient(90deg, transparent, #000 7%, #000 93%, transparent);
-	mask-image: linear-gradient(90deg, transparent, #000 7%, #000 93%, transparent);
-}
-
-.skills-track {
-	display: flex;
-
-	width: max-content;
-
-	animation: skillsScroll var(--dur, 40s) linear infinite;
-
-	will-change: transform;
-}
-
-.skills-track.paused {
-	animation-play-state: paused;
-}
-
-@keyframes skillsScroll {
-	to {
-		transform: translateX(-50%);
-	}
-}
-
-.skills-copy {
-	display: flex;
-
-	flex: none;
-
-	align-items: center;
-
-	gap: var(--skill-gap);
-
-	padding: 0 var(--skill-gap) 0 22px;
-}
-
-.skill-group {
-	flex: none;
-
-	padding-left: 2px;
-
-	color: rgba(21, 20, 18, 0.42);
-
-	font-size: 9px;
-
-	font-weight: 900;
-
-	letter-spacing: 0.14em;
-
-	text-transform: uppercase;
-
-	white-space: nowrap;
-}
-
-.skill-sep {
-	flex: none;
-
-	width: 4px;
-	height: 4px;
-
-	margin: 0 8px;
-
-	border-radius: 999px;
-
-	background: var(--accent);
-}
-
-.skill {
-	display: grid;
-
-	flex: none;
-
-	place-items: center;
-
-	width: var(--skill-size);
-	height: var(--skill-size);
-
-	border-radius: 10px;
-
-	background: rgba(255, 255, 255, 0.55);
-
-	box-shadow: inset 0 0 0 1px rgba(21, 20, 18, 0.08);
-
-	pointer-events: auto;
-
-	transition:
-		background 180ms ease,
-		box-shadow 180ms ease,
-		transform 260ms cubic-bezier(0.3, 1.6, 0.5, 1);
-}
-
-.skill img {
-	width: 18px;
-	height: 18px;
-
-	object-fit: contain;
-
-	opacity: 0.78;
-
-	filter: grayscale(1) brightness(0.35) contrast(1.4);
-
-	pointer-events: none;
-
-	transition: opacity 180ms ease;
-}
-
-.skill.active {
-	background: #fff;
-
-	box-shadow:
-		inset 0 0 0 1.5px var(--accent),
-		0 3px 8px rgba(217, 75, 45, 0.25);
-
-	transform: translateY(-1px) scale(1.08);
-}
-
-.skill.active img {
-	opacity: 1;
-}
-
-.sr-only {
-	position: absolute;
-
-	width: 1px;
-	height: 1px;
-
-	margin: -1px;
-	padding: 0;
-
-	overflow: hidden;
-
-	border: 0;
-
-	clip: rect(0, 0, 0, 0);
-
-	white-space: nowrap;
-}
-
-@media (prefers-reduced-motion: reduce) {
-	.skills-track {
-		animation-duration: calc(var(--dur, 40s) * 2.2);
-	}
-
-	.skill,
-	.skill img {
-		transition: none;
-	}
-
-	.skills-caption.swap {
-		animation: none;
-	}
+  position: fixed;
+  z-index: 20;
+  left: clamp(22px, 5vw, 70px);
+  right: clamp(22px, 5vw, 70px);
+  bottom: 25px;
+  color: rgba(255, 255, 255, 0.25);
+  font-size: 8px;
+  font-weight: 800;
+  letter-spacing: 0.18em;
+  pointer-events: none;
+  visibility: hidden;
 }
 
 /* =========================================================
@@ -797,29 +1008,27 @@ body {
    ========================================================= */
 
 @media (max-width: 900px) {
-	.scene {
-		padding: 80px 25px 60px;
-	}
+  .scene {
+    padding: 80px 25px 60px;
+  }
 
-	.cloth {
-		width: calc(100vw - 50px);
+  .cloth {
+    width: calc(100vw - 50px);
+    height: min(560px, calc(100vh - 140px));
+  }
 
-		height: min(560px, calc(100vh - 140px));
-	}
+  .content-grid {
+    gap: 35px;
+    padding-top: clamp(35px, 8vh, 70px);
+  }
 
-	.content-grid {
-		gap: 35px;
+  .intro h1 {
+    font-size: clamp(45px, 7vw, 72px);
+  }
 
-		padding-top: clamp(35px, 8vh, 70px);
-	}
-
-	.intro h1 {
-		font-size: clamp(45px, 7vw, 72px);
-	}
-
-	.contact h2 {
-		font-size: clamp(30px, 5vw, 48px);
-	}
+  .contact h2 {
+    font-size: clamp(30px, 5vw, 48px);
+  }
 }
 
 /* =========================================================
@@ -827,83 +1036,71 @@ body {
    ========================================================= */
 
 @media (max-width: 700px) {
-	.topbar {
-		padding: 20px;
-	}
+  .topbar {
+    padding: 20px;
+  }
 
-	.logo {
-		font-size: 17px;
-	}
+  .logo {
+    font-size: 17px;
+  }
 
-	.scene {
-		padding: 80px 22px 60px;
-	}
+  .scene {
+    padding: 80px 22px 60px;
+  }
 
-	.cloth {
-		width: min(680px, calc(100vw - 44px));
+  .cloth {
+    width: min(680px, calc(100vw - 44px));
+    height: min(470px, calc(100vh - 180px));
+  }
 
-		height: min(610px, calc(100vh - 140px));
-	}
+  .cloth-content {
+    padding: 25px;
+  }
 
-	.cloth-content {
-		padding: 25px;
-	}
+  .content-grid {
+    grid-template-columns: 1fr;
+    gap: 26px;
+    padding-top: 35px;
+  }
 
-	.content-grid {
-		grid-template-columns: 1fr;
+  .intro h1 {
+    font-size: clamp(42px, 13vw, 65px);
+  }
 
-		gap: 26px;
+  .hello {
+    margin-top: 14px;
+    font-size: 16px;
+  }
 
-		padding-top: 35px;
-	}
+  .intro-text {
+    margin-top: 14px;
+    font-size: 12px;
+  }
 
-	.intro h1 {
-		font-size: clamp(42px, 13vw, 65px);
-	}
+  .contact h2 {
+    font-size: clamp(30px, 9vw, 46px);
+  }
 
-	.hello {
-		margin-top: 14px;
+  .contact-list {
+    margin-top: 18px;
+  }
 
-		font-size: 16px;
-	}
+  .section-label {
+    margin-bottom: 15px;
+  }
 
-	.intro-text {
-		margin-top: 14px;
+  .section-label .version {
+    font-size: 6px !important;
+  }
 
-		font-size: 12px;
-	}
+  .meow {
+    right: 45px;
+    font-size: 9px;
+  }
 
-	.contact h2 {
-		font-size: clamp(30px, 9vw, 46px);
-	}
-
-	.contact-list {
-		margin-top: 18px;
-	}
-
-	.section-label {
-		margin-bottom: 15px;
-	}
-
-	.section-label .version {
-		font-size: 6px !important;
-	}
-
-	.meow {
-		right: 45px;
-
-		font-size: 9px;
-	}
-
-	.cloth-footer {
-		padding-top: 16px;
-
-		border-top: 0;
-	}
-
-	.page-footer {
-		display: none;
-	}
+  .page-footer {
+    display: none;
+  }
 }
 
 /* =========================================================
@@ -911,72 +1108,58 @@ body {
    ========================================================= */
 
 @media (max-width: 480px) {
-	.topbar {
-		padding: 18px;
-	}
+  .topbar {
+    padding: 18px;
+  }
 
-	.scene {
-		padding: 70px 18px 45px;
-	}
+  .scene {
+    padding: 70px 18px 45px;
+  }
 
-	.cloth {
-		width: calc(100vw - 36px);
+  .cloth {
+    width: calc(100vw - 36px);
+    height: min(400px, calc(100vh - 150px));
+  }
 
-		height: min(515px, calc(100vh - 135px));
-	}
+  .cloth-content {
+    padding: 20px;
+  }
 
-	.cloth-content {
-		padding: 20px;
-	}
+  .content-grid {
+    gap: 20px;
+    padding-top: 25px;
+  }
 
-	.content-grid {
-		gap: 20px;
+  .intro h1 {
+    font-size: 45px;
+  }
 
-		padding-top: 25px;
-	}
+  .contact h2 {
+    font-size: 32px;
+  }
 
-	.intro h1 {
-		font-size: 45px;
-	}
+  .eyebrow {
+    margin-bottom: 12px;
+    font-size: 8px;
+  }
 
-	.contact h2 {
-		font-size: 32px;
-	}
+  .hello {
+    font-size: 14px;
+  }
 
-	.eyebrow {
-		margin-bottom: 12px;
+  .intro-text {
+    font-size: 10px;
+  }
 
-		font-size: 8px;
-	}
+  .contact-row {
+    padding: 9px 0;
+    font-size: 9px;
+  }
 
-	.hello {
-		font-size: 14px;
-	}
-
-	.intro-text {
-		font-size: 10px;
-	}
-
-	.contact-row {
-		padding: 9px 0;
-
-		font-size: 9px;
-	}
-
-	.meow {
-		right: 38px;
-
-		font-size: 8px;
-	}
-
-	.skills {
-		--skill-size: 30px;
-		--skill-gap: 7px;
-	}
-
-	.skills-caption {
-		font-size: 8px;
-	}
+  .meow {
+    right: 38px;
+    font-size: 8px;
+  }
 }
 
 /* =========================================================
@@ -984,60 +1167,47 @@ body {
    ========================================================= */
 
 @media (max-height: 600px) {
-	.scene {
-		padding-top: 65px;
-		padding-bottom: 25px;
-	}
+  .scene {
+    padding-top: 65px;
+    padding-bottom: 25px;
+  }
 
-	.cloth {
-		height: calc(100vh - 125px);
-	}
+  .cloth {
+    height: calc(100vh - 125px);
+  }
 
-	.cloth-content {
-		padding: 20px 28px;
-	}
+  .cloth-content {
+    padding: 20px 28px;
+  }
 
-	.content-grid {
-		gap: 18px;
+  .content-grid {
+    gap: 18px;
+    padding-top: 30px;
+  }
 
-		padding-top: 30px;
-	}
+  .eyebrow {
+    margin-bottom: 10px;
+  }
 
-	.eyebrow {
-		margin-bottom: 10px;
-	}
+  .hello {
+    margin-top: 12px;
+  }
 
-	.hello {
-		margin-top: 12px;
-	}
+  .intro-text {
+    margin-top: 12px;
+  }
 
-	.intro-text {
-		margin-top: 12px;
-	}
+  .contact h2 {
+    font-size: 36px;
+  }
 
-	.contact h2 {
-		font-size: 36px;
-	}
+  .contact-list {
+    margin-top: 15px;
+  }
 
-	.contact-list {
-		margin-top: 15px;
-	}
-
-	.contact-row {
-		padding: 9px 0;
-	}
-}
-
-@media (max-height: 600px) and (max-width: 900px) {
-	.cloth-footer {
-		padding-top: 0;
-
-		border-top: 0;
-	}
-
-	.skills {
-		display: none;
-	}
+  .contact-row {
+    padding: 9px 0;
+  }
 }
 
 /* =========================================================
@@ -1045,74 +1215,58 @@ body {
    ========================================================= */
 
 html[data-theme] {
-	--deep-a: color-mix(in srgb, var(--text-a) 68%, #151412);
-	--deep-b: color-mix(in srgb, var(--text-b) 68%, #151412);
-	--deep-c: color-mix(in srgb, var(--text-c) 68%, #151412);
+  --deep-a: color-mix(in srgb, var(--text-a) 68%, #151412);
+  --deep-b: color-mix(in srgb, var(--text-b) 68%, #151412);
+  --deep-c: color-mix(in srgb, var(--text-c) 68%, #151412);
 }
 
 @keyframes foilShine {
-	0% {
-		background-position:
+  0% {
+    background-position:
 			160% 0,
 			0 0;
-	}
+  }
 
-	100% {
-		background-position:
+  100% {
+    background-position:
 			-60% 0,
 			0 0;
-	}
+  }
 }
 
 html[data-theme] :is(.intro h1, .contact h2, .hello) {
-	background:
+  background:
 		linear-gradient(105deg, transparent 42%, rgba(255, 255, 255, 0.75) 50%, transparent 58%) 0 0 / 250% 100% no-repeat,
 		linear-gradient(100deg, var(--deep-a), var(--deep-b) 50%, var(--deep-c)) 0 0 / 100% 100% no-repeat;
-
-	-webkit-background-clip: text;
-	background-clip: text;
-
-	-webkit-text-fill-color: transparent;
-
-	animation: foilShine 6s ease-in-out infinite;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: foilShine 6s ease-in-out infinite;
 }
 
 html[data-theme] .contact h2 em {
-	background:
+  background:
 		linear-gradient(105deg, transparent 42%, rgba(255, 255, 255, 0.75) 50%, transparent 58%) 0 0 / 250% 100% no-repeat,
 		linear-gradient(100deg, var(--deep-c), var(--text-b) 50%, var(--deep-a)) 0 0 / 100% 100% no-repeat;
-
-	-webkit-background-clip: text;
-	background-clip: text;
-
-	-webkit-text-fill-color: transparent;
-
-	animation: foilShine 6s ease-in-out infinite;
-	animation-delay: -1.5s;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: foilShine 6s ease-in-out infinite;
+  animation-delay: -1.5s;
 }
 
 html[data-theme] .intro h1 span {
-	opacity: 0.55;
+  opacity: 0.55;
 }
 
-html[data-theme] :is(.eyebrow, .section-label span:first-child, .contact-row span:last-child, .skills-caption) {
-	color: var(--deep-b);
-}
-
-html[data-theme] .skill-sep {
-	background: var(--text-b);
-}
-
-html[data-theme] .skill.active {
-	box-shadow:
-		inset 0 0 0 1.5px var(--text-b),
-		0 3px 8px color-mix(in srgb, var(--text-b) 35%, transparent);
+html[data-theme] :is(.eyebrow, .section-label span:first-child, .contact-row span:last-child) {
+  color: var(--deep-b);
 }
 
 @media (prefers-reduced-motion: reduce) {
-	html[data-theme] :is(.intro h1, .contact h2, .hello, .contact h2 em) {
-		animation: none;
-	}
+  html[data-theme] :is(.intro h1, .contact h2, .hello, .contact h2 em) {
+    animation: none;
+  }
 }
 
 /* =========================================================
@@ -1120,136 +1274,300 @@ html[data-theme] .skill.active {
    ========================================================= */
 
 .cat-party {
-	position: absolute;
-
-	z-index: 30;
-
-	inset: 0;
-
-	pointer-events: none;
+  position: absolute;
+  z-index: 30;
+  inset: 0;
+  pointer-events: none;
 }
 
 .party-cat {
-	position: absolute;
-
-	display: inline-block;
-
-	transform: translate(-50%, -50%);
+  position: absolute;
+  display: inline-block;
+  transform: translate(-50%, -50%);
 }
 
 .party-flip {
-	display: block;
+  display: block;
 }
 
 .party-face {
-	display: block;
-
-	font-size: 28px;
-
-	line-height: 1;
-
-	opacity: 0;
-
-	transform: scale(0) rotate(-24deg);
-
-	filter: drop-shadow(0 3px 4px rgba(0, 0, 0, 0.28));
-
-	transition:
+  display: block;
+  font-size: 28px;
+  line-height: 1;
+  opacity: 0;
+  transform: scale(0) rotate(-24deg);
+  filter: drop-shadow(0 3px 4px rgba(0, 0, 0, 0.28));
+  transition:
 		transform 420ms cubic-bezier(0.3, 1.7, 0.5, 1),
 		opacity 260ms ease;
 }
 
 .party-cat.in .party-face {
-	opacity: 1;
-
-	transform: scale(1) rotate(0deg);
+  opacity: 1;
+  transform: scale(1) rotate(0deg);
 }
 
 .party-cat.talking .party-face {
-	animation: catTalk 520ms ease-in-out;
+  animation: catTalk 520ms ease-in-out;
 }
 
 @keyframes catTalk {
-	0% {
-		transform: scale(1) rotate(0deg);
-	}
+  0% {
+    transform: scale(1) rotate(0deg);
+  }
 
-	30% {
-		transform: scale(1.2) rotate(-7deg);
-	}
+  30% {
+    transform: scale(1.2) rotate(-7deg);
+  }
 
-	60% {
-		transform: scale(1.1) rotate(6deg);
-	}
+  60% {
+    transform: scale(1.1) rotate(6deg);
+  }
 
-	100% {
-		transform: scale(1) rotate(0deg);
-	}
+  100% {
+    transform: scale(1) rotate(0deg);
+  }
 }
 
 .party-bubble {
-	position: absolute;
-
-	bottom: 100%;
-	left: 50%;
-
-	margin-bottom: 6px;
-
-	padding: 4px 9px;
-
-	border-radius: 10px;
-
-	background: rgba(255, 255, 255, 0.95);
-
-	color: var(--ink);
-
-	font-size: 10px;
-
-	font-weight: 800;
-
-	letter-spacing: 0.04em;
-
-	white-space: nowrap;
-
-	opacity: 0;
-
-	transform: translate(-50%, 6px) scale(0.8);
-
-	transform-origin: 50% 100%;
-
-	box-shadow: 0 4px 14px rgba(0, 0, 0, 0.18);
-
-	transition:
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  margin-bottom: 6px;
+  padding: 4px 9px;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.95);
+  color: var(--ink);
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+  opacity: 0;
+  transform: translate(-50%, 6px) scale(0.8);
+  transform-origin: 50% 100%;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.18);
+  transition:
 		opacity 180ms ease,
 		transform 260ms cubic-bezier(0.3, 1.5, 0.5, 1);
 }
 
 .party-bubble::after {
-	content: "";
-
-	position: absolute;
-
-	top: 100%;
-	left: 50%;
-
-	width: 7px;
-	height: 7px;
-
-	margin-top: -4px;
-
-	background: inherit;
-
-	transform: translateX(-50%) rotate(45deg);
+  content: "";
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  width: 7px;
+  height: 7px;
+  margin-top: -4px;
+  background: inherit;
+  transform: translateX(-50%) rotate(45deg);
 }
 
 .party-bubble.show {
-	opacity: 1;
-
-	transform: translate(-50%, 0) scale(1);
+  opacity: 1;
+  transform: translate(-50%, 0) scale(1);
 }
 
 @media (prefers-reduced-motion: reduce) {
-	.party-cat.talking .party-face {
-		animation: none;
-	}
+  .party-cat.talking .party-face {
+    animation: none;
+  }
+}
+
+/* =========================================================
+   SKILLS
+   ========================================================= */
+
+.skills {
+  --skill-size: 32px;
+  --skill-gap: 8px;
+  min-width: 0;
+}
+
+.skills-caption {
+  margin: 0 0 8px;
+  min-height: 11px;
+  overflow: hidden;
+  color: #d94b2d;
+  font-size: 9px;
+  font-weight: 900;
+  letter-spacing: 0.2em;
+  text-overflow: ellipsis;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.skills-caption.swap {
+  animation: captionIn 220ms ease-out;
+}
+
+@keyframes captionIn {
+  from {
+    opacity: 0;
+    transform: translateY(3px);
+  }
+
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.skills-fallback {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.skills-fallback li {
+  padding: 5px 10px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  color: var(--ink);
+  font-size: 10px;
+  font-weight: 800;
+}
+
+.skills.js .skills-fallback,
+.skills:not(.js) .skills-viewport {
+  display: none;
+}
+
+.skills-viewport {
+  padding: 4px 0;
+  overflow: hidden;
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 7%, #000 93%, transparent);
+  mask-image: linear-gradient(90deg, transparent, #000 7%, #000 93%, transparent);
+}
+
+.skills-track {
+  display: flex;
+  width: -moz-max-content;
+  width: max-content;
+  animation: skillsScroll var(--dur, 40s) linear infinite;
+  will-change: transform;
+}
+
+.skills-track.paused {
+  animation-play-state: paused;
+}
+
+@keyframes skillsScroll {
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+.skills-copy {
+  display: flex;
+  flex: none;
+  align-items: center;
+  gap: var(--skill-gap);
+  padding: 0 var(--skill-gap) 0 22px;
+}
+
+.skill-group {
+  flex: none;
+  padding-left: 2px;
+  color: rgba(21, 20, 18, 0.42);
+  font-size: 9px;
+  font-weight: 900;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.skill-sep {
+  flex: none;
+  width: 4px;
+  height: 4px;
+  margin: 0 8px;
+  border-radius: 999px;
+  background: var(--accent);
+}
+
+.skill {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: var(--skill-size);
+  height: var(--skill-size);
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.55);
+  box-shadow: inset 0 0 0 1px rgba(21, 20, 18, 0.08);
+  pointer-events: auto;
+  transition:
+		background 180ms ease,
+		box-shadow 180ms ease,
+		transform 260ms cubic-bezier(0.3, 1.6, 0.5, 1);
+}
+
+.skill img {
+  width: 18px;
+  height: 18px;
+  -o-object-fit: contain;
+     object-fit: contain;
+  opacity: 0.78;
+  filter: grayscale(1) brightness(0.35) contrast(1.4);
+  pointer-events: none;
+  transition: opacity 180ms ease;
+}
+
+.skill.active {
+  background: #fff;
+  box-shadow:
+		inset 0 0 0 1.5px var(--accent),
+		0 3px 8px rgba(217, 75, 45, 0.25);
+  transform: translateY(-1px) scale(1.08);
+}
+
+.skill.active img {
+  opacity: 1;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  border: 0;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .skills-track {
+    animation-duration: calc(var(--dur, 40s) * 2.2);
+  }
+
+  .skill,
+	.skill img {
+    transition: none;
+  }
+
+  .skills-caption.swap {
+    animation: none;
+  }
+}
+
+@media (max-width: 480px) {
+  .skills {
+    --skill-size: 30px;
+    --skill-gap: 7px;
+  }
+
+  .skills-caption {
+    font-size: 8px;
+  }
+}
+
+@media (max-height: 600px) {
+  .skills {
+    display: none;
+  }
 }
