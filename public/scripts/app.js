@@ -1664,7 +1664,7 @@ function drawDarts(strength) {
 			x = lerp(startX, centerX, p);
 			y = lerp(startY, centerY, p) - Math.sin(p * Math.PI) * 40;
 
-			angle = Math.atan2(centerY - startY - Math.cos(p * Math.PI) * 40 * Math.PI / 0.9 * 0.0, centerX - startX) + (p - 0.5) * 0.4;
+			angle = Math.atan2(centerY - startY - ((Math.cos(p * Math.PI) * 40 * Math.PI) / 0.9) * 0.0, centerX - startX) + (p - 0.5) * 0.4;
 
 			if (p >= 1) {
 				dart.phase = "stuck";
@@ -1909,7 +1909,7 @@ function drawCassette(strength, time) {
 		ctx.textAlign = "center";
 		ctx.textBaseline = "middle";
 
-		ctx.fillText("SIDE A · C-90 · NORMAL BIAS", 0, -8);
+		ctx.fillText("SIDE A · volume 1 · meowlody", 0, -8);
 	});
 
 	ctx.globalAlpha = 1;
@@ -2244,7 +2244,6 @@ function applyWaves(time) {
 	}
 }
 
-
 const THEME_LINES = {
 	holographic: { ask: "Meow ik wil glitter zien", after: "meow. glimmend" },
 	aurora: { ask: "Meow ik wil noorderlicht zien", after: "meow. mooi" },
@@ -2279,7 +2278,6 @@ const THEME_LINES = {
 	vhs: { ask: "Meow ik wil terugspoelen", after: "meow. be kind, rewind" },
 	cassette: { ask: "Meow ik wil een mixtape", after: "meow. kant B" },
 };
-
 
 const themeState = {
 	current: null,
@@ -2976,20 +2974,7 @@ const RAIN = {
 	lastSpawn: 0,
 };
 
-const RAIN_CODE = [
-	"const cat = 'meow';",
-	"if (cat) meow();",
-	"npm run meow",
-	"git commit -m 'meow'",
-	"while (true) { meow(); }",
-	"SELECT * FROM cats;",
-	"sudo meow",
-	"return 'meow';",
-	"<cat>meow</cat>",
-	"meow.exe",
-	"import { cat } from 'meow'",
-	"console.log('meow')",
-];
+const RAIN_CODE = ["const cat = 'meow';", "if (cat) meow();", "npm run meow", "git commit -m 'meow'", "while (true) { meow(); }", "SELECT * FROM cats;", "sudo meow", "return 'meow';", "<cat>meow</cat>", "meow.exe", "import { cat } from 'meow'", "console.log('meow')"];
 
 function resizeFx() {
 	fxCanvas.width = Math.round(window.innerWidth * dpr);
@@ -3072,13 +3057,48 @@ const FX = {
 const FX_NOTES = ["♪", "♫", "♩", "♬"];
 
 const TETROMINOES = [
-	[[0, 0], [1, 0], [2, 0], [3, 0]],
-	[[0, 0], [1, 0], [0, 1], [1, 1]],
-	[[0, 0], [1, 0], [2, 0], [1, 1]],
-	[[1, 0], [2, 0], [0, 1], [1, 1]],
-	[[0, 0], [1, 0], [1, 1], [2, 1]],
-	[[0, 0], [0, 1], [1, 1], [2, 1]],
-	[[2, 0], [0, 1], [1, 1], [2, 1]],
+	[
+		[0, 0],
+		[1, 0],
+		[2, 0],
+		[3, 0],
+	],
+	[
+		[0, 0],
+		[1, 0],
+		[0, 1],
+		[1, 1],
+	],
+	[
+		[0, 0],
+		[1, 0],
+		[2, 0],
+		[1, 1],
+	],
+	[
+		[1, 0],
+		[2, 0],
+		[0, 1],
+		[1, 1],
+	],
+	[
+		[0, 0],
+		[1, 0],
+		[1, 1],
+		[2, 1],
+	],
+	[
+		[0, 0],
+		[0, 1],
+		[1, 1],
+		[2, 1],
+	],
+	[
+		[2, 0],
+		[0, 1],
+		[1, 1],
+		[2, 1],
+	],
 ];
 
 const fxState = { theme: null, time: 0, dirty: false };
@@ -3099,7 +3119,7 @@ function drawNotes(now) {
 		FX.lastNote = now;
 
 		FX.notes.push({
-			x: Math.random() * window.innerWidth,
+			x: bandX(30),
 			y: -30,
 			vy: 0.6 + Math.random() * 1.2,
 			size: 18 + Math.random() * 20,
@@ -3124,6 +3144,25 @@ function drawNotes(now) {
 
 		return note.y < window.innerHeight + 40;
 	});
+}
+
+function bandX(pad) {
+	const left = offsetX;
+	const right = window.innerWidth - (offsetX + width);
+
+	const sides = [];
+
+	if (left > pad * 2) {
+		sides.push([pad, left - pad]);
+	}
+
+	if (right > pad * 2) {
+		sides.push([offsetX + width + pad, window.innerWidth - pad]);
+	}
+
+	const range = sides.length ? pickRandom(sides) : [0, window.innerWidth];
+
+	return range[0] + Math.random() * (range[1] - range[0]);
 }
 
 function pieceSpawnX(size) {
@@ -3216,7 +3255,7 @@ function drawSuits(now) {
 		SUITS.last = now;
 
 		SUITS.items.push({
-			x: Math.random() * window.innerWidth,
+			x: bandX(30),
 			y: -30,
 			vy: 0.8 + Math.random() * 1.2,
 			size: 22 + Math.random() * 22,
@@ -3282,28 +3321,30 @@ function drawInvaders(now) {
 	const reduced = fxReduced();
 
 	const size = 4;
-	const gapX = 74;
-	const gapY = 52;
-	const perRow = 8;
+	const gapX = 90;
+	const gapY = 50;
+
+	const perRow = Math.max(3, Math.min(12, Math.floor((window.innerWidth - 60) / gapX)));
+	const rowCount = Math.max(1, Math.min(3, Math.floor((offsetY - 14) / gapY)));
 
 	const fieldW = perRow * gapX;
 	const slack = Math.max(0, (window.innerWidth - fieldW) / 2 - 10);
 
-	const ox = (window.innerWidth - fieldW) / 2 + (reduced ? 0 : Math.sin(now / 2600) * Math.min(160, slack));
-	const oy = 50 + (reduced ? 0 : (Math.floor(now / 1800) % 6) * 14);
+	const ox = (window.innerWidth - fieldW) / 2 + (reduced ? 0 : Math.sin(now / 2600) * Math.min(60, slack));
+	const oy = 12 + (reduced ? 0 : Math.abs(Math.sin(now / 3000)) * 6);
 
 	const frame = reduced ? 0 : Math.floor(now / 500) % 2;
 
-	fxCtx.globalAlpha = 0.75;
+	fxCtx.globalAlpha = 0.8;
 
 	const alive = [];
 
-	for (let r = 0; r < 4; r++) {
+	for (let r = 0; r < rowCount; r++) {
 		const sprite = r === 0 ? INV_SPRITES.squid : INV_SPRITES.crab;
-		const color = r === 0 ? "#ff3cc8" : r < 3 ? "#50ff50" : "#ffffff";
+		const color = r === 0 ? "#ff3cc8" : r === 1 ? "#50ff50" : "#ffffff";
 
 		for (let c = 0; c < perRow; c++) {
-			const x = ox + c * gapX;
+			const x = ox + c * gapX + (gapX - 11 * size) / 2;
 			const y = oy + r * gapY;
 
 			drawSprite(sprite[frame], x, y, size, color);
@@ -3372,7 +3413,7 @@ function drawChess(now) {
 		CHESS_POOL.last = now;
 
 		CHESS_POOL.items.push({
-			x: Math.random() * window.innerWidth,
+			x: bandX(30),
 			y: -30,
 			vy: 0.7 + Math.random() * 1.1,
 			size: 26 + Math.random() * 26,
@@ -3416,7 +3457,7 @@ function drawBubbles(now) {
 		UW.lastBubble = now;
 
 		UW.bubbles.push({
-			x: Math.random() * window.innerWidth,
+			x: bandX(30),
 			y: window.innerHeight + 20,
 			vy: 0.6 + Math.random() * 1.4,
 			r: 3 + Math.random() * 9,
@@ -4373,14 +4414,7 @@ catButton.addEventListener("click", (event) => {
 	event.stopPropagation();
 
 	if (themeUnlocked) {
-		catButton.animate(
-			[
-				{ transform: "rotate(0deg) scale(1)" },
-				{ transform: "rotate(-10deg) scale(1.15)" },
-				{ transform: "rotate(0deg) scale(1)" },
-			],
-			{ duration: 320, easing: "ease-out" },
-		);
+		catButton.animate([{ transform: "rotate(0deg) scale(1)" }, { transform: "rotate(-10deg) scale(1.15)" }, { transform: "rotate(0deg) scale(1)" }], { duration: 320, easing: "ease-out" });
 
 		themeSequence(nextTheme());
 
