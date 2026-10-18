@@ -572,6 +572,10 @@ video {
   resize: both;
 }
 
+.italic {
+  font-style: italic;
+}
+
 .filter {
   filter: var(--tw-blur) var(--tw-brightness) var(--tw-contrast) var(--tw-grayscale) var(--tw-hue-rotate) var(--tw-invert) var(--tw-saturate) var(--tw-sepia) var(--tw-drop-shadow);
 }
@@ -1388,7 +1392,8 @@ html[data-theme] .skill.active {
   font-size: 12px;
   font-weight: 800;
   letter-spacing: 0.04em;
-  white-space: nowrap;
+  white-space: pre;
+  text-align: center;
   -webkit-text-stroke: 3px #fff;
   paint-order: stroke fill;
   text-shadow: 0 1px 3px rgba(255, 255, 255, 0.9);
@@ -2430,7 +2435,6 @@ html[data-theme="newspaper"] .party-cat.in::after {
 html[data-theme="fallout"] .bd-fallout,
 html[data-theme="keyboard"] .bd-keyboard,
 html[data-theme="virtualboy"] .bd-virtualboy,
-html[data-theme="liquid"] .bd-liquid,
 html[data-theme="water"] .bd-water,
 html[data-theme="fallout"] .crt-overlay,
 html[data-theme="virtualboy"] .crt-overlay {
@@ -2451,36 +2455,13 @@ html[data-theme="virtualboy"] .crt-overlay {
   background: radial-gradient(ellipse at center, #1a0000 0%, #070000 65%, #000 100%);
 }
 
-.bd-liquid {
-  overflow: hidden;
-  background: #1a1740;
-}
-
-.bd-liquid::before {
-  content: "";
-  position: absolute;
-  inset: -30%;
-  background:
-		radial-gradient(circle at 15% 25%, #ff7ab8 0, transparent 40%),
-		radial-gradient(circle at 85% 20%, #5ad2ff 0, transparent 42%),
-		radial-gradient(circle at 70% 85%, #ffb86b 0, transparent 40%),
-		radial-gradient(circle at 20% 85%, #8a7bff 0, transparent 45%);
-  filter: blur(30px);
-  animation: liquidSpin 26s linear infinite;
-}
-
-@keyframes liquidSpin {
-  to {
-    transform: rotate(360deg);
-  }
-}
-
 .bd-water {
   overflow: hidden;
   background:
-		radial-gradient(ellipse at 20% 0%, rgba(120, 230, 255, 0.35), transparent 50%),
-		radial-gradient(ellipse at 80% 10%, rgba(80, 190, 255, 0.3), transparent 45%),
-		linear-gradient(180deg, #06304f, #021a33);
+		radial-gradient(ellipse at 50% 120%, rgba(255, 240, 200, 0.5), transparent 60%),
+		radial-gradient(rgba(120, 85, 40, 0.1) 1px, transparent 1.5px) 0 0 / 5px 5px,
+		radial-gradient(rgba(255, 255, 255, 0.18) 1px, transparent 1.5px) 2px 2px / 7px 7px,
+		linear-gradient(180deg, #efdcaa 0%, #e3c586 100%);
 }
 
 .bd-water::before {
@@ -2488,8 +2469,8 @@ html[data-theme="virtualboy"] .crt-overlay {
   position: absolute;
   inset: -20%;
   background:
-		repeating-radial-gradient(circle at 30% 40%, rgba(255, 255, 255, 0.07) 0 2px, transparent 2px 40px),
-		repeating-radial-gradient(circle at 70% 60%, rgba(255, 255, 255, 0.05) 0 2px, transparent 2px 55px);
+		repeating-radial-gradient(circle at 30% 40%, rgba(150, 110, 50, 0.08) 0 2px, transparent 2px 46px),
+		repeating-radial-gradient(circle at 70% 60%, rgba(150, 110, 50, 0.06) 0 2px, transparent 2px 60px);
   animation: waterDrift 12s ease-in-out infinite alternate;
 }
 
@@ -2537,8 +2518,7 @@ html[data-theme="virtualboy"] .crt-overlay {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .bd-liquid::before,
-	.bd-water::before,
+  .bd-water::before,
 	.crt-overlay::after {
     animation: none;
   }
@@ -2551,7 +2531,6 @@ html[data-theme="virtualboy"] .crt-overlay {
 html[data-theme="fallout"] .site :is(.intro h1, .contact h2, .contact h2 em, .hello),
 html[data-theme="keyboard"] .site :is(.intro h1, .contact h2, .contact h2 em, .hello),
 html[data-theme="virtualboy"] .site :is(.intro h1, .contact h2, .contact h2 em, .hello),
-html[data-theme="liquid"] .site :is(.intro h1, .contact h2, .contact h2 em, .hello),
 html[data-theme="water"] .site :is(.intro h1, .contact h2, .contact h2 em, .hello) {
   background: none;
   -webkit-text-fill-color: currentColor;
@@ -2562,7 +2541,6 @@ html[data-theme="water"] .site :is(.intro h1, .contact h2, .contact h2 em, .hell
 html[data-theme="fallout"] .site .intro h1 span,
 html[data-theme="keyboard"] .site .intro h1 span,
 html[data-theme="virtualboy"] .site .intro h1 span,
-html[data-theme="liquid"] .site .intro h1 span,
 html[data-theme="water"] .site .intro h1 span {
   -webkit-text-fill-color: currentColor;
   opacity: 1;
@@ -2863,86 +2841,6 @@ html[data-theme="virtualboy"] .party-face {
 }
 
 /* =========================================================
-   LIQUID GLASS
-   ========================================================= */
-
-html[data-theme="liquid"] {
-  --accent: #ff78c8;
-  --line: rgba(60, 80, 120, 0.25);
-}
-
-html[data-theme="liquid"] .site .intro h1 {
-  color: #1d2733;
-  font-weight: 800;
-  letter-spacing: -0.05em;
-}
-
-html[data-theme="liquid"] .site .intro h1 span {
-  color: #4a6bff;
-}
-
-html[data-theme="liquid"] .site .contact h2 {
-  color: #1d2733;
-  font-weight: 800;
-  letter-spacing: -0.05em;
-}
-
-html[data-theme="liquid"] .site .contact h2 em {
-  color: #4a6bff;
-}
-
-html[data-theme="liquid"] .site .hello {
-  color: #51607a;
-}
-
-html[data-theme="liquid"] .site .intro-text {
-  color: #3c4a5f;
-}
-
-html[data-theme="liquid"] .site :is(.eyebrow, .section-label span:first-child, .skills-caption) {
-  color: #4a6bff;
-}
-
-html[data-theme="liquid"] .site .section-label .version {
-  color: rgba(60, 80, 120, 0.55);
-}
-
-html[data-theme="liquid"] .site .contact-row {
-  color: #1d2733;
-}
-
-html[data-theme="liquid"] .site .contact-row:hover {
-  color: #4a6bff;
-}
-
-html[data-theme="liquid"] .site .contact-row span:last-child {
-  color: #4a6bff;
-}
-
-html[data-theme="liquid"] .site .skill-group {
-  color: rgba(60, 80, 120, 0.7);
-}
-
-html[data-theme="liquid"] .site .skill-sep {
-  background: #ff78c8;
-}
-
-html[data-theme="liquid"] .site .skill {
-  background: rgba(255, 255, 255, 0.6);
-  box-shadow:
-		inset 0 1px 0 #fff,
-		inset 0 0 0 1px rgba(255, 255, 255, 0.7),
-		0 4px 10px rgba(80, 100, 160, 0.18);
-}
-
-html[data-theme="liquid"] .site .skill.active {
-  background: #fff;
-  box-shadow:
-		inset 0 0 0 1.5px #4a6bff,
-		0 6px 14px rgba(74, 107, 255, 0.3);
-}
-
-/* =========================================================
    WATER
    ========================================================= */
 
@@ -3019,4 +2917,641 @@ html[data-theme="water"] .site .skill img {
 html[data-theme="water"] .site .skill.active {
   background: rgba(255, 255, 255, 0.3);
   box-shadow: inset 0 0 0 1.5px #fff;
+}
+
+/* =========================================================
+   EVEN MORE BACKDROPS
+   ========================================================= */
+
+html[data-theme="keyboard"] .fx-canvas,
+html[data-theme="tetris"] .fx-canvas,
+html[data-theme="minecraft"] .bd-minecraft,
+html[data-theme="lego"] .bd-lego,
+html[data-theme="tetris"] .bd-tetris,
+html[data-theme="clock"] .bd-clock,
+html[data-theme="runescape"] .bd-runescape {
+  opacity: 1;
+}
+
+.bd-minecraft {
+  background:
+		linear-gradient(180deg, #5d9c35 0 18px, transparent 18px),
+		linear-gradient(180deg, transparent calc(100% - 14vh), #7a5636 calc(100% - 14vh)),
+		linear-gradient(90deg, rgba(255, 255, 255, 0.92) 0 90px, transparent 90px) 12% 14% / 150px 36px no-repeat,
+		linear-gradient(90deg, rgba(255, 255, 255, 0.92) 0 120px, transparent 120px) 70% 22% / 180px 42px no-repeat,
+		linear-gradient(90deg, rgba(255, 255, 255, 0.92) 0 70px, transparent 70px) 40% 8% / 110px 30px no-repeat,
+		linear-gradient(180deg, #78a7ff 0%, #bcd8ff 100%);
+}
+
+.bd-lego {
+  background:
+		radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.28) 0 7px, rgba(0, 0, 0, 0.22) 7px 9px, transparent 9px) 0 0 / 44px 44px,
+		#0055bf;
+}
+
+.bd-tetris {
+  background:
+		linear-gradient(rgba(120, 140, 255, 0.07) 1px, transparent 1px) 0 0 / 28px 28px,
+		linear-gradient(90deg, rgba(120, 140, 255, 0.07) 1px, transparent 1px) 0 0 / 28px 28px,
+		#050818;
+}
+
+.bd-clock {
+  background:
+		radial-gradient(ellipse at center, transparent 45%, rgba(0, 0, 0, 0.55) 100%),
+		repeating-linear-gradient(90deg, rgba(0, 0, 0, 0.12) 0 2px, transparent 2px 9px),
+		repeating-linear-gradient(90deg, rgba(255, 255, 255, 0.03) 0 1px, transparent 1px 23px),
+		#4a2e18;
+}
+
+.bd-runescape {
+  background:
+		radial-gradient(ellipse at center, transparent 45%, rgba(0, 0, 0, 0.5) 100%),
+		linear-gradient(rgba(0, 0, 0, 0.35) 2px, transparent 2px) 0 0 / 64px 64px,
+		linear-gradient(90deg, rgba(0, 0, 0, 0.35) 2px, transparent 2px) 0 0 / 64px 64px,
+		#3a3126;
+}
+
+/* =========================================================
+   FLAT TEXT THEMES (EVEN MORE)
+   ========================================================= */
+
+html[data-theme="minecraft"] .site :is(.intro h1, .contact h2, .contact h2 em, .hello),
+html[data-theme="lego"] .site :is(.intro h1, .contact h2, .contact h2 em, .hello),
+html[data-theme="tetris"] .site :is(.intro h1, .contact h2, .contact h2 em, .hello),
+html[data-theme="clock"] .site :is(.intro h1, .contact h2, .contact h2 em, .hello),
+html[data-theme="runescape"] .site :is(.intro h1, .contact h2, .contact h2 em, .hello) {
+  background: none;
+  -webkit-text-fill-color: currentColor;
+  filter: none;
+  animation: none;
+}
+
+html[data-theme="minecraft"] .site .intro h1 span,
+html[data-theme="lego"] .site .intro h1 span,
+html[data-theme="tetris"] .site .intro h1 span,
+html[data-theme="clock"] .site .intro h1 span,
+html[data-theme="runescape"] .site .intro h1 span {
+  -webkit-text-fill-color: currentColor;
+  opacity: 1;
+}
+
+/* =========================================================
+   MINECRAFT
+   ========================================================= */
+
+html[data-theme="minecraft"] {
+  --accent: #5d9c35;
+  --line: rgba(255, 255, 255, 0.35);
+}
+
+html[data-theme="minecraft"] .site .cloth-content,
+html[data-theme="minecraft"] .site .cloth-content * {
+  font-family: "Press Start 2P", ui-monospace, Menlo, Consolas, monospace;
+  text-shadow: 2px 2px 0 #3f3f3f;
+}
+
+html[data-theme="minecraft"] .site .intro h1 {
+  color: #fff;
+  font-size: clamp(22px, 3.2vw, 34px);
+  font-weight: 400;
+  line-height: 1.1;
+  letter-spacing: 0;
+}
+
+html[data-theme="minecraft"] .site .intro h1 span {
+  color: #ffff55;
+}
+
+html[data-theme="minecraft"] .site .contact h2 {
+  color: #fff;
+  font-size: clamp(14px, 1.9vw, 20px);
+  font-weight: 400;
+  line-height: 1.3;
+  letter-spacing: 0;
+}
+
+html[data-theme="minecraft"] .site .contact h2 em {
+  color: #55ff55;
+}
+
+html[data-theme="minecraft"] .site .hello {
+  color: #ffff55;
+  font-size: 11px;
+  font-weight: 400;
+}
+
+html[data-theme="minecraft"] .site .intro-text {
+  color: #fff;
+  font-size: 8px;
+  line-height: 2;
+}
+
+html[data-theme="minecraft"] .site :is(.eyebrow, .section-label span:first-child, .skills-caption) {
+  color: #ffff55;
+  font-size: 7px;
+  font-weight: 400;
+  letter-spacing: 0.1em;
+}
+
+html[data-theme="minecraft"] .site .section-label .version {
+  color: #aaa;
+}
+
+html[data-theme="minecraft"] .site .contact-row {
+  color: #fff;
+  font-size: 8px;
+  font-weight: 400;
+}
+
+html[data-theme="minecraft"] .site .contact-row:hover {
+  color: #ffff55;
+}
+
+html[data-theme="minecraft"] .site .contact-row span:last-child {
+  color: #55ff55;
+}
+
+html[data-theme="minecraft"] .site .skill-group {
+  color: #ddd;
+  font-size: 7px;
+  font-weight: 400;
+}
+
+html[data-theme="minecraft"] .site .skill-sep {
+  background: #ffff55;
+}
+
+html[data-theme="minecraft"] .site .skill {
+  background: rgba(0, 0, 0, 0.35);
+  box-shadow: inset 0 0 0 2px #373737;
+}
+
+html[data-theme="minecraft"] .site .skill img {
+  opacity: 1;
+  filter: brightness(0) invert(1);
+  image-rendering: pixelated;
+}
+
+html[data-theme="minecraft"] .site .skill.active {
+  background: rgba(255, 255, 255, 0.2);
+  box-shadow: inset 0 0 0 2px #fff;
+}
+
+/* =========================================================
+   LEGO
+   ========================================================= */
+
+html[data-theme="lego"] {
+  --accent: #c91a09;
+  --line: rgba(60, 40, 0, 0.4);
+}
+
+html[data-theme="lego"] .site .cloth-content,
+html[data-theme="lego"] .site .cloth-content * {
+  font-family: "Arial Rounded MT Bold", "Trebuchet MS", "Segoe UI", sans-serif;
+}
+
+html[data-theme="lego"] .site .intro h1 {
+  color: #111;
+  font-weight: 900;
+  letter-spacing: -0.04em;
+}
+
+html[data-theme="lego"] .site .intro h1 span {
+  color: #c91a09;
+}
+
+html[data-theme="lego"] .site .contact h2 {
+  color: #111;
+  font-weight: 900;
+  letter-spacing: -0.04em;
+}
+
+html[data-theme="lego"] .site .contact h2 em {
+  color: #0055bf;
+}
+
+html[data-theme="lego"] .site .hello {
+  color: #3a3000;
+}
+
+html[data-theme="lego"] .site .intro-text {
+  color: #2a2200;
+}
+
+html[data-theme="lego"] .site :is(.eyebrow, .section-label span:first-child, .skills-caption) {
+  color: #c91a09;
+}
+
+html[data-theme="lego"] .site .section-label .version {
+  color: rgba(60, 40, 0, 0.55);
+}
+
+html[data-theme="lego"] .site .contact-row {
+  color: #111;
+}
+
+html[data-theme="lego"] .site .contact-row:hover {
+  color: #c91a09;
+}
+
+html[data-theme="lego"] .site .contact-row span:last-child {
+  color: #0055bf;
+}
+
+html[data-theme="lego"] .site .skill-group {
+  color: rgba(60, 40, 0, 0.65);
+}
+
+html[data-theme="lego"] .site .skill-sep {
+  background: #c91a09;
+}
+
+html[data-theme="lego"] .site .skill {
+  background: rgba(255, 255, 255, 0.55);
+  box-shadow: inset 0 0 0 1px rgba(60, 40, 0, 0.3);
+}
+
+html[data-theme="lego"] .site .skill.active {
+  background: #fff;
+  box-shadow: inset 0 0 0 2px #c91a09;
+}
+
+/* =========================================================
+   TETRIS
+   ========================================================= */
+
+html[data-theme="tetris"] {
+  --accent: #00f0f0;
+  --line: rgba(120, 140, 255, 0.45);
+}
+
+html[data-theme="tetris"] .site .cloth-content,
+html[data-theme="tetris"] .site .cloth-content * {
+  font-family: "Press Start 2P", ui-monospace, Menlo, Consolas, monospace;
+}
+
+html[data-theme="tetris"] .site .intro h1 {
+  color: #fff;
+  font-size: clamp(22px, 3.2vw, 34px);
+  font-weight: 400;
+  line-height: 1.1;
+  letter-spacing: 0;
+}
+
+html[data-theme="tetris"] .site .intro h1 span {
+  color: #f0f000;
+}
+
+html[data-theme="tetris"] .site .contact h2 {
+  color: #fff;
+  font-size: clamp(14px, 1.9vw, 20px);
+  font-weight: 400;
+  line-height: 1.3;
+  letter-spacing: 0;
+}
+
+html[data-theme="tetris"] .site .contact h2 em {
+  color: #00f0f0;
+}
+
+html[data-theme="tetris"] .site .hello {
+  color: #f0a000;
+  font-size: 11px;
+  font-weight: 400;
+}
+
+html[data-theme="tetris"] .site .intro-text {
+  color: #cfd3ff;
+  font-size: 8px;
+  line-height: 2;
+}
+
+html[data-theme="tetris"] .site :is(.eyebrow, .section-label span:first-child, .skills-caption) {
+  color: #00f0f0;
+  font-size: 7px;
+  font-weight: 400;
+  letter-spacing: 0.1em;
+}
+
+html[data-theme="tetris"] .site .section-label .version {
+  color: #888;
+}
+
+html[data-theme="tetris"] .site .contact-row {
+  color: #fff;
+  font-size: 8px;
+  font-weight: 400;
+}
+
+html[data-theme="tetris"] .site .contact-row:hover {
+  color: #f0f000;
+}
+
+html[data-theme="tetris"] .site .contact-row span:last-child {
+  color: #00f000;
+}
+
+html[data-theme="tetris"] .site .skill-group {
+  color: #a0a8ff;
+  font-size: 7px;
+  font-weight: 400;
+}
+
+html[data-theme="tetris"] .site .skill-sep {
+  background: #f0a000;
+}
+
+html[data-theme="tetris"] .site .skill {
+  background: rgba(20, 24, 70, 0.8);
+  box-shadow: inset 0 0 0 1px rgba(120, 140, 255, 0.6);
+}
+
+html[data-theme="tetris"] .site .skill img {
+  opacity: 0.95;
+  filter: brightness(0) invert(1);
+}
+
+html[data-theme="tetris"] .site .skill.active {
+  background: rgba(0, 240, 240, 0.2);
+  box-shadow: inset 0 0 0 1.5px #00f0f0;
+}
+
+/* =========================================================
+   CLOCK
+   ========================================================= */
+
+html[data-theme="clock"] {
+  --accent: #9a6b1f;
+  --line: rgba(43, 29, 14, 0.4);
+}
+
+html[data-theme="clock"] .site .cloth-content,
+html[data-theme="clock"] .site .cloth-content * {
+  font-family: "Palatino Linotype", Palatino, "Book Antiqua", Georgia, serif;
+}
+
+html[data-theme="clock"] .site .intro h1 {
+  color: #2b1d0e;
+  font-weight: 700;
+  letter-spacing: -0.03em;
+}
+
+html[data-theme="clock"] .site .intro h1 span {
+  color: #9a6b1f;
+}
+
+html[data-theme="clock"] .site .contact h2 {
+  color: #2b1d0e;
+  font-weight: 700;
+  letter-spacing: -0.03em;
+}
+
+html[data-theme="clock"] .site .contact h2 em {
+  color: #8a1c14;
+  font-style: italic;
+}
+
+html[data-theme="clock"] .site .hello {
+  color: #5a4326;
+  font-style: italic;
+}
+
+html[data-theme="clock"] .site .intro-text {
+  color: #3b2a14;
+}
+
+html[data-theme="clock"] .site :is(.eyebrow, .section-label span:first-child, .skills-caption) {
+  color: #8a1c14;
+  letter-spacing: 0.3em;
+}
+
+html[data-theme="clock"] .site .section-label .version {
+  color: rgba(43, 29, 14, 0.5);
+}
+
+html[data-theme="clock"] .site .contact-row {
+  color: #2b1d0e;
+}
+
+html[data-theme="clock"] .site .contact-row:hover {
+  color: #8a1c14;
+}
+
+html[data-theme="clock"] .site .contact-row span:last-child {
+  color: #8a1c14;
+}
+
+html[data-theme="clock"] .site .skill-group {
+  color: rgba(43, 29, 14, 0.6);
+}
+
+html[data-theme="clock"] .site .skill-sep {
+  background: #9a6b1f;
+}
+
+html[data-theme="clock"] .site .skill {
+  background: rgba(255, 255, 255, 0.4);
+  box-shadow: inset 0 0 0 1px rgba(43, 29, 14, 0.3);
+}
+
+html[data-theme="clock"] .site .skill.active {
+  background: rgba(255, 255, 255, 0.75);
+  box-shadow: inset 0 0 0 1.5px #9a6b1f;
+}
+
+/* =========================================================
+   OLD SCHOOL RUNESCAPE
+   ========================================================= */
+
+html[data-theme="runescape"] {
+  --accent: #ff981f;
+  --line: rgba(255, 200, 40, 0.4);
+}
+
+html[data-theme="runescape"] .site .cloth-content,
+html[data-theme="runescape"] .site .cloth-content * {
+  font-family: "Trebuchet MS", Verdana, sans-serif;
+  text-shadow: 1px 1px 0 #000;
+}
+
+html[data-theme="runescape"] .site .intro h1 {
+  color: #ffff00;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+
+html[data-theme="runescape"] .site .intro h1 span {
+  color: #ff981f;
+}
+
+html[data-theme="runescape"] .site .contact h2 {
+  color: #ff981f;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+
+html[data-theme="runescape"] .site .contact h2 em {
+  color: #ffff00;
+}
+
+html[data-theme="runescape"] .site .hello {
+  color: #00ffff;
+}
+
+html[data-theme="runescape"] .site .intro-text {
+  color: #fff;
+}
+
+html[data-theme="runescape"] .site :is(.eyebrow, .section-label span:first-child, .skills-caption) {
+  color: #ff981f;
+}
+
+html[data-theme="runescape"] .site .section-label .version {
+  color: #c8c8c8;
+}
+
+html[data-theme="runescape"] .site .contact-row {
+  color: #fff;
+}
+
+html[data-theme="runescape"] .site .contact-row:hover {
+  color: #ffff00;
+}
+
+html[data-theme="runescape"] .site .contact-row span:last-child {
+  color: #ffff00;
+}
+
+html[data-theme="runescape"] .site .skill-group {
+  color: #00ffff;
+}
+
+html[data-theme="runescape"] .site .skill-sep {
+  background: #ffff00;
+}
+
+html[data-theme="runescape"] .site .skill {
+  background: rgba(0, 0, 0, 0.35);
+  box-shadow: inset 0 0 0 1px #5b4d33;
+}
+
+html[data-theme="runescape"] .site .skill img {
+  opacity: 0.95;
+  filter: brightness(0) invert(1);
+}
+
+html[data-theme="runescape"] .site .skill.active {
+  background: rgba(255, 200, 40, 0.2);
+  box-shadow: inset 0 0 0 1.5px #ffc828;
+}
+
+html[data-theme="water"] .site .logo {
+  color: #5a3d12;
+}
+
+/* =========================================================
+   GEMS
+   ========================================================= */
+
+html[data-theme="gems"] .bd-gems {
+  opacity: 1;
+}
+
+.bd-gems {
+  background:
+		radial-gradient(ellipse at 30% 20%, rgba(255, 120, 200, 0.18), transparent 50%),
+		radial-gradient(ellipse at 75% 80%, rgba(120, 220, 255, 0.16), transparent 50%),
+		#12061f;
+}
+
+html[data-theme="gems"] .site :is(.intro h1, .contact h2, .contact h2 em, .hello) {
+  background: none;
+  -webkit-text-fill-color: currentColor;
+  filter: none;
+  animation: none;
+}
+
+html[data-theme="gems"] .site .intro h1 span {
+  -webkit-text-fill-color: currentColor;
+  opacity: 1;
+}
+
+html[data-theme="gems"] {
+  --accent: #ff78c8;
+  --line: rgba(255, 255, 255, 0.4);
+}
+
+html[data-theme="gems"] .site .intro h1 {
+  color: #fff;
+  font-weight: 800;
+  text-shadow: 0 0 14px rgba(255, 255, 255, 0.4);
+}
+
+html[data-theme="gems"] .site .intro h1 span {
+  color: #ffd6ef;
+}
+
+html[data-theme="gems"] .site .contact h2 {
+  color: #fff;
+  text-shadow: 0 0 12px rgba(255, 255, 255, 0.35);
+}
+
+html[data-theme="gems"] .site .contact h2 em {
+  color: #ffb3e0;
+}
+
+html[data-theme="gems"] .site .hello {
+  color: #e6f6ff;
+}
+
+html[data-theme="gems"] .site .intro-text {
+  color: rgba(255, 255, 255, 0.88);
+}
+
+html[data-theme="gems"] .site :is(.eyebrow, .section-label span:first-child, .skills-caption) {
+  color: #ffd6ef;
+  text-shadow: 0 0 8px rgba(255, 120, 200, 0.6);
+}
+
+html[data-theme="gems"] .site .section-label .version {
+  color: rgba(255, 255, 255, 0.6);
+}
+
+html[data-theme="gems"] .site .contact-row {
+  color: #fff;
+}
+
+html[data-theme="gems"] .site .contact-row:hover {
+  color: #ffb3e0;
+}
+
+html[data-theme="gems"] .site .contact-row span:last-child {
+  color: #9fe4ff;
+}
+
+html[data-theme="gems"] .site .skill-group {
+  color: rgba(255, 255, 255, 0.75);
+}
+
+html[data-theme="gems"] .site .skill-sep {
+  background: #ff78c8;
+}
+
+html[data-theme="gems"] .site .skill {
+  background: rgba(255, 255, 255, 0.16);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.5);
+}
+
+html[data-theme="gems"] .site .skill img {
+  opacity: 0.95;
+  filter: brightness(0) invert(1);
+}
+
+html[data-theme="gems"] .site .skill.active {
+  background: rgba(255, 255, 255, 0.3);
+  box-shadow:
+		inset 0 0 0 1.5px #fff,
+		0 0 10px rgba(255, 255, 255, 0.5);
 }

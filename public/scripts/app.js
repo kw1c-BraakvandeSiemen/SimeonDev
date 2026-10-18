@@ -365,30 +365,6 @@ const VIRTUALBOY = {
 	grid: { step: 1, color: "255,30,30", alpha: 0.16 },
 };
 
-const LIQUID = {
-	name: "liquid",
-	fixed: ["29,39,51", "74,107,255", "255,120,200"],
-	edge: "rgba(255, 255, 255, 0.95)",
-	color(t, nx, ny, s) {
-		const hi = clamp((s - 1) * 3, 0, 1);
-		const lo = clamp((1 - s) * 1.6, 0, 1);
-
-		let r = lerp(236, 222, t) + nx * 22;
-		let g = lerp(242, 228, t) + ny * 10;
-		let b = lerp(252, 250, t) - nx * 22;
-
-		r = lerp(r, 170, lo);
-		g = lerp(g, 184, lo);
-		b = lerp(b, 214, lo);
-
-		r = lerp(r, 255, hi);
-		g = lerp(g, 255, hi);
-		b = lerp(b, 255, hi);
-
-		return [clamp(r, 0, 255), clamp(g, 0, 255), clamp(b, 0, 255)];
-	},
-};
-
 const WATER = {
 	name: "water",
 	fixed: ["255,255,255", "140,235,255", "60,170,230"],
@@ -412,10 +388,312 @@ const WATER = {
 	},
 };
 
-const ALL_THEMES = [...THEMES, RETRO, TERMINAL, GAMEBOY, BLUEPRINT, NEWSPAPER, FALLOUT, KEYBOARD, VIRTUALBOY, LIQUID, WATER];
+function hash2(i, j) {
+	const n = Math.sin(i * 127.1 + j * 311.7) * 43758.5453;
+
+	return n - Math.floor(n);
+}
+
+const MINECRAFT = {
+	name: "minecraft",
+	fixed: ["255,255,255", "255,255,85", "85,255,85"],
+	edge: "rgba(0, 0, 0, 0.6)",
+	color(t, nx, ny, s, time, i, j) {
+		const h = hash2(i, j);
+
+		let base;
+
+		if (j < 2 || (j === 2 && hash2(i, 7) > 0.5)) {
+			base = [lerp(80, 110, h), lerp(140, 175, h), lerp(40, 60, h)];
+		} else if (h > 0.93) {
+			base = [125, 125, 125];
+		} else if (h < 0.12) {
+			base = [104, 72, 48];
+		} else {
+			base = [lerp(122, 146, h), lerp(86, 104, h), lerp(58, 76, h)];
+		}
+
+		return [clamp(base[0] * s, 0, 255), clamp(base[1] * s, 0, 255), clamp(base[2] * s, 0, 255)];
+	},
+	grid: { step: 1, color: "0,0,0", alpha: 0.1 },
+};
+
+const LEGO = {
+	name: "lego",
+	fixed: ["17,17,17", "201,26,9", "0,85,191"],
+	edge: "rgba(120, 90, 0, 0.7)",
+	studs: { radius: 9 },
+	color(t, nx, ny, s) {
+		const hi = clamp((s - 1) * 2.5, 0, 1);
+		const lo = clamp((1 - s) * 1.4, 0, 1);
+
+		let r = lerp(242, 255, hi);
+		let g = lerp(205, 240, hi);
+		let b = lerp(55, 150, hi);
+
+		r *= 1 - lo * 0.3;
+		g *= 1 - lo * 0.35;
+		b *= 1 - lo * 0.4;
+
+		return [clamp(r, 0, 255), clamp(g, 0, 255), clamp(b, 0, 255)];
+	},
+};
+
+const TETRIS_COLORS = [
+	[0, 240, 240],
+	[240, 240, 0],
+	[160, 0, 240],
+	[0, 240, 0],
+	[240, 0, 0],
+	[0, 0, 240],
+	[240, 160, 0],
+];
+
+const TETRIS = {
+	name: "tetris",
+	fixed: ["255,255,255", "0,240,240", "240,240,0"],
+	edge: "rgba(255, 255, 255, 0.6)",
+	color(t, nx, ny, s, time, i, j) {
+		const wall = i < 2 || i >= cols - 3;
+
+		if (wall) {
+			const side = i < 2 ? 0 : 1;
+			const localI = i < 2 ? i : i - (cols - 3);
+
+			const by = Math.floor(j / 2);
+			const blockRows = Math.floor((rows - 1) / 2);
+
+			const fromBottom = blockRows - 1 - by;
+			const stack = 3 + Math.floor(hash2(side * 5, 3) * 8);
+
+			const present = fromBottom < 2 || (fromBottom < stack && hash2(side * 13 + by, by * 7 + side) > 0.25);
+
+			if (present) {
+				const base = TETRIS_COLORS[Math.floor(hash2(side + by * 3, by) * TETRIS_COLORS.length)];
+
+				const bevel = localI === 0 && j % 2 === 0 ? 45 : localI === 1 && j % 2 === 1 ? -45 : 0;
+
+				return [clamp((base[0] + bevel) * s, 0, 255), clamp((base[1] + bevel) * s, 0, 255), clamp((base[2] + bevel) * s, 0, 255)];
+			}
+		}
+
+		return [clamp((12 + t * 6) * s, 0, 255), clamp((12 + t * 6) * s, 0, 255), clamp((34 + t * 12) * s, 0, 255)];
+	},
+	grid: { step: 1, color: "120,140,255", alpha: 0.08 },
+};
+
+const CLOCK_NUMERALS = ["XII", "I", "II", "III", "IIII", "V", "VI", "VII", "VIII", "IX", "X", "XI"];
+
+const clockPoint = { x: 0, y: 0 };
+
+function clockEdge(angle, inset, frac) {
+	const margin = 24;
+
+	const halfW = width / 2 - margin;
+	const halfH = height / 2 - margin;
+
+	const dx = Math.sin(angle);
+	const dy = -Math.cos(angle);
+
+	const tx = Math.abs(dx) > 1e-6 ? halfW / Math.abs(dx) : Infinity;
+	const ty = Math.abs(dy) > 1e-6 ? halfH / Math.abs(dy) : Infinity;
+
+	const reach = Math.min(tx, ty) * frac - inset;
+
+	sampleMesh(width / 2 + dx * reach, height / 2 + dy * reach, clockPoint);
+
+	return { x: clockPoint.x, y: clockPoint.y };
+}
+
+function drawClock(strength) {
+	const now = new Date();
+
+	const seconds = now.getSeconds() + now.getMilliseconds() / 1000;
+	const minutes = now.getMinutes() + seconds / 60;
+	const hours = (now.getHours() % 12) + minutes / 60;
+
+	for (let n = 0; n < 60; n++) {
+		const major = n % 5 === 0;
+		const angle = (n / 60) * Math.PI * 2;
+
+		const a = clockEdge(angle, 0, 1);
+		const b = clockEdge(angle, major ? 14 : 7, 1);
+
+		ctx.strokeStyle = "rgba(60, 40, 15, " + (major ? 0.55 : 0.3) * strength + ")";
+		ctx.lineWidth = major ? 2 : 1;
+
+		ctx.beginPath();
+		ctx.moveTo(a.x, a.y);
+		ctx.lineTo(b.x, b.y);
+		ctx.stroke();
+	}
+
+	ctx.font = "italic 13px Georgia, serif";
+	ctx.textAlign = "center";
+	ctx.textBaseline = "middle";
+	ctx.fillStyle = "rgba(60, 40, 15, " + 0.5 * strength + ")";
+
+	for (let h = 0; h < 12; h++) {
+		const p = clockEdge((h / 12) * Math.PI * 2, 30, 1);
+
+		ctx.fillText(CLOCK_NUMERALS[h], p.x, p.y);
+	}
+
+	const center = clockEdge(0, 0, 0);
+
+	const hands = [
+		{ angle: (hours / 12) * Math.PI * 2, frac: 0.5, width: 5, color: "rgba(60, 40, 15, " + 0.3 * strength + ")" },
+		{ angle: (minutes / 60) * Math.PI * 2, frac: 0.75, width: 3, color: "rgba(60, 40, 15, " + 0.3 * strength + ")" },
+		{ angle: (seconds / 60) * Math.PI * 2, frac: 0.85, width: 1.5, color: "rgba(170, 30, 20, " + 0.55 * strength + ")" },
+	];
+
+	hands.forEach((hand) => {
+		const tip = clockEdge(hand.angle, 0, hand.frac);
+
+		ctx.strokeStyle = hand.color;
+		ctx.lineWidth = hand.width;
+		ctx.lineCap = "round";
+
+		ctx.beginPath();
+		ctx.moveTo(center.x, center.y);
+		ctx.lineTo(tip.x, tip.y);
+		ctx.stroke();
+	});
+
+	ctx.lineCap = "butt";
+
+	ctx.fillStyle = "rgba(170, 30, 20, " + 0.7 * strength + ")";
+	ctx.beginPath();
+	ctx.arc(center.x, center.y, 5, 0, Math.PI * 2);
+	ctx.fill();
+}
+
+const CLOCK = {
+	name: "clock",
+	fixed: ["43,29,14", "138,28,20", "154,107,31"],
+	edge: "rgba(154, 107, 31, 0.9)",
+	draw: drawClock,
+	color(t, nx, ny, s) {
+		const r = lerp(240, 222, t) * s;
+		const g = lerp(232, 208, t) * s;
+		const b = lerp(210, 176, t) * s;
+
+		return [clamp(r, 0, 255), clamp(g, 0, 255), clamp(b, 0, 255)];
+	},
+};
+
+const RUNESCAPE = {
+	name: "runescape",
+	fixed: ["255,255,0", "0,255,255", "255,152,31"],
+	edge: "rgba(255, 200, 40, 0.9)",
+	color(t, nx, ny, s, time, i, j) {
+		const h = hash2(i, j);
+
+		const tone = (h - 0.5) * 18;
+
+		return [clamp((78 + tone) * s, 0, 255), clamp((66 + tone) * s, 0, 255), clamp((48 + tone * 0.8) * s, 0, 255)];
+	},
+	grid: { step: 4, color: "0,0,0", alpha: 0.28 },
+};
+
+function drawStuds(studs, strength) {
+	for (let j = 1; j < rows - 1; j += 2) {
+		for (let i = 1; i < cols - 1; i += 2) {
+			const k = j * cols + i;
+
+			const scale = (Math.hypot(sx[k + 1] - sx[k], sy[k + 1] - sy[k]) + Math.hypot(sx[k + cols] - sx[k], sy[k + cols] - sy[k])) / (2 * CONFIG.spacing);
+
+			const radius = studs.radius * scale;
+
+			ctx.fillStyle = "rgba(0, 0, 0, " + 0.12 * strength + ")";
+			ctx.beginPath();
+			ctx.arc(sx[k] + 1.5, sy[k] + 2.5, radius + 1.5, 0, Math.PI * 2);
+			ctx.fill();
+
+			ctx.fillStyle = "rgba(255, 255, 255, " + 0.3 * strength + ")";
+			ctx.strokeStyle = "rgba(0, 0, 0, " + 0.2 * strength + ")";
+			ctx.lineWidth = 1;
+
+			ctx.beginPath();
+			ctx.arc(sx[k], sy[k], radius, 0, Math.PI * 2);
+			ctx.fill();
+			ctx.stroke();
+		}
+	}
+}
+
+const GEM_STOPS = [
+	[150, 10, 50],
+	[110, 40, 170],
+	[20, 70, 190],
+	[10, 140, 90],
+];
+
+function drawSparkles(strength, time) {
+	ctx.lineCap = "round";
+
+	for (let j = 1; j < rows - 1; j += 3) {
+		for (let i = 1; i < cols - 1; i += 3) {
+			const h = hash2(i, j);
+
+			if (h < 0.8) {
+				continue;
+			}
+
+			const phase = (time * 0.8 + h * 10) % 1;
+			const twinkle = Math.pow(Math.sin(phase * Math.PI), 4);
+
+			if (twinkle < 0.05) {
+				continue;
+			}
+
+			const k = j * cols + i;
+			const reach = 5 + 9 * twinkle;
+
+			ctx.strokeStyle = "rgba(255, 255, 255, " + 0.9 * twinkle * strength + ")";
+			ctx.lineWidth = 1.5;
+
+			ctx.beginPath();
+			ctx.moveTo(sx[k] - reach, sy[k]);
+			ctx.lineTo(sx[k] + reach, sy[k]);
+			ctx.moveTo(sx[k], sy[k] - reach);
+			ctx.lineTo(sx[k], sy[k] + reach);
+			ctx.stroke();
+		}
+	}
+
+	ctx.lineCap = "butt";
+}
+
+const GEMS = {
+	name: "gems",
+	fixed: ["255,255,255", "255,120,200", "120,220,255"],
+	edge: "rgba(255, 255, 255, 0.85)",
+	draw: drawSparkles,
+	color(t, nx, ny, s, time, i, j) {
+		const scaled = clamp(t, 0, 1) * (GEM_STOPS.length - 1);
+		const index = Math.min(Math.floor(scaled), GEM_STOPS.length - 2);
+		const f = scaled - index;
+
+		const a = GEM_STOPS[index];
+		const b = GEM_STOPS[index + 1];
+
+		const facet = 0.8 + 0.4 * hash2(Math.floor(i / 3), Math.floor(j / 3));
+		const glint = Math.max(0, s - 1.05) * 220;
+
+		const r = lerp(a[0], b[0], f) * facet * s + glint;
+		const g = lerp(a[1], b[1], f) * facet * s + glint;
+		const bl = lerp(a[2], b[2], f) * facet * s + glint;
+
+		return [clamp(r, 0, 255), clamp(g, 0, 255), clamp(bl, 0, 255)];
+	},
+	grid: { step: 3, color: "255,255,255", alpha: 0.14 },
+};
+
+const ALL_THEMES = [...THEMES, RETRO, TERMINAL, GAMEBOY, BLUEPRINT, NEWSPAPER, FALLOUT, KEYBOARD, VIRTUALBOY, WATER, MINECRAFT, LEGO, TETRIS, CLOCK, RUNESCAPE, GEMS];
 
 const BASICS_LINES = {
-	ask: "Meow ik heb geen verdere thema inspiratie meer, terug naar de basics",
+	ask: "Meow ik heb geen verdere thema inspiratie meer,\nterug naar de basics",
 	after: "meow. basics",
 };
 
@@ -486,8 +764,13 @@ const THEME_LINES = {
 	fallout: { ask: "Meow ik wil naar de vault", after: "meow. war never changes" },
 	keyboard: { ask: "Meow ik wil muziek maken", after: "meow. do re mi miauw" },
 	virtualboy: { ask: "Meow ik wil rood zien", after: "meow. ik heb hoofdpijn" },
-	liquid: { ask: "Meow ik wil door glas kijken", after: "meow. doorzichtig" },
 	water: { ask: "Meow ik wil water zien", after: "meow. ik blijf wel droog" },
+	minecraft: { ask: "Meow ik wil blokjes zien", after: "meow. ssssss" },
+	lego: { ask: "Meow ik wil bouwen", after: "meow. au, een steentje" },
+	tetris: { ask: "Meow ik wil blokken zien vallen", after: "meow. lijn!" },
+	clock: { ask: "Meow ik wil weten hoe laat het is", after: "meow. etenstijd" },
+	runescape: { ask: "Meow ik wil de grind zien", after: "meow. level 99 miauwen" },
+	gems: { ask: "Meow ik wil iets glimmends zien", after: "meow. ik ben rijk" },
 };
 
 
@@ -1268,22 +1551,150 @@ function drawRain() {
 	});
 }
 
-function updateFx(now) {
-	const active = themeState.current === TERMINAL;
+const FX = {
+	notes: [],
+	pieces: [],
+	lastNote: 0,
+	lastPiece: 0,
+};
 
-	if (active) {
-		RAIN.lastActive = now;
+const FX_NOTES = ["♪", "♫", "♩", "♬"];
+
+const TETROMINOES = [
+	[[0, 0], [1, 0], [2, 0], [3, 0]],
+	[[0, 0], [1, 0], [0, 1], [1, 1]],
+	[[0, 0], [1, 0], [2, 0], [1, 1]],
+	[[1, 0], [2, 0], [0, 1], [1, 1]],
+	[[0, 0], [1, 0], [1, 1], [2, 1]],
+	[[0, 0], [0, 1], [1, 1], [2, 1]],
+	[[2, 0], [0, 1], [1, 1], [2, 1]],
+];
+
+const fxState = { theme: null, time: 0, dirty: false };
+
+function fxReduced() {
+	return window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+}
+
+function drawNotes(now) {
+	fxCtx.setTransform(dpr, 0, 0, dpr, 0, 0);
+	fxCtx.clearRect(0, 0, window.innerWidth, window.innerHeight);
+
+	if (fxReduced()) {
+		return;
 	}
 
-	if (active || now - RAIN.lastActive < 2000) {
-		drawRain();
+	if (now - FX.lastNote > 320 && FX.notes.length < 28) {
+		FX.lastNote = now;
 
-		RAIN.dirty = true;
-	} else if (RAIN.dirty) {
+		FX.notes.push({
+			x: Math.random() * window.innerWidth,
+			y: -30,
+			vy: 0.6 + Math.random() * 1.2,
+			size: 18 + Math.random() * 20,
+			glyph: pickRandom(FX_NOTES),
+			sway: Math.random() * Math.PI * 2,
+			swaySpeed: 0.01 + Math.random() * 0.02,
+			alpha: 0.25 + Math.random() * 0.35,
+			red: Math.random() < 0.25,
+		});
+	}
+
+	fxCtx.textBaseline = "middle";
+
+	FX.notes = FX.notes.filter((note) => {
+		note.y += note.vy;
+		note.sway += note.swaySpeed;
+
+		fxCtx.font = note.size + "px serif";
+		fxCtx.fillStyle = note.red ? "rgba(214, 58, 70, " + (note.alpha + 0.2) + ")" : "rgba(255, 255, 255, " + note.alpha + ")";
+
+		fxCtx.fillText(note.glyph, note.x + Math.sin(note.sway) * 24, note.y);
+
+		return note.y < window.innerHeight + 40;
+	});
+}
+
+function drawPieces(now) {
+	fxCtx.setTransform(dpr, 0, 0, dpr, 0, 0);
+	fxCtx.clearRect(0, 0, window.innerWidth, window.innerHeight);
+
+	if (fxReduced()) {
+		return;
+	}
+
+	const size = 28;
+
+	if (now - FX.lastPiece > 700 && FX.pieces.length < 12) {
+		FX.lastPiece = now;
+
+		let cells = pickRandom(TETROMINOES).map((cell) => cell.slice());
+
+		const turns = Math.floor(Math.random() * 4);
+
+		for (let n = 0; n < turns; n++) {
+			cells = cells.map(([cx, cy]) => [-cy, cx]);
+		}
+
+		FX.pieces.push({
+			cells,
+			color: pickRandom(TETRIS_COLORS),
+			x: Math.floor((Math.random() * window.innerWidth) / size) * size,
+			y: -size * 4,
+			vy: 1.2 + Math.random() * 1.2,
+		});
+	}
+
+	FX.pieces = FX.pieces.filter((piece) => {
+		piece.y += piece.vy;
+
+		const [r, g, b] = piece.color;
+
+		piece.cells.forEach(([cx, cy]) => {
+			const px = piece.x + cx * size;
+			const py = piece.y + cy * size;
+
+			fxCtx.fillStyle = "rgba(" + r + "," + g + "," + b + ",0.5)";
+			fxCtx.fillRect(px + 1, py + 1, size - 2, size - 2);
+
+			fxCtx.fillStyle = "rgba(255, 255, 255, 0.28)";
+			fxCtx.fillRect(px + 1, py + 1, size - 2, 4);
+			fxCtx.fillRect(px + 1, py + 1, 4, size - 2);
+
+			fxCtx.fillStyle = "rgba(0, 0, 0, 0.25)";
+			fxCtx.fillRect(px + size - 5, py + 1, 4, size - 2);
+			fxCtx.fillRect(px + 1, py + size - 5, size - 2, 4);
+		});
+
+		return piece.y < window.innerHeight + size * 4;
+	});
+}
+
+const FX_THEMES = {
+	terminal: drawRain,
+	keyboard: drawNotes,
+	tetris: drawPieces,
+};
+
+function updateFx(now) {
+	const current = themeState.current && FX_THEMES[themeState.current.name] ? themeState.current : null;
+
+	if (current) {
+		fxState.theme = current;
+		fxState.time = now;
+	}
+
+	const live = current || (fxState.theme && now - fxState.time < 2000 ? fxState.theme : null);
+
+	if (live) {
+		FX_THEMES[live.name](now);
+
+		fxState.dirty = true;
+	} else if (fxState.dirty) {
 		fxCtx.setTransform(1, 0, 0, 1, 0, 0);
 		fxCtx.clearRect(0, 0, fxCanvas.width, fxCanvas.height);
 
-		RAIN.dirty = false;
+		fxState.dirty = false;
 	}
 }
 
@@ -1564,9 +1975,17 @@ function gridIndices(n, step) {
 	return list;
 }
 
-function drawExtras(theme, strength) {
+function drawExtras(theme, strength, time) {
 	if (!theme || strength < 0.02) {
 		return;
+	}
+
+	if (theme.studs) {
+		drawStuds(theme.studs, strength);
+	}
+
+	if (theme.draw) {
+		theme.draw(strength, time);
 	}
 
 	if (theme.grid) {
@@ -1691,10 +2110,10 @@ function draw(time) {
 		}
 	}
 
-	drawExtras(themeState.current, themeState.mix);
+	drawExtras(themeState.current, themeState.mix, time);
 
 	if (blending) {
-		drawExtras(themeState.previous, 1 - themeState.mix);
+		drawExtras(themeState.previous, 1 - themeState.mix, time);
 	}
 
 	ctx.beginPath();
