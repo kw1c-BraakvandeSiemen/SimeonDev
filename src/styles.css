@@ -605,7 +605,8 @@ body {
 	.cloth {
 		width: min(680px, calc(100vw - 44px));
 
-		height: min(470px, calc(100vh - 180px));
+		height: min(560px, calc(100vh - 140px));
+		height: min(560px, calc(100svh - 140px));
 	}
 
 	.cloth-content {
@@ -673,23 +674,24 @@ body {
 	}
 
 	.scene {
-		padding: 70px 18px 45px;
+		padding: 62px 18px 28px;
 	}
 
 	.cloth {
 		width: calc(100vw - 36px);
 
-		height: min(400px, calc(100vh - 150px));
+		height: min(570px, calc(100vh - 100px));
+		height: min(570px, calc(100svh - 100px));
 	}
 
 	.cloth-content {
-		padding: 20px;
+		padding: 18px 20px;
 	}
 
 	.content-grid {
-		gap: 20px;
+		gap: 18px;
 
-		padding-top: 25px;
+		padding-top: 14px;
 	}
 
 	.intro h1 {
@@ -1270,7 +1272,7 @@ html[data-theme] .skill.active {
 	}
 }
 
-@media (max-height: 600px) {
+@media (max-height: 480px) {
 	.skills {
 		display: none;
 	}
