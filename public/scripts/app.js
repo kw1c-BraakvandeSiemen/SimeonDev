@@ -777,6 +777,33 @@ const BASICS_LINES = {
 
 const usedThemes = new Set();
 
+const THEME_SCENES = {
+	runescape: async (star) => {
+		const left = spawnCat();
+		const right = spawnCat();
+
+		left.px = 20;
+		left.py = 40;
+
+		right.px = 80;
+		right.py = 40;
+
+		await sleep(1400);
+
+		say(left, "meow. wat is je fishing level?");
+
+		await sleep(2800);
+
+		say(star, "meow. 69");
+
+		await sleep(2400);
+
+		say(right, "meow. nice");
+
+		await sleep(2600);
+	},
+};
+
 function nextTheme() {
 	let remaining = ALL_THEMES.filter((theme) => !usedThemes.has(theme.name));
 
@@ -1264,11 +1291,15 @@ async function themeSequence(theme) {
 
 	await sleep(2800);
 
+	if (theme && THEME_SCENES[theme.name]) {
+		await THEME_SCENES[theme.name](star);
+	}
+
 	say(star, lines.after);
 
 	await sleep(3600);
 
-	star.element.classList.remove("in");
+	party.cats.forEach((cat) => cat.element.classList.remove("in"));
 
 	await sleep(3800);
 
