@@ -76,6 +76,8 @@ const state = {
 	grabY: 0,
 
 	travel: 0,
+	prevX: null,
+	prevY: null,
 };
 
 let cols = 0;
@@ -494,6 +496,55 @@ async function conversation() {
 
 		await sleep(600);
 	}
+}
+
+async function flingCat(cat) {
+	if (cat.flung) {
+		return;
+	}
+
+	cat.flung = true;
+
+	cat.flip.style.setProperty("--fling-x", `${(Math.random() < 0.5 ? -1 : 1) * (60 + Math.random() * 60)}px`);
+
+	cat.element.classList.add("flung");
+
+	if (Math.random() < 0.6) {
+		say(cat, pickRandom(DRAG_LINES));
+	}
+
+	await sleep(950);
+
+	if (partyLive()) {
+		cat.element.classList.remove("in");
+
+		placeCat(cat);
+
+		cat.element.classList.remove("flung");
+
+		await sleep(120);
+
+		if (partyLive()) {
+			cat.element.classList.add("in");
+		}
+	}
+
+	cat.flung = false;
+}
+
+function flingNearbyCats() {
+	if (!partyLive()) {
+		return;
+	}
+
+	party.cats.forEach((cat) => {
+		const catX = (cat.px / 100) * width;
+		const catY = (cat.py / 100) * height;
+
+		if (Math.hypot(catX - state.grabX, catY - state.grabY) < 150) {
+			flingCat(cat);
+		}
+	});
 }
 
 async function dragReaction() {
@@ -928,6 +979,10 @@ function startDrag() {
 	}
 
 	state.travel = 0;
+	state.prevX = null;
+	state.prevY = null;
+
+	flingNearbyCats();
 
 	state.dx = 0;
 	state.dy = 0;
@@ -1390,7 +1445,12 @@ canvas.addEventListener("pointermove", (event) => {
 		return;
 	}
 
-	state.travel += Math.hypot(event.movementX || 0, event.movementY || 0);
+	if (state.prevX !== null) {
+		state.travel += Math.hypot(event.clientX - state.prevX, event.clientY - state.prevY);
+	}
+
+	state.prevX = event.clientX;
+	state.prevY = event.clientY;
 
 	const length = Math.hypot(dx, dy);
 	const scale = length > 0 ? (CONFIG.maxPull * Math.tanh(length / CONFIG.maxPull)) / length : 1;
