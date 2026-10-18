@@ -846,10 +846,10 @@ function drawXp(strength) {
 		ctx.textAlign = "left";
 
 		ctx.fillStyle = "rgba(0, 0, 0, 0.35)";
-		ctx.fillText("siemen.dev - Microsoft Internet Explorer", 15, 21);
+		ctx.fillText("siemen.dev", 15, 21);
 
 		ctx.fillStyle = "#fff";
-		ctx.fillText("siemen.dev - Microsoft Internet Explorer", 14, 20);
+		ctx.fillText("siemen.dev", 14, 20);
 
 		const button = (x, red) => {
 			ctx.fillStyle = red ? "#d9472b" : "#2f6ed6";
@@ -1312,7 +1312,630 @@ const SCENE_PLAYERS = [
 	[50, 93],
 ];
 
-const ALL_THEMES = [...THEMES, RETRO, TERMINAL, GAMEBOY, BLUEPRINT, NEWSPAPER, FALLOUT, KEYBOARD, VIRTUALBOY, WATER, MINECRAFT, LEGO, TETRIS, CLOCK, RUNESCAPE, GEMS, CASINO, XP, INVADERS, BSOD, NOTFOUND, CHESS, MINIGOLF, AIRHOCKEY];
+function spawnAt(list) {
+	return list.map(([px, py]) => {
+		const cat = spawnCat();
+
+		cat.px = px;
+		cat.py = py;
+
+		return cat;
+	});
+}
+
+function cheerAll(cats, star, line) {
+	cats.forEach((cat, index) => {
+		cat.element.classList.add("cheer");
+
+		setTimeout(() => say(cat, pickRandom(["meow!", "MEOW!", "meow meow!", "meow. wauw"])), index * 250);
+	});
+
+	star.element.classList.add("cheer");
+
+	say(star, line);
+}
+
+/* ---------- Bowling ---------- */
+
+const bowl = { phase: "idle", t0: 0, t1: 0 };
+
+function drawBowling(strength) {
+	const now = performance.now();
+
+	const startX = width * 0.07;
+	const endX = width - 58;
+	const midY = height / 2;
+
+	ctx.globalAlpha = strength;
+
+	let since = 0;
+
+	if (bowl.phase === "strike") {
+		since = (now - bowl.t1) / 1000;
+	}
+
+	const baseX = width - 50;
+
+	let index = 0;
+
+	for (let r = 0; r < 4; r++) {
+		for (let k = 0; k <= r; k++) {
+			const px = baseX + r * 13;
+			const py = midY + (k - r / 2) * 15;
+
+			let dx = 0;
+			let dy = 0;
+			let rot = 0;
+			let alpha = 1;
+
+			if (bowl.phase === "strike") {
+				const h = hash2(index, 3);
+
+				dx = (30 + h * 60) * since * 1.5;
+				dy = (hash2(index, 9) - 0.5) * 120 * since;
+				rot = since * (6 + h * 8);
+				alpha = clamp(1 - since / 1.4, 0, 1);
+			}
+
+			index++;
+
+			if (alpha <= 0) {
+				continue;
+			}
+
+			withMesh(px + dx, py + dy, () => {
+				ctx.globalAlpha = strength * alpha;
+				ctx.rotate(rot);
+
+				ctx.fillStyle = "#fff";
+				ctx.beginPath();
+				ctx.ellipse(0, 1, 3.6, 6.2, 0, 0, Math.PI * 2);
+				ctx.fill();
+
+				ctx.beginPath();
+				ctx.arc(0, -6, 2.6, 0, Math.PI * 2);
+				ctx.fill();
+
+				ctx.fillStyle = "#e53935";
+				ctx.fillRect(-3.2, -3.2, 6.4, 1.8);
+			});
+		}
+	}
+
+	let ballX = startX;
+	let ballAlpha = 1;
+	let show = bowl.phase === "idle" || bowl.phase === "roll" || bowl.phase === "strike";
+
+	if (bowl.phase === "roll") {
+		const p = clamp((now - bowl.t0) / 1500, 0, 1);
+
+		ballX = lerp(startX, endX, 1 - Math.pow(1 - p, 1.4));
+
+		if (p >= 1) {
+			bowl.phase = "strike";
+			bowl.t1 = now;
+		}
+	}
+
+	if (bowl.phase === "strike") {
+		ballX = endX;
+		ballAlpha = clamp(1 - since / 0.4, 0, 1);
+
+		if (ballAlpha <= 0) {
+			show = false;
+		}
+	}
+
+	if (show) {
+		withMesh(ballX, midY, () => {
+			ctx.globalAlpha = strength * ballAlpha;
+
+			ctx.fillStyle = "rgba(0, 0, 0, 0.25)";
+			ctx.beginPath();
+			ctx.arc(1.5, 2.5, 8, 0, Math.PI * 2);
+			ctx.fill();
+
+			ctx.fillStyle = "#1a237e";
+			ctx.beginPath();
+			ctx.arc(0, 0, 8, 0, Math.PI * 2);
+			ctx.fill();
+
+			ctx.fillStyle = "rgba(255, 255, 255, 0.45)";
+			ctx.beginPath();
+			ctx.arc(-3, -3, 2.2, 0, Math.PI * 2);
+			ctx.fill();
+		});
+	}
+
+	ctx.globalAlpha = 1;
+}
+
+const BOWLING = {
+	name: "bowling",
+	fixed: ["58,36,16", "198,40,40", "90,58,26"],
+	edge: "rgba(70, 40, 20, 0.95)",
+	draw: drawBowling,
+	color(t, nx, ny, s, time, i, j) {
+		if (j === 0 || j >= rows - 2) {
+			return [clamp(46 * s, 0, 255), clamp(34 * s, 0, 255), clamp(28 * s, 0, 255)];
+		}
+
+		const plank = i % 2 === 1;
+
+		const r = (lerp(226, 208, t) + (plank ? 5 : -3)) * s;
+		const g = (lerp(184, 160, t) + (plank ? 4 : -2)) * s + Math.max(0, s - 1.05) * 40;
+		const b = lerp(120, 100, t) * s;
+
+		return [clamp(r, 0, 255), clamp(g, 0, 255), clamp(b, 0, 255)];
+	},
+};
+
+/* ---------- Penalty ---------- */
+
+const pen = { phase: "idle", t0: 0 };
+
+function drawPenalty(strength) {
+	const now = performance.now();
+
+	const midY = height / 2;
+	const startX = width * 0.07;
+
+	const targetX = width - 16;
+	const targetY = midY - 34;
+
+	ctx.globalAlpha = strength;
+	ctx.lineWidth = 2;
+	ctx.strokeStyle = "rgba(255, 255, 255, 0.7)";
+
+	meshLine(
+		[
+			[width - 6, midY - 96],
+			[width - 96, midY - 96],
+			[width - 96, midY + 96],
+			[width - 6, midY + 96],
+		],
+		false,
+	);
+
+	ctx.stroke();
+
+	ctx.lineWidth = 3;
+	ctx.strokeStyle = "#fff";
+
+	meshLine(
+		[
+			[width - 24, midY - 50],
+			[width - 5, midY - 50],
+			[width - 5, midY + 50],
+			[width - 24, midY + 50],
+		],
+		false,
+	);
+
+	ctx.stroke();
+
+	ctx.lineWidth = 1;
+	ctx.strokeStyle = "rgba(255, 255, 255, 0.45)";
+
+	for (let n = -40; n <= 40; n += 16) {
+		meshLine(
+			[
+				[width - 24, midY + n],
+				[width - 5, midY + n],
+			],
+			false,
+		);
+
+		ctx.stroke();
+	}
+
+	for (let n = 0; n <= 3; n++) {
+		meshLine(
+			[
+				[width - 20 + n * 5, midY - 50],
+				[width - 20 + n * 5, midY + 50],
+			],
+			false,
+		);
+
+		ctx.stroke();
+	}
+
+	withMesh(startX, midY, () => {
+		ctx.fillStyle = "rgba(255, 255, 255, 0.8)";
+		ctx.beginPath();
+		ctx.arc(0, 8, 3, 0, Math.PI * 2);
+		ctx.fill();
+	});
+
+	let ballX = startX;
+	let ballY = midY;
+
+	if (pen.phase === "flight") {
+		const p = clamp((now - pen.t0) / 1100, 0, 1);
+		const e = 1 - Math.pow(1 - p, 1.6);
+
+		ballX = lerp(startX, targetX, e);
+		ballY = lerp(midY, targetY, e) - Math.sin(p * Math.PI) * 18;
+
+		if (p >= 1) {
+			pen.phase = "goal";
+		}
+	}
+
+	if (pen.phase === "goal") {
+		ballX = targetX;
+		ballY = targetY;
+	}
+
+	withMesh(ballX, ballY, () => {
+		ctx.fillStyle = "rgba(0, 0, 0, 0.22)";
+		ctx.beginPath();
+		ctx.arc(1.5, 2.5, 6, 0, Math.PI * 2);
+		ctx.fill();
+
+		ctx.fillStyle = "#fff";
+		ctx.beginPath();
+		ctx.arc(0, 0, 6, 0, Math.PI * 2);
+		ctx.fill();
+
+		ctx.fillStyle = "#222";
+		ctx.beginPath();
+		ctx.arc(0, 0, 2.2, 0, Math.PI * 2);
+		ctx.fill();
+	});
+
+	ctx.globalAlpha = 1;
+}
+
+const PENALTY = {
+	name: "penalty",
+	fixed: ["255,255,255", "255,235,59", "10,110,30"],
+	edge: "rgba(255, 255, 255, 0.8)",
+	draw: drawPenalty,
+	color(t, nx, ny, s, time, i) {
+		const stripe = Math.floor(i / 3) % 2 === 1;
+
+		const r = (stripe ? 36 : 30) * s;
+		const g = (stripe ? 134 : 118) * s + Math.max(0, s - 1.05) * 60;
+		const b = (stripe ? 62 : 54) * s;
+
+		return [clamp(r, 0, 255), clamp(g, 0, 255), clamp(b, 0, 255)];
+	},
+};
+
+/* ---------- Darts ---------- */
+
+const dart = { phase: "idle", t0: 0 };
+
+function drawDarts(strength) {
+	const now = performance.now();
+
+	const centerX = width / 2;
+	const centerY = height / 2;
+
+	ctx.globalAlpha = strength;
+
+	withMesh(centerX, centerY, () => {
+		for (let n = 0; n < 20; n++) {
+			const a0 = (n / 20) * Math.PI * 2 - Math.PI / 20;
+			const a1 = ((n + 1) / 20) * Math.PI * 2 - Math.PI / 20;
+
+			ctx.fillStyle = n % 2 === 0 ? "rgba(0, 0, 0, 0.3)" : "rgba(245, 233, 208, 0.14)";
+
+			ctx.beginPath();
+			ctx.moveTo(0, 0);
+			ctx.arc(0, 0, 140, a0, a1);
+			ctx.closePath();
+			ctx.fill();
+		}
+
+		ctx.strokeStyle = "rgba(245, 233, 208, 0.25)";
+		ctx.lineWidth = 1;
+
+		[140, 128, 88, 76].forEach((radius) => {
+			ctx.beginPath();
+			ctx.arc(0, 0, radius, 0, Math.PI * 2);
+			ctx.stroke();
+		});
+
+		ctx.fillStyle = "rgba(0, 160, 60, 0.5)";
+		ctx.beginPath();
+		ctx.arc(0, 0, 22, 0, Math.PI * 2);
+		ctx.fill();
+
+		ctx.fillStyle = "rgba(230, 40, 50, 0.85)";
+		ctx.beginPath();
+		ctx.arc(0, 0, 9, 0, Math.PI * 2);
+		ctx.fill();
+	});
+
+	if (dart.phase === "flight" || dart.phase === "stuck") {
+		const startX = width * 0.06;
+		const startY = height * 0.58;
+
+		let x = centerX;
+		let y = centerY;
+		let angle = -0.35;
+
+		if (dart.phase === "flight") {
+			const p = clamp((now - dart.t0) / 900, 0, 1);
+
+			x = lerp(startX, centerX, p);
+			y = lerp(startY, centerY, p) - Math.sin(p * Math.PI) * 40;
+
+			angle = Math.atan2(centerY - startY - Math.cos(p * Math.PI) * 40 * Math.PI / 0.9 * 0.0, centerX - startX) + (p - 0.5) * 0.4;
+
+			if (p >= 1) {
+				dart.phase = "stuck";
+			}
+		}
+
+		withMesh(x, y, () => {
+			ctx.rotate(angle);
+
+			ctx.strokeStyle = "#cfd8dc";
+			ctx.lineWidth = 2;
+			ctx.beginPath();
+			ctx.moveTo(0, 0);
+			ctx.lineTo(-24, 0);
+			ctx.stroke();
+
+			ctx.fillStyle = "#e53935";
+			ctx.beginPath();
+			ctx.moveTo(-18, 0);
+			ctx.lineTo(-28, -6);
+			ctx.lineTo(-28, 6);
+			ctx.closePath();
+			ctx.fill();
+		});
+	}
+
+	ctx.globalAlpha = 1;
+}
+
+const DARTS = {
+	name: "darts",
+	fixed: ["245,233,208", "255,204,102", "230,57,70"],
+	edge: "rgba(245, 233, 208, 0.7)",
+	draw: drawDarts,
+	color(t, nx, ny, s) {
+		const glint = Math.max(0, s - 1.05) * 50;
+
+		return [clamp((62 + t * 10) * s + glint, 0, 255), clamp((16 + t * 4) * s + glint * 0.4, 0, 255), clamp((20 + t * 4) * s + glint * 0.4, 0, 255)];
+	},
+};
+
+/* ---------- Poker ---------- */
+
+const poker = { phase: "back", t0: 0 };
+
+const POKER_FACES = ["A", "K", "Q", "J", "10"];
+
+function drawPoker(strength) {
+	const now = performance.now();
+
+	ctx.globalAlpha = strength;
+
+	for (let n = 0; n < 5; n++) {
+		const cx = width / 2 + (n - 2) * 34;
+		const cy = height - 26;
+
+		let scaleX = 1;
+		let face = false;
+
+		if (poker.phase === "flip") {
+			const p = clamp((now - poker.t0 - n * 180) / 500, 0, 1);
+
+			scaleX = Math.max(0.05, Math.abs(Math.cos(p * Math.PI)));
+
+			face = p > 0.5;
+		}
+
+		withMesh(cx, cy, () => {
+			ctx.scale(scaleX, 1);
+
+			ctx.fillStyle = face ? "#fff" : "#1d3f9c";
+			ctx.fillRect(-14, -20, 28, 40);
+
+			ctx.strokeStyle = face ? "#999" : "#fff";
+			ctx.lineWidth = 1.5;
+			ctx.strokeRect(-14, -20, 28, 40);
+
+			if (face) {
+				ctx.fillStyle = "#d32f2f";
+				ctx.font = "bold 13px Georgia, serif";
+				ctx.textAlign = "center";
+				ctx.textBaseline = "middle";
+
+				ctx.fillText(POKER_FACES[n], 0, -6);
+				ctx.fillText("♥", 0, 9);
+			} else {
+				ctx.strokeStyle = "rgba(255, 255, 255, 0.5)";
+				ctx.lineWidth = 1;
+
+				ctx.beginPath();
+				ctx.moveTo(-10, -16);
+				ctx.lineTo(10, 16);
+				ctx.moveTo(10, -16);
+				ctx.lineTo(-10, 16);
+				ctx.stroke();
+			}
+		});
+	}
+
+	ctx.globalAlpha = 1;
+}
+
+const POKER = {
+	name: "poker",
+	fixed: ["255,255,255", "255,213,79", "16,70,120"],
+	edge: "rgba(255, 213, 79, 0.85)",
+	draw: drawPoker,
+	color(t, nx, ny, s, time, i, j) {
+		const grain = 0.95 + 0.1 * hash2(i, j);
+
+		const r = lerp(16, 12, t) * grain * s;
+		const g = lerp(70, 56, t) * grain * s + Math.max(0, s - 1.05) * 50;
+		const b = lerp(120, 100, t) * grain * s;
+
+		return [clamp(r, 0, 255), clamp(g, 0, 255), clamp(b, 0, 255)];
+	},
+};
+
+/* ---------- Underwater ---------- */
+
+const UNDERWATER = {
+	name: "underwater",
+	fixed: ["255,255,255", "140,235,255", "60,170,230"],
+	edge: "rgba(160, 235, 255, 0.7)",
+	wave: { amp: 8, speed: 0.8, pull: 0.06 },
+	color(t, nx, ny, s, time) {
+		const caustic = Math.max(0, Math.sin(t * 40 + time * 1.5 + nx * 8)) * 0.5;
+		const foam = clamp((s - 1.05) * 3, 0, 1);
+		const dark = clamp((1 - s) * 1.2, 0, 1);
+
+		let r = lerp(0, 8, t);
+		let g = lerp(48, 120, t) + caustic * 30;
+		let b = lerp(108, 160, t) + caustic * 34;
+
+		r = lerp(r, 255, foam * 0.6) * (1 - dark * 0.5);
+		g = lerp(g, 255, foam * 0.6) * (1 - dark * 0.5);
+		b = lerp(b, 255, foam * 0.6) * (1 - dark * 0.5);
+
+		return [clamp(r, 0, 255), clamp(g, 0, 255), clamp(b, 0, 255)];
+	},
+};
+
+/* ---------- VHS ---------- */
+
+function drawVhsOsd(strength, time) {
+	ctx.globalAlpha = strength;
+
+	withMesh(0, 0, () => {
+		ctx.font = "26px VT323, 'Courier New', monospace";
+		ctx.textBaseline = "middle";
+
+		const outline = (text, x, y, align) => {
+			ctx.textAlign = align;
+
+			ctx.fillStyle = "rgba(255, 0, 80, 0.7)";
+			ctx.fillText(text, x - 1.5, y);
+
+			ctx.fillStyle = "rgba(0, 220, 255, 0.7)";
+			ctx.fillText(text, x + 1.5, y);
+
+			ctx.fillStyle = "#fff";
+			ctx.fillText(text, x, y);
+		};
+
+		outline("PLAY ▶", 16, 22, "left");
+
+		const seconds = Math.floor(time);
+		const stamp = String(Math.floor(seconds / 3600) % 24).padStart(2, "0") + ":" + String(Math.floor(seconds / 60) % 60).padStart(2, "0") + ":" + String(seconds % 60).padStart(2, "0");
+
+		outline(stamp, width - 16, 22, "right");
+	});
+
+	ctx.globalAlpha = 1;
+}
+
+const VHS = {
+	name: "vhs",
+	fixed: ["255,255,255", "0,229,255", "255,77,157"],
+	edge: "rgba(255, 255, 255, 0.4)",
+	draw: drawVhsOsd,
+	color(t, nx, ny, s, time, i, j) {
+		const noise = hash2(i + Math.floor(time * 10), j);
+		const band = Math.sin(j * 0.9 - time * 2.2) > 0.92 ? 26 : 0;
+
+		const r = (22 + noise * 14 + band) * s;
+		const g = (20 + noise * 12 + band) * s;
+		const b = (32 + noise * 18 + band) * s;
+
+		return [clamp(r, 0, 255), clamp(g, 0, 255), clamp(b, 0, 255)];
+	},
+};
+
+/* ---------- Cassette ---------- */
+
+function drawCassette(strength, time) {
+	ctx.globalAlpha = strength;
+
+	const spin = time * 1.6;
+
+	[width * 0.12, width * 0.88].forEach((x, index) => {
+		withMesh(x, 22, () => {
+			ctx.fillStyle = "rgba(42, 33, 24, 0.85)";
+			ctx.beginPath();
+			ctx.arc(0, 0, 15, 0, Math.PI * 2);
+			ctx.fill();
+
+			ctx.fillStyle = "#e8dcc0";
+			ctx.beginPath();
+			ctx.arc(0, 0, 6, 0, Math.PI * 2);
+			ctx.fill();
+
+			ctx.rotate(spin * (index === 0 ? 1 : 1.15));
+
+			ctx.strokeStyle = "rgba(42, 33, 24, 0.9)";
+			ctx.lineWidth = 2;
+
+			for (let n = 0; n < 6; n++) {
+				ctx.rotate(Math.PI / 3);
+				ctx.beginPath();
+				ctx.moveTo(0, 0);
+				ctx.lineTo(0, 6);
+				ctx.stroke();
+			}
+		});
+	});
+
+	meshLine(
+		[
+			[width * 0.12 + 15, 22],
+			[width * 0.88 - 15, 22],
+		],
+		false,
+	);
+
+	ctx.strokeStyle = "rgba(60, 40, 20, 0.5)";
+	ctx.lineWidth = 2;
+	ctx.stroke();
+
+	withMesh(width / 2, 22, () => {
+		ctx.fillStyle = "rgba(42, 33, 24, 0.75)";
+		ctx.font = "bold 11px 'Courier New', monospace";
+		ctx.textAlign = "center";
+		ctx.textBaseline = "middle";
+
+		ctx.fillText("SIDE A · C-90 · NORMAL BIAS", 0, -8);
+	});
+
+	ctx.globalAlpha = 1;
+}
+
+const CASSETTE = {
+	name: "cassette",
+	fixed: ["42,33,24", "200,50,42", "90,70,50"],
+	edge: "rgba(60, 40, 20, 0.8)",
+	draw: drawCassette,
+	color(t, nx, ny, s, time, i, j) {
+		if (j >= rows - 3) {
+			const base = j === rows - 3 ? [230, 120, 40] : [200, 50, 40];
+
+			return [clamp(base[0] * s, 0, 255), clamp(base[1] * s, 0, 255), clamp(base[2] * s, 0, 255)];
+		}
+
+		const r = lerp(238, 224, t) * s;
+		const g = lerp(226, 210, t) * s;
+		const b = lerp(196, 176, t) * s;
+
+		return [clamp(r, 0, 255), clamp(g, 0, 255), clamp(b, 0, 255)];
+	},
+};
+
+const ALL_THEMES = [...THEMES, RETRO, TERMINAL, GAMEBOY, BLUEPRINT, NEWSPAPER, FALLOUT, KEYBOARD, VIRTUALBOY, WATER, MINECRAFT, LEGO, TETRIS, CLOCK, RUNESCAPE, GEMS, CASINO, XP, INVADERS, BSOD, NOTFOUND, CHESS, MINIGOLF, AIRHOCKEY, BOWLING, PENALTY, DARTS, POKER, UNDERWATER, VHS, CASSETTE];
 
 const BASICS_LINES = {
 	ask: "Meow ik heb geen verdere thema inspiratie meer,\nterug naar de basics",
@@ -1322,6 +1945,153 @@ const BASICS_LINES = {
 const usedThemes = new Set();
 
 const THEME_SCENES = {
+	bowling: async (star) => {
+		bowl.phase = "idle";
+
+		star.element.classList.remove("mega");
+
+		await moveCat(star, 4, 58);
+
+		const fans = spawnAt([
+			[93, 22],
+			[93, 78],
+			[50, 9],
+			[50, 93],
+		]);
+
+		await sleep(1400);
+
+		say(star, "meow. strike?");
+
+		await sleep(900);
+
+		bowl.phase = "roll";
+		bowl.t0 = performance.now();
+
+		await sleep(1700);
+
+		cheerAll(fans, star, "meow. STRIKE");
+
+		await sleep(3800);
+	},
+
+	penalty: async (star) => {
+		pen.phase = "idle";
+
+		star.element.classList.remove("mega");
+
+		await moveCat(star, 4, 60);
+
+		const [keeper, ...fans] = spawnAt([
+			[94, 50],
+			[50, 9],
+			[50, 93],
+			[22, 9],
+		]);
+
+		await sleep(1400);
+
+		say(star, "meow. penalty");
+
+		await sleep(1000);
+
+		pen.phase = "flight";
+		pen.t0 = performance.now();
+
+		await sleep(250);
+
+		keeper.element.classList.add("dive");
+
+		await sleep(1000);
+
+		cheerAll(fans, star, "meow. GOAL");
+
+		await sleep(700);
+
+		say(keeper, "meow. ik zag hem niet aankomen");
+
+		await sleep(3200);
+	},
+
+	darts: async (star) => {
+		dart.phase = "idle";
+
+		star.element.classList.remove("mega");
+
+		await moveCat(star, 5, 58);
+
+		const fans = spawnAt([
+			[93, 28],
+			[93, 74],
+			[50, 9],
+			[50, 93],
+		]);
+
+		await sleep(1400);
+
+		say(fans[0], "meow. 3");
+
+		await sleep(1000);
+
+		say(fans[1], "meow. 2");
+
+		await sleep(1000);
+
+		say(fans[2], "meow. 1");
+
+		await sleep(1000);
+
+		dart.phase = "flight";
+		dart.t0 = performance.now();
+
+		await sleep(1200);
+
+		cheerAll(fans, star, "meow. bullseye");
+
+		await sleep(3600);
+	},
+
+	poker: async (star) => {
+		poker.phase = "back";
+
+		star.element.classList.remove("mega");
+
+		await moveCat(star, 6, 54);
+
+		const others = spawnAt([
+			[93, 28],
+			[93, 74],
+			[50, 9],
+		]);
+
+		await sleep(1400);
+
+		say(others[0], "meow. pass");
+
+		await sleep(1100);
+
+		say(others[1], "meow. call");
+
+		await sleep(1100);
+
+		say(others[2], "meow. raise");
+
+		await sleep(1300);
+
+		say(star, "meow. all in");
+
+		await sleep(1100);
+
+		poker.phase = "flip";
+		poker.t0 = performance.now();
+
+		await sleep(2000);
+
+		cheerAll(others, star, "meow. royal flush");
+
+		await sleep(3600);
+	},
+
 	minigolf: async (star) => {
 		golf.phase = "idle";
 
@@ -1501,6 +2271,13 @@ const THEME_LINES = {
 	chess: { ask: "Meow ik wil schaken", after: "meow. schaakmat" },
 	minigolf: { ask: "Meow ik wil golfen", after: "meow. makkelijk" },
 	airhockey: { ask: "Meow ik wil air hockey spelen", after: "meow. 1-0" },
+	bowling: { ask: "Meow ik wil bowlen", after: "meow. geen kegels meer" },
+	penalty: { ask: "Meow ik wil voetballen", after: "meow. gewoon in de hoek" },
+	darts: { ask: "Meow ik wil darten", after: "meow. 50 punten" },
+	poker: { ask: "Meow ik wil pokeren", after: "meow. ik bluf nooit" },
+	underwater: { ask: "Meow ik wil duiken", after: "meow. ik wil naar boven" },
+	vhs: { ask: "Meow ik wil terugspoelen", after: "meow. be kind, rewind" },
+	cassette: { ask: "Meow ik wil een mixtape", after: "meow. kant B" },
 };
 
 
@@ -2349,6 +3126,25 @@ function drawNotes(now) {
 	});
 }
 
+function pieceSpawnX(size) {
+	const left = offsetX;
+	const right = window.innerWidth - (offsetX + width);
+
+	const sides = [];
+
+	if (left - 7 * size > 0) {
+		sides.push([3 * size, left - 4 * size]);
+	}
+
+	if (right - 7 * size > 0) {
+		sides.push([offsetX + width + 3 * size, window.innerWidth - 4 * size]);
+	}
+
+	const range = sides.length ? pickRandom(sides) : [3 * size, window.innerWidth - 4 * size];
+
+	return Math.floor((range[0] + Math.random() * Math.max(0, range[1] - range[0])) / size) * size;
+}
+
 function drawPieces(now) {
 	fxCtx.setTransform(dpr, 0, 0, dpr, 0, 0);
 	fxCtx.clearRect(0, 0, window.innerWidth, window.innerHeight);
@@ -2359,7 +3155,7 @@ function drawPieces(now) {
 
 	const size = 28;
 
-	if (now - FX.lastPiece > 320 && FX.pieces.length < 26) {
+	if (now - FX.lastPiece > 280 && FX.pieces.length < 22) {
 		FX.lastPiece = now;
 
 		let cells = pickRandom(TETROMINOES).map((cell) => cell.slice());
@@ -2373,7 +3169,7 @@ function drawPieces(now) {
 		FX.pieces.push({
 			cells,
 			color: pickRandom(TETRIS_COLORS),
-			x: Math.floor((Math.random() * window.innerWidth) / size) * size,
+			x: pieceSpawnX(size),
 			y: -size * 4,
 			vy: 1.2 + Math.random() * 1.2,
 		});
@@ -2604,7 +3400,123 @@ function drawChess(now) {
 	});
 }
 
+const UW = { bubbles: [], fish: [], lastBubble: 0, lastFish: 0 };
+
+const UW_FISH = ["🐟", "🐠", "🐡"];
+
+function drawBubbles(now) {
+	fxCtx.setTransform(dpr, 0, 0, dpr, 0, 0);
+	fxCtx.clearRect(0, 0, window.innerWidth, window.innerHeight);
+
+	if (fxReduced()) {
+		return;
+	}
+
+	if (now - UW.lastBubble > 140 && UW.bubbles.length < 50) {
+		UW.lastBubble = now;
+
+		UW.bubbles.push({
+			x: Math.random() * window.innerWidth,
+			y: window.innerHeight + 20,
+			vy: 0.6 + Math.random() * 1.4,
+			r: 3 + Math.random() * 9,
+			sway: Math.random() * Math.PI * 2,
+			swaySpeed: 0.02 + Math.random() * 0.03,
+		});
+	}
+
+	if (now - UW.lastFish > 3500 && UW.fish.length < 3) {
+		UW.lastFish = now;
+
+		const dir = Math.random() < 0.5 ? 1 : -1;
+
+		UW.fish.push({
+			x: dir === 1 ? -60 : window.innerWidth + 60,
+			y: window.innerHeight * (0.15 + Math.random() * 0.7),
+			vx: dir * (1.2 + Math.random() * 1.5),
+			size: 30 + Math.random() * 26,
+			glyph: pickRandom(UW_FISH),
+			bob: Math.random() * Math.PI * 2,
+		});
+	}
+
+	fxCtx.lineWidth = 1.5;
+
+	UW.bubbles = UW.bubbles.filter((bubble) => {
+		bubble.y -= bubble.vy;
+		bubble.sway += bubble.swaySpeed;
+
+		const x = bubble.x + Math.sin(bubble.sway) * 10;
+
+		fxCtx.strokeStyle = "rgba(255, 255, 255, 0.5)";
+		fxCtx.beginPath();
+		fxCtx.arc(x, bubble.y, bubble.r, 0, Math.PI * 2);
+		fxCtx.stroke();
+
+		fxCtx.fillStyle = "rgba(255, 255, 255, 0.35)";
+		fxCtx.beginPath();
+		fxCtx.arc(x - bubble.r * 0.35, bubble.y - bubble.r * 0.35, bubble.r * 0.25, 0, Math.PI * 2);
+		fxCtx.fill();
+
+		return bubble.y > -20;
+	});
+
+	fxCtx.textBaseline = "middle";
+	fxCtx.textAlign = "center";
+
+	UW.fish = UW.fish.filter((fish) => {
+		fish.x += fish.vx;
+		fish.bob += 0.04;
+
+		fxCtx.save();
+
+		fxCtx.globalAlpha = 0.6;
+		fxCtx.translate(fish.x, fish.y + Math.sin(fish.bob) * 8);
+		fxCtx.scale(fish.vx > 0 ? -1 : 1, 1);
+		fxCtx.font = fish.size + "px serif";
+		fxCtx.fillText(fish.glyph, 0, 0);
+
+		fxCtx.restore();
+
+		return fish.x > -80 && fish.x < window.innerWidth + 80;
+	});
+}
+
+function drawVhs(now) {
+	fxCtx.setTransform(dpr, 0, 0, dpr, 0, 0);
+	fxCtx.clearRect(0, 0, window.innerWidth, window.innerHeight);
+
+	if (fxReduced()) {
+		return;
+	}
+
+	for (let n = 0; n < 220; n++) {
+		const v = 140 + Math.floor(Math.random() * 115);
+
+		fxCtx.fillStyle = "rgba(" + v + "," + v + "," + v + "," + (0.06 + Math.random() * 0.12) + ")";
+		fxCtx.fillRect(Math.random() * window.innerWidth, Math.random() * window.innerHeight, 2, 1.5);
+	}
+
+	for (let n = 0; n < 5; n++) {
+		fxCtx.fillStyle = "rgba(255, 255, 255, " + (0.03 + Math.random() * 0.06) + ")";
+		fxCtx.fillRect(0, Math.random() * window.innerHeight, window.innerWidth, 1 + Math.random() * 2);
+	}
+
+	const barY = ((now / 14) % (window.innerHeight + 160)) - 80;
+
+	const gradient = fxCtx.createLinearGradient(0, barY - 40, 0, barY + 40);
+
+	gradient.addColorStop(0, "rgba(255, 255, 255, 0)");
+	gradient.addColorStop(0.5, "rgba(255, 255, 255, 0.07)");
+	gradient.addColorStop(1, "rgba(255, 255, 255, 0)");
+
+	fxCtx.fillStyle = gradient;
+	fxCtx.fillRect(0, barY - 40, window.innerWidth, 80);
+}
+
 const FX_THEMES = {
+	underwater: drawBubbles,
+	vhs: drawVhs,
 	invaders: drawInvaders,
 	chess: drawChess,
 	casino: drawSuits,
