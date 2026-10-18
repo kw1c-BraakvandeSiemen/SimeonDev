@@ -37,10 +37,6 @@ const CONFIG = {
 	partyPause: [2500, 4500],
 	partyDuration: [70000, 100000],
 	rareChance: 0.05,
-	dragReactWindow: 25000,
-	dragReactHits: 3,
-	dragReactTravel: 2500,
-	dragReactCooldown: 30000,
 };
 
 const LIGHT = (() => {
@@ -74,10 +70,6 @@ const state = {
 
 	grabX: 0,
 	grabY: 0,
-
-	travel: 0,
-	prevX: null,
-	prevY: null,
 };
 
 let cols = 0;
@@ -200,14 +192,15 @@ const THEMES = [
 		},
 	},
 
-	{
-		name: "prismatic",
-		color(t, nx, ny, s, time) {
-			const u = t * 2.2 + (nx * 0.9 + ny * 0.7) * 2.2 + time * 0.03;
-
-			return hslToRgb((u - Math.floor(u)) * 360, 0.8, clamp(0.72 * s, 0.35, 0.88));
-		},
-	},
+	// Rainbow variant, disabled for now.
+	// {
+	// 	name: "prismatic",
+	// 	color(t, nx, ny, s, time) {
+	// 		const u = t * 2.2 + (nx * 0.9 + ny * 0.7) * 2.2 + time * 0.03;
+	//
+	// 		return hslToRgb((u - Math.floor(u)) * 360, 0.8, clamp(0.72 * s, 0.35, 0.88));
+	// 	},
+	// },
 
 	{
 		name: "aurora",
@@ -218,6 +211,285 @@ const THEMES = [
 		},
 	},
 ];
+
+const RETRO = {
+	name: "retrowave",
+	fixed: ["255,79,216", "53,224,255", "183,139,255"],
+	color(t, nx, ny, s, time) {
+		const stops = [
+			[30, 6, 78],
+			[96, 16, 130],
+			[190, 32, 140],
+			[255, 70, 150],
+		];
+
+		const scaled = clamp(t, 0, 1) * (stops.length - 1);
+		const i = Math.min(Math.floor(scaled), stops.length - 2);
+		const f = scaled - i;
+
+		const a = stops[i];
+		const b = stops[i + 1];
+
+		const bands = 0.94 + 0.06 * Math.sin(t * 90 + time * 1.5);
+
+		const r = (lerp(a[0], b[0], f) - nx * 40) * s * bands;
+		const g = lerp(a[1], b[1], f) * s * bands;
+		const bl = (lerp(a[2], b[2], f) + nx * 60) * s * bands;
+
+		return [clamp(r, 0, 255), clamp(g, 0, 255), clamp(bl, 0, 255)];
+	},
+};
+
+const TERMINAL = {
+	name: "terminal",
+	fixed: ["57,255,136", "125,255,176", "0,190,90"],
+	color(t, nx, ny, s, time) {
+		const scan = 0.9 + 0.1 * Math.sin(t * 140 + time * 2);
+
+		const r = (6 + t * 4) * s * scan;
+		const g = (18 + t * 14) * s * scan + Math.max(0, s - 1) * 60;
+		const b = (10 + t * 6) * s * scan;
+
+		return [clamp(r, 0, 255), clamp(g, 0, 255), clamp(b, 0, 255)];
+	},
+	grid: { step: 1, color: "57,255,136", alpha: 0.06, cols: false },
+};
+
+const GAMEBOY_PALETTE = [
+	[15, 56, 15],
+	[48, 98, 48],
+	[139, 172, 15],
+	[155, 188, 15],
+];
+
+const GAMEBOY = {
+	name: "gameboy",
+	fixed: ["15,56,15", "48,98,48", "48,98,48"],
+	edge: "rgba(15, 56, 15, 0.9)",
+	color(t, nx, ny, s) {
+		const v = clamp((s - 0.35) / 0.7, 0, 1);
+
+		const level = v < 0.25 ? 0 : v < 0.5 ? 1 : v < 0.8 ? 2 : 3;
+
+		return GAMEBOY_PALETTE[level].slice();
+	},
+};
+
+const BLUEPRINT = {
+	name: "blueprint",
+	fixed: ["255,255,255", "159,208,255", "100,160,255"],
+	edge: "rgba(255, 255, 255, 0.6)",
+	color(t, nx, ny, s) {
+		const r = lerp(16, 34, t) * s;
+		const g = lerp(62, 104, t) * s;
+		const b = lerp(138, 190, t) * s;
+
+		return [clamp(r, 0, 255), clamp(g, 0, 255), clamp(b, 0, 255)];
+	},
+	grid: { step: 2, color: "255,255,255", alpha: 0.22 },
+};
+
+const NEWSPAPER = {
+	name: "newspaper",
+	fixed: ["20,20,20", "122,31,18", "60,48,36"],
+	edge: "rgba(60, 40, 20, 0.4)",
+	color(t, nx, ny, s) {
+		const r = lerp(232, 206, t) * s;
+		const g = lerp(220, 190, t) * s;
+		const b = lerp(186, 152, t) * s;
+
+		return [clamp(r, 0, 255), clamp(g, 0, 255), clamp(b, 0, 255)];
+	},
+	dots: { color: "70,50,30", alpha: 0.3 },
+};
+
+const FALLOUT = {
+	name: "fallout",
+	fixed: ["255,176,0", "255,214,102", "204,128,0"],
+	edge: "rgba(255, 176, 0, 0.55)",
+	color(t, nx, ny, s, time) {
+		const flicker = 0.96 + 0.04 * Math.sin(time * 9 + t * 6);
+
+		const r = (14 + t * 10) * s * flicker + Math.max(0, s - 1) * 90;
+		const g = (10 + t * 7) * s * flicker + Math.max(0, s - 1) * 55;
+		const b = (2 + t * 2) * s;
+
+		return [clamp(r, 0, 255), clamp(g, 0, 255), clamp(b, 0, 255)];
+	},
+	grid: { step: 1, color: "255,176,0", alpha: 0.08, cols: false },
+};
+
+const KEYBOARD = {
+	name: "keyboard",
+	fixed: ["26,26,26", "179,32,42", "90,70,60"],
+	edge: "rgba(20, 20, 20, 0.5)",
+	color(t, nx, ny, s, time, i, j) {
+		const boundary = Math.round((i + 0.5) / 4);
+		const nearBoundary = Math.abs(i + 0.5 - 4 * boundary) <= 1;
+		const note = (boundary - 1 + 7) % 7;
+
+		const black = j < 4 && boundary >= 1 && nearBoundary && note !== 2 && note !== 6;
+
+		if (black) {
+			const edgeLift = j === 3 ? 22 : 0;
+			const gloss = Math.max(0, s - 1) * 90;
+
+			return [clamp(26 * s + edgeLift + gloss, 0, 255), clamp(26 * s + edgeLift + gloss, 0, 255), clamp(32 * s + edgeLift + gloss, 0, 255)];
+		}
+
+		const tone = 1 - (j / Math.max(1, rows)) * 0.06;
+
+		return [clamp(250 * s * tone, 0, 255), clamp(246 * s * tone, 0, 255), clamp(236 * s * tone, 0, 255)];
+	},
+	grid: { step: 4, color: "60,50,40", alpha: 0.55, rows: false },
+};
+
+const VIRTUALBOY_REDS = [
+	[8, 0, 0],
+	[60, 0, 0],
+	[120, 0, 0],
+	[190, 0, 0],
+];
+
+const VIRTUALBOY = {
+	name: "virtualboy",
+	fixed: ["255,48,48", "176,0,0", "255,110,110"],
+	edge: "rgba(255, 30, 30, 0.8)",
+	color(t, nx, ny, s) {
+		const lift = s - 0.97;
+
+		const level = lift < 0.05 ? 0 : lift < 0.13 ? 1 : lift < 0.22 ? 2 : 3;
+
+		return VIRTUALBOY_REDS[level].slice();
+	},
+	grid: { step: 1, color: "255,30,30", alpha: 0.16 },
+};
+
+const LIQUID = {
+	name: "liquid",
+	fixed: ["29,39,51", "74,107,255", "255,120,200"],
+	edge: "rgba(255, 255, 255, 0.95)",
+	color(t, nx, ny, s) {
+		const hi = clamp((s - 1) * 3, 0, 1);
+		const lo = clamp((1 - s) * 1.6, 0, 1);
+
+		let r = lerp(236, 222, t) + nx * 22;
+		let g = lerp(242, 228, t) + ny * 10;
+		let b = lerp(252, 250, t) - nx * 22;
+
+		r = lerp(r, 170, lo);
+		g = lerp(g, 184, lo);
+		b = lerp(b, 214, lo);
+
+		r = lerp(r, 255, hi);
+		g = lerp(g, 255, hi);
+		b = lerp(b, 255, hi);
+
+		return [clamp(r, 0, 255), clamp(g, 0, 255), clamp(b, 0, 255)];
+	},
+};
+
+const WATER = {
+	name: "water",
+	fixed: ["255,255,255", "140,235,255", "60,170,230"],
+	edge: "rgba(200, 245, 255, 0.7)",
+	wave: { amp: 14, speed: 1.4, pull: 0.08 },
+	color(t, nx, ny, s, time) {
+		const band = 0.5 + 0.5 * Math.sin(t * 50 + time * 1.2 + nx * 6);
+
+		const foam = clamp((s - 1.05) * 4, 0, 1);
+		const dark = clamp((1 - s) * 1.4, 0, 1);
+
+		let r = lerp(6, 24, t) * (1 + band * 0.12);
+		let g = lerp(70, 150, t) * (1 + band * 0.12);
+		let b = lerp(130, 200, t) * (1 + band * 0.1);
+
+		r = lerp(r, 255, foam * 0.85) * (1 - dark * 0.5);
+		g = lerp(g, 255, foam * 0.85) * (1 - dark * 0.5);
+		b = lerp(b, 255, foam * 0.85) * (1 - dark * 0.5);
+
+		return [clamp(r, 0, 255), clamp(g, 0, 255), clamp(b, 0, 255)];
+	},
+};
+
+const ALL_THEMES = [...THEMES, RETRO, TERMINAL, GAMEBOY, BLUEPRINT, NEWSPAPER, FALLOUT, KEYBOARD, VIRTUALBOY, LIQUID, WATER];
+
+const BASICS_LINES = {
+	ask: "Meow ik heb geen verdere thema inspiratie meer, terug naar de basics",
+	after: "meow. basics",
+};
+
+const usedThemes = new Set();
+
+function nextTheme() {
+	let remaining = ALL_THEMES.filter((theme) => !usedThemes.has(theme.name));
+
+	if (remaining.length === 0 && themeState.current === null) {
+		usedThemes.clear();
+
+		remaining = ALL_THEMES;
+	}
+
+	if (remaining.length === 0) {
+		return null;
+	}
+
+	return pickRandom(remaining);
+}
+
+function waveWeight() {
+	let weight = 0;
+
+	if (themeState.current && themeState.current.wave) {
+		weight += themeState.mix;
+	}
+
+	if (themeState.previous && themeState.previous.wave && themeState.mix < 1) {
+		weight += 1 - themeState.mix;
+	}
+
+	return Math.min(weight, 1);
+}
+
+function applyWaves(time) {
+	const wave = (themeState.current && themeState.current.wave) || (themeState.previous && themeState.previous.wave);
+
+	const weight = waveWeight();
+
+	if (!wave || weight <= 0.01) {
+		return;
+	}
+
+	for (let k = 0; k < count; k++) {
+		if (pinned[k]) {
+			continue;
+		}
+
+		const px = rx[k];
+		const py = ry[k];
+
+		const target = weight * wave.amp * (Math.sin(px * 0.028 + py * 0.012 - time * wave.speed) + 0.6 * Math.sin(px * 0.011 - py * 0.034 + time * wave.speed * 1.3));
+
+		z[k] += (target - z[k]) * wave.pull;
+	}
+}
+
+
+const THEME_LINES = {
+	holographic: { ask: "Meow ik wil glitter zien", after: "meow. glimmend" },
+	aurora: { ask: "Meow ik wil noorderlicht zien", after: "meow. mooi" },
+	retrowave: { ask: "Meow ik wil een ander thema zien", after: "meow. beter" },
+	terminal: { ask: "Meow ik wil iets groens zien", after: "meow. sudo meow" },
+	gameboy: { ask: "Meow ik wil pixels zien", after: "meow. press start" },
+	blueprint: { ask: "Meow ik wil een tekening zien", after: "meow. dit is een bouwtekening" },
+	newspaper: { ask: "Meow ik wil in de krant", after: "KAT VRAAGT ANDER THEMA" },
+	fallout: { ask: "Meow ik wil naar de vault", after: "meow. war never changes" },
+	keyboard: { ask: "Meow ik wil muziek maken", after: "meow. do re mi miauw" },
+	virtualboy: { ask: "Meow ik wil rood zien", after: "meow. ik heb hoofdpijn" },
+	liquid: { ask: "Meow ik wil door glas kijken", after: "meow. doorzichtig" },
+	water: { ask: "Meow ik wil water zien", after: "meow. ik blijf wel droog" },
+};
+
 
 const themeState = {
 	current: null,
@@ -239,11 +511,9 @@ const GOODBYES = ["meow. doei", "meow, doei", "meow. tot later", "meow. ik ga", 
 
 const BRABANTS_GOODBYES = ["meowdoe!", "meowdoe, hè", "meowdoe, en tot gauw"];
 
-const DRAG_LINES = ["meow. ik zat hier net", "meow, kan dit wat rustiger", "meow. weer?", "meow, ik had net een plek", "meow. ga maar door, ik wacht"];
-
 const CHORUS_LINES = ["MEOW", "meow.", "meow meow meow"];
 
-const STARE_LINES = ["meow. wat?", "meow. ja?", "meow. niks"];
+const STARE_LINES = ["meow?", "meow."];
 
 const PERSONAL_LINES = [
 	() => "meow. je bent er nog",
@@ -261,9 +531,7 @@ const party = {
 	active: false,
 	ending: false,
 	timers: [],
-	dragHits: [],
-	travel: 0,
-	lastReact: 0,
+	busy: false,
 };
 
 const mouse = { x: 0, y: 0, seen: false };
@@ -498,98 +766,6 @@ async function conversation() {
 	}
 }
 
-async function flingCat(cat) {
-	if (cat.flung) {
-		return;
-	}
-
-	cat.flung = true;
-
-	cat.flip.style.setProperty("--fling-x", `${(Math.random() < 0.5 ? -1 : 1) * (60 + Math.random() * 60)}px`);
-
-	cat.element.classList.add("flung");
-
-	if (Math.random() < 0.6) {
-		say(cat, pickRandom(DRAG_LINES));
-	}
-
-	await sleep(950);
-
-	if (partyLive()) {
-		cat.element.classList.remove("in");
-
-		placeCat(cat);
-
-		cat.element.classList.remove("flung");
-
-		await sleep(120);
-
-		if (partyLive()) {
-			cat.element.classList.add("in");
-		}
-	}
-
-	cat.flung = false;
-}
-
-function flingNearbyCats() {
-	if (!partyLive()) {
-		return;
-	}
-
-	party.cats.forEach((cat) => {
-		const catX = (cat.px / 100) * width;
-		const catY = (cat.py / 100) * height;
-
-		if (Math.hypot(catX - state.grabX, catY - state.grabY) < 150) {
-			flingCat(cat);
-		}
-	});
-}
-
-async function dragReaction() {
-	party.lastReact = performance.now();
-	party.dragHits = [];
-	party.travel = 0;
-
-	const cats = [...party.cats].sort(() => Math.random() - 0.5);
-
-	say(cats[0], pickRandom(DRAG_LINES));
-
-	await sleep(500);
-
-	for (const cat of cats.slice(0, 3)) {
-		hop(cat);
-
-		await sleep(220);
-	}
-}
-
-function noteDrag(travel) {
-	if (!partyLive()) {
-		return;
-	}
-
-	const now = performance.now();
-
-	party.dragHits = party.dragHits.filter((time) => now - time < CONFIG.dragReactWindow);
-
-	if (party.dragHits.length === 0) {
-		party.travel = 0;
-	}
-
-	party.dragHits.push(now);
-	party.travel += travel;
-
-	if (now - party.lastReact < CONFIG.dragReactCooldown) {
-		return;
-	}
-
-	if (party.dragHits.length >= CONFIG.dragReactHits || party.travel >= CONFIG.dragReactTravel) {
-		dragReaction();
-	}
-}
-
 function schedulePersonal() {
 	[18000, 40000, 62000].forEach((delay, index) => {
 		party.timers.push(
@@ -651,6 +827,101 @@ async function endCatParty() {
 	party.active = false;
 }
 
+async function themeSequence(theme) {
+	if (party.busy) {
+		return;
+	}
+
+	party.busy = true;
+
+	setCatReady(false);
+
+	const lines = theme ? THEME_LINES[theme.name] || { ask: "Meow ik wil een ander thema zien", after: "meow. beter" } : BASICS_LINES;
+
+	let star = null;
+
+	if (party.active) {
+		party.ending = true;
+
+		party.timers.forEach((id) => clearTimeout(id));
+		party.timers = [];
+
+		party.cats.forEach((cat) => cat.element.classList.remove("giant", "stare"));
+
+		star = party.cats.length ? pickRandom(party.cats) : null;
+
+		for (const cat of party.cats) {
+			if (cat !== star) {
+				cat.element.classList.remove("in");
+
+				await sleep(130);
+			}
+		}
+
+		if (star) {
+			star.element.classList.remove("in");
+
+			await sleep(450);
+		}
+	} else {
+		party.active = true;
+		party.ending = true;
+
+		party.element = document.createElement("div");
+		party.element.className = "cat-party";
+
+		clothContent.appendChild(party.element);
+	}
+
+	if (!star) {
+		star = spawnCat();
+	}
+
+	star.px = 50;
+	star.py = 52;
+
+	star.flip.style.transform = "scaleX(1) rotate(0deg)";
+
+	star.element.classList.add("mega");
+
+	await sleep(80);
+
+	star.element.classList.add("in");
+
+	await sleep(1100);
+
+	say(star, lines.ask);
+
+	await sleep(3200);
+
+	applyTheme(theme);
+
+	if (!theme) {
+		usedThemes.clear();
+	}
+
+	await sleep(2800);
+
+	say(star, lines.after);
+
+	await sleep(3600);
+
+	star.element.classList.remove("in");
+
+	await sleep(3800);
+
+	party.element.remove();
+
+	party.element = null;
+	party.cats = [];
+
+	party.ending = false;
+	party.active = false;
+	party.busy = false;
+
+	setCatReady(true);
+}
+
 async function startCatParty() {
 	if (party.active) {
 		return;
@@ -658,10 +929,6 @@ async function startCatParty() {
 
 	party.active = true;
 	party.ending = false;
-
-	party.dragHits = [];
-	party.travel = 0;
-	party.lastReact = 0;
 
 	party.element = document.createElement("div");
 	party.element.className = "cat-party";
@@ -671,12 +938,20 @@ async function startCatParty() {
 	party.timers.push(setInterval(orientCats, 120));
 
 	for (let n = 0; n < CONFIG.partyCats; n++) {
+		if (!partyLive()) {
+			return;
+		}
+
 		spawnCat();
 
 		await sleep(CONFIG.partySpawnEvery);
 	}
 
 	await sleep(700);
+
+	if (!partyLive()) {
+		return;
+	}
 
 	schedulePersonal();
 
@@ -685,18 +960,36 @@ async function startCatParty() {
 	conversation();
 }
 
-function themeColor(theme, t, nx, ny, s, time) {
+function themeColor(theme, t, nx, ny, s, time, i, j) {
 	if (!theme) {
 		const base = baseColor(t);
 
 		return [Math.min(255, base[0] * s), Math.min(255, base[1] * s), Math.min(255, base[2] * s)];
 	}
 
-	return theme.color(t, nx, ny, s, time);
+	return theme.color(t, nx, ny, s, time, i, j);
+}
+
+function setTextColors(colors) {
+	const root = document.documentElement.style;
+
+	root.setProperty("--text-a", `rgb(${colors[0]})`);
+	root.setProperty("--text-b", `rgb(${colors[1]})`);
+	root.setProperty("--text-c", `rgb(${colors[2]})`);
+
+	root.setProperty("--text-a-soft", `rgba(${colors[0]}, 0.55)`);
+	root.setProperty("--text-b-soft", `rgba(${colors[1]}, 0.55)`);
+	root.setProperty("--text-c-soft", `rgba(${colors[2]}, 0.55)`);
 }
 
 function updateTextColors(time) {
 	if (!themeState.current) {
+		return;
+	}
+
+	if (themeState.current.fixed) {
+		setTextColors(themeState.current.fixed);
+
 		return;
 	}
 
@@ -717,35 +1010,59 @@ function updateTextColors(time) {
 		return `${vivid[0] | 0},${vivid[1] | 0},${vivid[2] | 0}`;
 	});
 
-	const root = document.documentElement.style;
-
-	root.setProperty("--text-a", `rgb(${colors[0]})`);
-	root.setProperty("--text-b", `rgb(${colors[1]})`);
-	root.setProperty("--text-c", `rgb(${colors[2]})`);
-
-	root.setProperty("--text-a-soft", `rgba(${colors[0]}, 0.55)`);
-	root.setProperty("--text-b-soft", `rgba(${colors[1]}, 0.55)`);
-	root.setProperty("--text-c-soft", `rgba(${colors[2]}, 0.55)`);
+	setTextColors(colors);
 }
 
-function changeTheme() {
-	const options = THEMES.filter((theme) => theme !== themeState.current);
-
+function applyTheme(theme) {
 	themeState.previous = themeState.current;
-	themeState.current = options[Math.floor(Math.random() * options.length)];
+	themeState.current = theme;
 	themeState.mix = 0;
 
-	document.documentElement.dataset.theme = themeState.current.name;
+	if (theme) {
+		document.documentElement.dataset.theme = theme.name;
+
+		usedThemes.add(theme.name);
+	} else {
+		delete document.documentElement.dataset.theme;
+	}
 
 	updateTextColors(performance.now() / 1000);
 
 	for (let k = 0; k < count; k++) {
 		if (!pinned[k]) {
-			z[k] += (Math.random() - 0.5) * 6;
+			z[k] += (Math.random() - 0.5) * (theme ? 6 : 3);
 		}
 	}
 
+	requestAnimationFrame(measureWarpTargets);
+}
+
+function resetTheme() {
+	if (!themeState.current || party.busy) {
+		return;
+	}
+
+	applyTheme(null);
+
+	endCatParty();
+}
+
+function changeTheme() {
+	if (party.busy) {
+		return;
+	}
+
+	let options = THEMES.filter((theme) => theme !== themeState.current && !usedThemes.has(theme.name));
+
+	if (options.length === 0) {
+		options = THEMES.filter((theme) => theme !== themeState.current);
+	}
+
+	applyTheme(pickRandom(options));
+
 	startCatParty();
+
+	setCatReady(true);
 }
 
 function build() {
@@ -851,11 +1168,132 @@ function build() {
 	measureWarpTargets();
 }
 
+const fxCanvas = document.getElementById("fxCanvas");
+const fxCtx = fxCanvas.getContext("2d");
+
+const RAIN = {
+	size: 16,
+	chars: "ｱｲｳｴｵｶｷｸｹｺｻｼｽｾｿﾀﾁﾂﾃﾄ0123456789",
+	drops: [],
+	frame: 0,
+	lastActive: 0,
+	dirty: false,
+	snippets: [],
+	lastSpawn: 0,
+};
+
+const RAIN_CODE = [
+	"const cat = 'meow';",
+	"if (cat) meow();",
+	"npm run meow",
+	"git commit -m 'meow'",
+	"while (true) { meow(); }",
+	"SELECT * FROM cats;",
+	"sudo meow",
+	"return 'meow';",
+	"<cat>meow</cat>",
+	"meow.exe",
+	"import { cat } from 'meow'",
+	"console.log('meow')",
+];
+
+function resizeFx() {
+	fxCanvas.width = Math.round(window.innerWidth * dpr);
+	fxCanvas.height = Math.round(window.innerHeight * dpr);
+
+	const columns = Math.ceil(window.innerWidth / RAIN.size);
+
+	RAIN.drops = Array.from({ length: columns }, () => -Math.random() * 40);
+}
+
+function drawRain() {
+	const reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+	RAIN.frame++;
+
+	if (RAIN.frame % 3 !== 0 && !reduce) {
+		return;
+	}
+
+	fxCtx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+	if (reduce) {
+		fxCtx.fillStyle = "#000";
+		fxCtx.fillRect(0, 0, window.innerWidth, window.innerHeight);
+
+		return;
+	}
+
+	fxCtx.fillStyle = "rgba(0, 6, 2, 0.14)";
+	fxCtx.fillRect(0, 0, window.innerWidth, window.innerHeight);
+
+	fxCtx.font = RAIN.size + "px monospace";
+
+	for (let i = 0; i < RAIN.drops.length; i++) {
+		const y = RAIN.drops[i] * RAIN.size;
+		const char = RAIN.chars[Math.floor(Math.random() * RAIN.chars.length)];
+
+		fxCtx.fillStyle = "#2dff7a";
+		fxCtx.fillText(char, i * RAIN.size, y);
+
+		if (y > window.innerHeight && Math.random() > 0.975) {
+			RAIN.drops[i] = 0;
+		} else {
+			RAIN.drops[i]++;
+		}
+	}
+
+	const now = performance.now();
+
+	if (now - RAIN.lastSpawn > 900 && RAIN.snippets.length < 6) {
+		RAIN.lastSpawn = now;
+
+		RAIN.snippets.push({
+			text: pickRandom(RAIN_CODE),
+			x: Math.random() * Math.max(1, window.innerWidth - 220),
+			y: -10,
+			speed: 5 + Math.random() * 5,
+		});
+	}
+
+	fxCtx.font = "12px monospace";
+	fxCtx.fillStyle = "#9dffc0";
+
+	RAIN.snippets = RAIN.snippets.filter((snippet) => {
+		snippet.y += snippet.speed;
+
+		fxCtx.fillText(snippet.text, snippet.x, snippet.y);
+
+		return snippet.y < window.innerHeight + 20;
+	});
+}
+
+function updateFx(now) {
+	const active = themeState.current === TERMINAL;
+
+	if (active) {
+		RAIN.lastActive = now;
+	}
+
+	if (active || now - RAIN.lastActive < 2000) {
+		drawRain();
+
+		RAIN.dirty = true;
+	} else if (RAIN.dirty) {
+		fxCtx.setTransform(1, 0, 0, 1, 0, 0);
+		fxCtx.clearRect(0, 0, fxCanvas.width, fxCanvas.height);
+
+		RAIN.dirty = false;
+	}
+}
+
 function resizeCanvas() {
 	dpr = Math.min(window.devicePixelRatio || 1, 2);
 
 	canvas.width = Math.round(window.innerWidth * dpr);
 	canvas.height = Math.round(window.innerHeight * dpr);
+
+	resizeFx();
 }
 
 function snapToRest() {
@@ -977,12 +1415,6 @@ function startDrag() {
 	for (let k = 0; k < count; k++) {
 		z[k] += (Math.random() - 0.5) * 1.5;
 	}
-
-	state.travel = 0;
-	state.prevX = null;
-	state.prevY = null;
-
-	flingNearbyCats();
 
 	state.dx = 0;
 	state.dy = 0;
@@ -1118,6 +1550,95 @@ function computeShading() {
 	}
 }
 
+function gridIndices(n, step) {
+	const list = [];
+
+	for (let i = 0; i < n; i += step) {
+		list.push(i);
+	}
+
+	if (list[list.length - 1] !== n - 1) {
+		list.push(n - 1);
+	}
+
+	return list;
+}
+
+function drawExtras(theme, strength) {
+	if (!theme || strength < 0.02) {
+		return;
+	}
+
+	if (theme.grid) {
+		const grid = theme.grid;
+
+		ctx.lineWidth = 1;
+		ctx.strokeStyle = "rgba(" + grid.color + "," + grid.alpha * strength + ")";
+
+		ctx.beginPath();
+
+		if (grid.cols !== false) {
+			gridIndices(cols, grid.step).forEach((i) => {
+				for (let j = 0; j < rows; j++) {
+					const k = j * cols + i;
+
+					if (j === 0) ctx.moveTo(sx[k], sy[k]);
+					else ctx.lineTo(sx[k], sy[k]);
+				}
+			});
+		}
+
+		if (grid.rows !== false) {
+			gridIndices(rows, grid.step).forEach((j) => {
+				for (let i = 0; i < cols; i++) {
+					const k = j * cols + i;
+
+					if (i === 0) ctx.moveTo(sx[k], sy[k]);
+					else ctx.lineTo(sx[k], sy[k]);
+				}
+			});
+		}
+
+		ctx.stroke();
+	}
+
+	if (theme.dots) {
+		ctx.fillStyle = "rgba(" + theme.dots.color + "," + theme.dots.alpha * strength + ")";
+
+		ctx.beginPath();
+
+		for (let j = 0; j < rows - 1; j++) {
+			for (let i = 0; i < cols - 1; i++) {
+				const a = j * cols + i;
+				const b = a + 1;
+				const c = a + cols;
+				const d = c + 1;
+
+				const s = (shade[a] + shade[b] + shade[c] + shade[d]) * 0.25;
+
+				const r = clamp((1.3 - s) * 2.4 + 0.5, 0.4, 2.6);
+
+				for (let u = 0.25; u < 1; u += 0.5) {
+					for (let v = 0.25; v < 1; v += 0.5) {
+						const topX = sx[a] + (sx[b] - sx[a]) * u;
+						const botX = sx[c] + (sx[d] - sx[c]) * u;
+						const topY = sy[a] + (sy[b] - sy[a]) * u;
+						const botY = sy[c] + (sy[d] - sy[c]) * u;
+
+						const px = topX + (botX - topX) * v;
+						const py = topY + (botY - topY) * v;
+
+						ctx.moveTo(px + r, py);
+						ctx.arc(px, py, r, 0, Math.PI * 2);
+					}
+				}
+			}
+		}
+
+		ctx.fill();
+	}
+}
+
 function draw(time) {
 	themeState.mix = Math.min(1, themeState.mix + CONFIG.themeFade);
 
@@ -1144,10 +1665,10 @@ function draw(time) {
 
 			const t = (i / (cols - 1) + j / (rows - 1)) / 2;
 
-			let rgb = themeColor(themeState.current, t, nx, ny, s, time);
+			let rgb = themeColor(themeState.current, t, nx, ny, s, time, i, j);
 
 			if (blending) {
-				const previous = themeColor(themeState.previous, t, nx, ny, s, time);
+				const previous = themeColor(themeState.previous, t, nx, ny, s, time, i, j);
 				const m = themeState.mix;
 
 				rgb = [lerp(previous[0], rgb[0], m), lerp(previous[1], rgb[1], m), lerp(previous[2], rgb[2], m)];
@@ -1168,6 +1689,12 @@ function draw(time) {
 			ctx.fill();
 			ctx.stroke();
 		}
+	}
+
+	drawExtras(themeState.current, themeState.mix);
+
+	if (blending) {
+		drawExtras(themeState.previous, 1 - themeState.mix);
 	}
 
 	ctx.beginPath();
@@ -1199,7 +1726,7 @@ function draw(time) {
 
 	ctx.closePath();
 
-	ctx.strokeStyle = "rgba(255, 255, 255, 0.35)";
+	ctx.strokeStyle = (themeState.current && themeState.current.edge) || "rgba(255, 255, 255, 0.35)";
 	ctx.stroke();
 }
 
@@ -1233,6 +1760,10 @@ function measureWarpTargets() {
 		target.w = Math.max(rect.width, 1);
 		target.h = Math.max(rect.height, 1);
 	});
+
+	if (sx) {
+		updateContent();
+	}
 }
 
 function sampleMesh(px, py, out) {
@@ -1358,6 +1889,8 @@ function animate() {
 		guideShape();
 	}
 
+	applyWaves(time);
+
 	limitDepth();
 
 	if (settle > 0) {
@@ -1371,6 +1904,8 @@ function animate() {
 	draw(time);
 
 	updateContent();
+
+	updateFx(now);
 
 	frameCount++;
 
@@ -1445,13 +1980,6 @@ canvas.addEventListener("pointermove", (event) => {
 		return;
 	}
 
-	if (state.prevX !== null) {
-		state.travel += Math.hypot(event.clientX - state.prevX, event.clientY - state.prevY);
-	}
-
-	state.prevX = event.clientX;
-	state.prevY = event.clientY;
-
 	const length = Math.hypot(dx, dy);
 	const scale = length > 0 ? (CONFIG.maxPull * Math.tanh(length / CONFIG.maxPull)) / length : 1;
 
@@ -1474,8 +2002,6 @@ function releaseCloth(event) {
 		state.dragging = false;
 
 		endDrag();
-
-		noteDrag(state.travel);
 
 		state.resetAt = performance.now() + CONFIG.resetDelay;
 
@@ -1522,6 +2048,10 @@ if (document.fonts && document.fonts.ready) {
 
 window.addEventListener("load", measureWarpTargets);
 
+if (document.fonts && document.fonts.addEventListener) {
+	document.fonts.addEventListener("loadingdone", measureWarpTargets);
+}
+
 const catMessages = ["meow", "meow meow?", "meow meow meow...", "MEOW?!", "MEOOOOOOOOOOOOOOW!"];
 
 const catPositions = [
@@ -1553,8 +2083,41 @@ const catPositions = [
 
 let catClickCount = 0;
 
+let themeUnlocked = false;
+
+function setCatReady(ready) {
+	catButton.disabled = !ready;
+
+	if (ready) {
+		catButton.classList.add("pulse");
+
+		clearTimeout(catButton.pulseTimeout);
+
+		catButton.pulseTimeout = setTimeout(() => catButton.classList.remove("pulse"), 3600);
+	} else {
+		catButton.classList.remove("pulse");
+
+		clearTimeout(catButton.pulseTimeout);
+	}
+}
+
 catButton.addEventListener("click", (event) => {
 	event.stopPropagation();
+
+	if (themeUnlocked) {
+		catButton.animate(
+			[
+				{ transform: "rotate(0deg) scale(1)" },
+				{ transform: "rotate(-10deg) scale(1.15)" },
+				{ transform: "rotate(0deg) scale(1)" },
+			],
+			{ duration: 320, easing: "ease-out" },
+		);
+
+		themeSequence(nextTheme());
+
+		return;
+	}
 
 	catClickCount++;
 
@@ -1614,5 +2177,15 @@ catButton.addEventListener("click", (event) => {
 		clearTimeout(catButton.themeTimeout);
 
 		catButton.themeTimeout = setTimeout(changeTheme, CONFIG.themeDelay);
+
+		themeUnlocked = true;
+
+		setCatReady(false);
 	}
+});
+
+document.querySelector(".logo").addEventListener("click", (event) => {
+	event.preventDefault();
+
+	resetTheme();
 });
