@@ -1,6 +1,5 @@
 const SKILLS = [
 	{
-		key: "apps",
 		label: "Building applications",
 		icons: [
 			{ name: "Unity", src: "icons/unity.svg" },
@@ -13,7 +12,6 @@ const SKILLS = [
 	},
 
 	{
-		key: "web",
 		label: "Web development",
 		icons: [
 			{ name: "HTML5", src: "icons/html5.svg" },
@@ -24,7 +22,6 @@ const SKILLS = [
 	},
 
 	{
-		key: "video",
 		label: "Video editing",
 		icons: [
 			{ name: "Final Cut Pro", src: "icons/icons8-final-cut-pro-x.svg" },
@@ -34,7 +31,6 @@ const SKILLS = [
 	},
 
 	{
-		key: "design",
 		label: "Design",
 		icons: [
 			{ name: "Photoshop", src: "icons/adobephotoshop.svg" },
@@ -45,240 +41,218 @@ const SKILLS = [
 	},
 ];
 
-const TIMING = {
-	startDelay: 900,
-	collapsedHold: 900,
-	openHold: 3200,
-	collapseTime: 500,
-	gap: 350,
-};
+const SPEED = 26;
+const TOUCH_HOLD = 3500;
+const RESUME_DELAY = 180;
 
 const root = document.getElementById("skills");
-const stage = document.getElementById("skillStage");
-const dotBox = document.getElementById("skillDots");
+const track = document.getElementById("skillsTrack");
+const caption = document.getElementById("skillsCaption");
+const list = document.getElementById("skillsList");
 
-const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+const defaultCaption = caption ? caption.textContent : "";
 
-const pills = [];
-const dots = [];
+let activeTile = null;
+let resumeTimer = 0;
+let lastPointer = "mouse";
 
-let run = 0;
-let paused = false;
+function loadIcon(icon) {
+	return new Promise((resolve) => {
+		const image = new Image();
 
-root.classList.add("js");
-
-SKILLS.forEach((skill, index) => {
-	const pill = document.createElement("button");
-
-	pill.type = "button";
-	pill.className = "skill-pill";
-	pill.dataset.skill = skill.key;
-	pill.setAttribute("aria-expanded", "false");
-
-	const label = document.createElement("span");
-
-	label.className = "skill-label";
-	label.textContent = skill.label;
-
-	const reveal = document.createElement("span");
-
-	reveal.className = "skill-reveal";
-
-	const icons = document.createElement("span");
-
-	icons.className = "skill-icons";
-
-	skill.icons.forEach((icon, order) => {
-		const tile = document.createElement("span");
-
-		tile.className = "skill-icon";
-		tile.title = icon.name;
-		tile.style.setProperty("--i", order);
-
-		const image = document.createElement("img");
+		image.onload = () => resolve({ ...icon, ok: true });
+		image.onerror = () => resolve({ ...icon, ok: false });
 
 		image.src = encodeURI(icon.src);
-		image.alt = icon.name;
-		image.draggable = false;
-
-		image.addEventListener("error", () => tile.remove());
-
-		tile.appendChild(image);
-		icons.appendChild(tile);
-	});
-
-	reveal.appendChild(icons);
-
-	pill.append(label, reveal);
-
-	pill.addEventListener("click", () => onPill(index));
-
-	stage.appendChild(pill);
-
-	pills.push(pill);
-
-	const dot = document.createElement("button");
-
-	dot.type = "button";
-	dot.className = "skill-dot";
-	dot.dataset.skill = skill.key;
-	dot.setAttribute("aria-label", `Show ${skill.label}`);
-
-	dot.addEventListener("click", () => jump(index, true));
-
-	dotBox.appendChild(dot);
-
-	dots.push(dot);
-});
-
-function activate(index) {
-	pills.forEach((pill, i) => {
-		if (i !== index) {
-			pill.classList.remove("show", "open");
-			pill.setAttribute("aria-expanded", "false");
-		}
-	});
-
-	pills[index].classList.add("show");
-
-	dots.forEach((dot, i) => dot.classList.toggle("active", i === index));
-}
-
-function setOpen(index, open) {
-	pills[index].classList.toggle("open", open);
-	pills[index].setAttribute("aria-expanded", String(open));
-}
-
-function wait(token, ms) {
-	return new Promise((resolve) => {
-		let left = ms;
-		let last = performance.now();
-
-		const tick = () => {
-			if (token !== run) {
-				resolve(false);
-
-				return;
-			}
-
-			const now = performance.now();
-
-			if (!paused && !document.hidden) {
-				left -= now - last;
-			}
-
-			last = now;
-
-			if (left <= 0) {
-				resolve(true);
-			} else {
-				setTimeout(tick, 50);
-			}
-		};
-
-		tick();
 	});
 }
 
-async function play(token, index, phase) {
-	let i = index;
-	let current = phase;
+async function resolveSkills() {
+	const groups = await Promise.all(
+		SKILLS.map(async (skill) => ({
+			label: skill.label,
+			icons: (await Promise.all(skill.icons.map(loadIcon))).filter((icon) => icon.ok),
+		})),
+	);
 
-	while (token === run) {
-		if (current === "enter") {
-			activate(i);
+	return groups.filter((group) => group.icons.length > 0);
+}
 
-			if (!(await wait(token, TIMING.collapsedHold))) return;
+function buildCopy(groups) {
+	const copy = document.createElement("div");
 
-			current = "collapsed";
-		}
+	copy.className = "skills-copy";
 
-		if (current === "collapsed") {
-			setOpen(i, true);
+	groups.forEach((group) => {
+		const label = document.createElement("span");
 
-			current = "expanded";
-		}
+		label.className = "skill-group";
+		label.textContent = group.label;
 
-		if (current === "expanded") {
-			if (!(await wait(token, TIMING.openHold))) return;
+		copy.appendChild(label);
 
-			setOpen(i, false);
+		group.icons.forEach((icon) => {
+			const tile = document.createElement("span");
 
-			current = "leave";
-		}
+			tile.className = "skill";
+			tile.dataset.name = icon.name;
 
-		if (current === "leave") {
-			if (!(await wait(token, TIMING.collapseTime))) return;
+			const image = document.createElement("img");
 
-			pills[i].classList.remove("show");
+			image.src = encodeURI(icon.src);
+			image.alt = "";
+			image.draggable = false;
 
-			if (!(await wait(token, TIMING.gap))) return;
+			tile.appendChild(image);
+			copy.appendChild(tile);
+		});
 
-			i = (i + 1) % pills.length;
+		const separator = document.createElement("span");
 
-			current = "enter";
-		}
+		separator.className = "skill-sep";
+
+		copy.appendChild(separator);
+	});
+
+	return copy;
+}
+
+function buildList(groups) {
+	groups.forEach((group) => {
+		const item = document.createElement("li");
+
+		item.textContent = `${group.label}: ${group.icons.map((icon) => icon.name).join(", ")}`;
+
+		list.appendChild(item);
+	});
+}
+
+function updateSpeed() {
+	const first = track.firstElementChild;
+
+	if (first) {
+		track.style.setProperty("--dur", `${first.offsetWidth / SPEED}s`);
 	}
 }
 
-function jump(index, open) {
-	run++;
-
-	activate(index);
-	setOpen(index, open);
-
-	if (!reduceMotion) {
-		play(run, index, open ? "expanded" : "leave");
-	}
-}
-
-function onPill(index) {
-	const open = pills[index].classList.contains("open");
-
-	if (reduceMotion) {
-		setOpen(index, !open);
-
+function setCaption(text) {
+	if (caption.textContent === text) {
 		return;
 	}
 
-	if (open) {
-		run++;
+	caption.textContent = text;
 
-		setOpen(index, false);
+	caption.classList.remove("swap");
 
-		play(run, index, "leave");
-	} else {
-		jump(index, true);
+	void caption.offsetWidth;
+
+	caption.classList.add("swap");
+}
+
+function setActive(tile) {
+	if (activeTile) {
+		activeTile.classList.remove("active");
+	}
+
+	activeTile = tile;
+
+	if (tile) {
+		tile.classList.add("active");
 	}
 }
 
-[stage, dotBox].forEach((element) => {
-	element.addEventListener("pointerenter", (event) => {
-		if (event.pointerType === "mouse") {
-			paused = true;
-		}
-	});
+function hold(tile) {
+	clearTimeout(resumeTimer);
 
-	element.addEventListener("pointerleave", () => {
-		paused = false;
-	});
+	track.classList.add("paused");
 
-	element.addEventListener("focusin", () => {
-		paused = true;
-	});
-
-	element.addEventListener("focusout", () => {
-		paused = false;
-	});
-});
-
-if (reduceMotion) {
-	activate(0);
-	setOpen(0, true);
-} else {
-	setTimeout(() => {
-		if (run === 0) {
-			play(++run, 0, "enter");
-		}
-	}, TIMING.startDelay);
+	setActive(tile);
+	setCaption(tile.dataset.name);
 }
+
+function release(delay = 0) {
+	clearTimeout(resumeTimer);
+
+	resumeTimer = setTimeout(() => {
+		track.classList.remove("paused");
+
+		setActive(null);
+		setCaption(defaultCaption);
+	}, delay);
+}
+
+function bindInteraction() {
+	track.addEventListener("pointerdown", (event) => {
+		lastPointer = event.pointerType;
+	});
+
+	track.addEventListener("pointerover", (event) => {
+		const tile = event.target.closest(".skill");
+
+		if (!tile || event.pointerType === "touch") {
+			return;
+		}
+
+		hold(tile);
+	});
+
+	track.addEventListener("pointerout", (event) => {
+		if (event.pointerType === "touch") {
+			return;
+		}
+
+		const next = event.relatedTarget && event.relatedTarget.closest ? event.relatedTarget.closest(".skill") : null;
+
+		if (!next) {
+			release(RESUME_DELAY);
+		}
+	});
+
+	track.addEventListener("click", (event) => {
+		const tile = event.target.closest(".skill");
+
+		if (!tile || lastPointer === "mouse") {
+			return;
+		}
+
+		if (tile === activeTile) {
+			release();
+
+			return;
+		}
+
+		hold(tile);
+
+		release(TOUCH_HOLD);
+	});
+}
+
+async function init() {
+	if (!root || !track || !caption || !list) {
+		return;
+	}
+
+	const groups = await resolveSkills();
+
+	if (groups.length === 0) {
+		return;
+	}
+
+	track.append(buildCopy(groups), buildCopy(groups));
+
+	buildList(groups);
+
+	root.classList.add("js");
+
+	updateSpeed();
+
+	bindInteraction();
+
+	window.addEventListener("resize", updateSpeed);
+
+	if (document.fonts && document.fonts.ready) {
+		document.fonts.ready.then(updateSpeed);
+	}
+}
+
+init();

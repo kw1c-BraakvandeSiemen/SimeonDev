@@ -10,7 +10,7 @@
 
 		<link rel="canonical" href="https://siemenvandebraak.com/" />
 
-		<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22%3E%3Ctext y=%22.9em%22 font-size=%2290%22%3E🐈%3C/text%3E%3C/svg%3E" />
+		<link rel="icon" href="img/favicon.svg" type="image/svg+xml" />
 
 		<meta property="og:type" content="website" />
 		<meta property="og:site_name" content="Siemen.dev" />
@@ -59,28 +59,13 @@
 								<p class="hello">Welcome :)</p>
 
 								<p class="intro-text">I'm Siemen van de Braak, a medior software engineer based in the Netherlands.</p>
-								<!-- <div class="skills" id="skills">
-									<div class="skills-head">
-										<p class="eyebrow">Experienced with</p>
-
-										<div class="skill-dots" id="skillDots"></div>
-									</div>
-
-									<ul class="skill-fallback">
-										<li>Building applications</li>
-										<li>Web development</li>
-										<li>Video editing</li>
-										<li>Design</li>
-									</ul>
-
-									<div class="skill-stage" id="skillStage"></div>
-								</div> -->
 							</section>
+
 							<section class="contact">
 								<div class="section-label">
 									<span>CONTACT</span>
 
-									<span class="version">v1.10</span>
+									<span class="version">v1.11</span>
 								</div>
 
 								<h2>
@@ -105,7 +90,24 @@
 							</section>
 						</div>
 
-						<div class="cloth-footer"></div>
+						<div class="cloth-footer">
+							<div class="skills" id="skills">
+								<p class="skills-caption" id="skillsCaption">Experienced with</p>
+
+								<ul class="skills-fallback">
+									<li>Building applications</li>
+									<li>Web development</li>
+									<li>Video editing</li>
+									<li>Design</li>
+								</ul>
+
+								<div class="skills-viewport" id="skillsViewport" aria-hidden="true">
+									<div class="skills-track" id="skillsTrack"></div>
+								</div>
+
+								<ul class="sr-only" id="skillsList"></ul>
+							</div>
+						</div>
 					</div>
 				</section>
 			</main>
