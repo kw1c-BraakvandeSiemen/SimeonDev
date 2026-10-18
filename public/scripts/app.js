@@ -3460,7 +3460,7 @@ function drawBubbles(now) {
 			x: bandX(30),
 			y: window.innerHeight + 20,
 			vy: 0.6 + Math.random() * 1.4,
-			r: 3 + Math.random() * 9,
+			r: 4 + Math.random() * 11,
 			sway: Math.random() * Math.PI * 2,
 			swaySpeed: 0.02 + Math.random() * 0.03,
 		});
@@ -3489,9 +3489,11 @@ function drawBubbles(now) {
 
 		const x = bubble.x + Math.sin(bubble.sway) * 10;
 
-		fxCtx.strokeStyle = "rgba(255, 255, 255, 0.5)";
+		fxCtx.fillStyle = "rgba(255, 255, 255, 0.12)";
+		fxCtx.strokeStyle = "rgba(255, 255, 255, 0.8)";
 		fxCtx.beginPath();
 		fxCtx.arc(x, bubble.y, bubble.r, 0, Math.PI * 2);
+		fxCtx.fill();
 		fxCtx.stroke();
 
 		fxCtx.fillStyle = "rgba(255, 255, 255, 0.35)";
