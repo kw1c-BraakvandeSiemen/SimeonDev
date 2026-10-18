@@ -2250,27 +2250,11 @@ html[data-theme="virtualboy"] .crt-overlay {
 }
 
 .bd-water {
-	overflow: hidden;
-
 	background:
-		radial-gradient(ellipse at 50% 120%, rgba(255, 240, 200, 0.5), transparent 60%),
-		radial-gradient(rgba(120, 85, 40, 0.1) 1px, transparent 1.5px) 0 0 / 5px 5px,
-		radial-gradient(rgba(255, 255, 255, 0.18) 1px, transparent 1.5px) 2px 2px / 7px 7px,
+		radial-gradient(ellipse at 50% 120%, rgba(255, 240, 200, 0.45), transparent 60%),
+		radial-gradient(rgba(120, 85, 40, 0.12) 1px, transparent 1.5px) 0 0 / 5px 5px,
+		radial-gradient(rgba(150, 105, 50, 0.08) 1px, transparent 1.5px) 2px 3px / 7px 7px,
 		linear-gradient(180deg, #efdcaa 0%, #e3c586 100%);
-}
-
-.bd-water::before {
-	content: "";
-
-	position: absolute;
-
-	inset: -20%;
-
-	background:
-		repeating-radial-gradient(circle at 30% 40%, rgba(150, 110, 50, 0.08) 0 2px, transparent 2px 46px),
-		repeating-radial-gradient(circle at 70% 60%, rgba(150, 110, 50, 0.06) 0 2px, transparent 2px 60px);
-
-	animation: waterDrift 12s ease-in-out infinite alternate;
 }
 
 @keyframes waterDrift {
@@ -3633,4 +3617,791 @@ html[data-theme="casino"] .site .skill.active {
 
 .contact-row .arrow svg {
 	display: block;
+}
+
+/* =========================================================
+   WINDOWS XP, INVADERS, BSOD, 404, CHESS, GOLF, HOCKEY
+   ========================================================= */
+
+html[data-theme="xp"] .bd-xp,
+html[data-theme="invaders"] .bd-invaders,
+html[data-theme="invaders"] .fx-canvas,
+html[data-theme="invaders"] .crt-overlay,
+html[data-theme="bsod"] .bd-bsod,
+html[data-theme="notfound"] .bd-notfound,
+html[data-theme="chess"] .bd-chess,
+html[data-theme="chess"] .fx-canvas,
+html[data-theme="minigolf"] .bd-golf,
+html[data-theme="airhockey"] .bd-hockey {
+	opacity: 1;
+}
+
+.bd-xp {
+	background:
+		linear-gradient(180deg, #3b82f6 0, #245edb 15%, #1d4fc0 100%) bottom / 100% 30px no-repeat,
+		radial-gradient(ellipse 90% 40% at 30% 100%, #5fae3a 0 60%, transparent 61%),
+		radial-gradient(ellipse 80% 38% at 85% 100%, #4c9a2a 0 60%, transparent 61%),
+		linear-gradient(180deg, #2d6fd1 0%, #8cc2ff 72%, #cfe6ff 100%);
+}
+
+.bd-xp::before {
+	content: "start";
+
+	position: absolute;
+
+	bottom: 0;
+	left: 0;
+
+	display: flex;
+
+	align-items: center;
+
+	height: 30px;
+
+	padding: 0 22px 0 14px;
+
+	border-radius: 0 14px 14px 0;
+
+	background: linear-gradient(180deg, #5cb85c, #2f8f2f);
+
+	color: #fff;
+
+	font: italic 700 15px Tahoma, "Trebuchet MS", sans-serif;
+}
+
+.bd-invaders {
+	background: #000;
+}
+
+.bd-bsod {
+	background: #0000aa;
+}
+
+.bd-notfound {
+	background: linear-gradient(180deg, #fff, #eceff1);
+}
+
+.bd-chess {
+	background:
+		radial-gradient(ellipse at center, transparent 40%, rgba(0, 0, 0, 0.6) 100%),
+		repeating-linear-gradient(90deg, rgba(0, 0, 0, 0.14) 0 2px, transparent 2px 10px),
+		#3a2414;
+}
+
+.bd-golf {
+	background:
+		radial-gradient(ellipse at center, transparent 50%, rgba(0, 50, 10, 0.35) 100%),
+		repeating-linear-gradient(90deg, #5fbf4f 0 60px, #55b246 60px 120px);
+}
+
+.bd-hockey {
+	background:
+		radial-gradient(circle at 20% 30%, rgba(0, 255, 200, 0.1), transparent 40%),
+		radial-gradient(circle at 80% 70%, rgba(255, 43, 214, 0.1), transparent 40%),
+		#05050f;
+}
+
+.party-cat.cheer .party-flip {
+	animation: cheer 0.55s ease-in-out infinite;
+}
+
+@keyframes cheer {
+	0%,
+	100% {
+		transform: translateY(0) rotate(0deg);
+	}
+
+	50% {
+		transform: translateY(-16px) rotate(-8deg);
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.party-cat.cheer .party-flip {
+		animation: none;
+	}
+}
+
+html[data-theme="notfound"] .site .logo {
+	color: #202124;
+}
+
+html[data-theme="xp"] {
+	--accent: #3c9c3c;
+	--line: rgba(0, 0, 0, 0.25);
+}
+
+html[data-theme="xp"] .site .cloth-content,
+html[data-theme="xp"] .site .cloth-content * {
+	font-family: Tahoma, 'Segoe UI', Verdana, sans-serif;
+}
+
+html[data-theme="xp"] .site :is(.intro h1, .contact h2, .contact h2 em, .hello) {
+	background: none;
+	-webkit-text-fill-color: currentColor;
+	filter: none;
+	animation: none;
+}
+
+html[data-theme="xp"] .site .intro h1 span {
+	-webkit-text-fill-color: currentColor;
+	opacity: 1;
+	color: #6d6d6d;
+}
+
+html[data-theme="xp"] .site .intro h1 {
+	color: #0054e3;
+	font-weight: 800; letter-spacing: -0.03em;
+}
+
+html[data-theme="xp"] .site .contact h2 {
+	color: #000;
+	font-weight: 800; letter-spacing: -0.03em;
+}
+
+html[data-theme="xp"] .site .contact h2 em {
+	color: #0054e3;
+}
+
+html[data-theme="xp"] .site .hello {
+	color: #3c3c3c;
+	
+}
+
+html[data-theme="xp"] .site .intro-text {
+	color: #222;
+	
+}
+
+html[data-theme="xp"] .site :is(.eyebrow, .section-label span:first-child, .skills-caption) {
+	color: #0054e3;
+	
+}
+
+html[data-theme="xp"] .site .section-label .version {
+	color: #6d6d6d;
+}
+
+html[data-theme="xp"] .site .contact-row {
+	color: #000;
+	
+}
+
+html[data-theme="xp"] .site .contact-row:hover {
+	color: #0054e3;
+}
+
+html[data-theme="xp"] .site .contact-row span:last-child {
+	color: #0054e3;
+}
+
+html[data-theme="xp"] .site .skill-group {
+	color: #555;
+	
+}
+
+html[data-theme="xp"] .site .skill-sep {
+	background: #3c9c3c;
+}
+
+html[data-theme="xp"] .site .skill {
+	background: #fff;
+	box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.25);
+}
+
+
+html[data-theme="xp"] .site .skill.active {
+	background: #fff;
+	box-shadow: inset 0 0 0 1.5px #0054e3;
+}
+
+html[data-theme="invaders"] {
+	--accent: #50ff50;
+	--line: rgba(80, 255, 80, 0.4);
+}
+
+html[data-theme="invaders"] .site .cloth-content,
+html[data-theme="invaders"] .site .cloth-content * {
+	font-family: "Press Start 2P", ui-monospace, Menlo, Consolas, monospace;
+}
+
+html[data-theme="invaders"] .site :is(.intro h1, .contact h2, .contact h2 em, .hello) {
+	background: none;
+	-webkit-text-fill-color: currentColor;
+	filter: none;
+	animation: none;
+}
+
+html[data-theme="invaders"] .site .intro h1 span {
+	-webkit-text-fill-color: currentColor;
+	opacity: 1;
+	color: #ff3cc8;
+}
+
+html[data-theme="invaders"] .site .intro h1 {
+	color: #50ff50;
+	font-size: clamp(22px, 3.2vw, 34px); font-weight: 400; line-height: 1.1; letter-spacing: 0;
+}
+
+html[data-theme="invaders"] .site .contact h2 {
+	color: #fff;
+	font-size: clamp(14px, 1.9vw, 20px); font-weight: 400; line-height: 1.3; letter-spacing: 0;
+}
+
+html[data-theme="invaders"] .site .contact h2 em {
+	color: #50ff50;
+}
+
+html[data-theme="invaders"] .site .hello {
+	color: #ff3cc8;
+	font-size: 11px; font-weight: 400;
+}
+
+html[data-theme="invaders"] .site .intro-text {
+	color: #cfd3cf;
+	font-size: 8px; line-height: 2;
+}
+
+html[data-theme="invaders"] .site :is(.eyebrow, .section-label span:first-child, .skills-caption) {
+	color: #50ff50;
+	font-size: 7px; font-weight: 400; letter-spacing: 0.1em;
+}
+
+html[data-theme="invaders"] .site .section-label .version {
+	color: #777;
+}
+
+html[data-theme="invaders"] .site .contact-row {
+	color: #fff;
+	font-size: 8px; font-weight: 400;
+}
+
+html[data-theme="invaders"] .site .contact-row:hover {
+	color: #ff3cc8;
+}
+
+html[data-theme="invaders"] .site .contact-row span:last-child {
+	color: #ff3cc8;
+}
+
+html[data-theme="invaders"] .site .skill-group {
+	color: #aaa;
+	font-size: 7px; font-weight: 400;
+}
+
+html[data-theme="invaders"] .site .skill-sep {
+	background: #ff3cc8;
+}
+
+html[data-theme="invaders"] .site .skill {
+	background: rgba(0, 40, 0, 0.6);
+	box-shadow: inset 0 0 0 1px rgba(80, 255, 80, 0.5);
+}
+
+html[data-theme="invaders"] .site .skill img {
+	opacity: 0.95;
+	filter: brightness(0) invert(1);
+}
+
+html[data-theme="invaders"] .site .skill.active {
+	background: rgba(80, 255, 80, 0.2);
+	box-shadow: inset 0 0 0 1.5px #50ff50;
+}
+
+html[data-theme="bsod"] {
+	--accent: #ffff55;
+	--line: rgba(255, 255, 255, 0.45);
+}
+
+html[data-theme="bsod"] .site .cloth-content,
+html[data-theme="bsod"] .site .cloth-content * {
+	font-family: "Lucida Console", Consolas, ui-monospace, monospace;
+}
+
+html[data-theme="bsod"] .site :is(.intro h1, .contact h2, .contact h2 em, .hello) {
+	background: none;
+	-webkit-text-fill-color: currentColor;
+	filter: none;
+	animation: none;
+}
+
+html[data-theme="bsod"] .site .intro h1 span {
+	-webkit-text-fill-color: currentColor;
+	opacity: 1;
+	color: #aaaaff;
+}
+
+html[data-theme="bsod"] .site .intro h1 {
+	color: #fff;
+	font-size: clamp(34px, 4.4vw, 56px); font-weight: 700; letter-spacing: -0.02em;
+}
+
+html[data-theme="bsod"] .site .contact h2 {
+	color: #fff;
+	font-size: clamp(22px, 2.9vw, 34px); font-weight: 700; letter-spacing: -0.02em;
+}
+
+html[data-theme="bsod"] .site .contact h2 em {
+	color: #ffff55;
+}
+
+html[data-theme="bsod"] .site .hello {
+	color: #fff;
+	
+}
+
+html[data-theme="bsod"] .site .intro-text {
+	color: #ddddff;
+	
+}
+
+html[data-theme="bsod"] .site :is(.eyebrow, .section-label span:first-child, .skills-caption) {
+	color: #ffff55;
+	
+}
+
+html[data-theme="bsod"] .site .section-label .version {
+	color: #aab;
+}
+
+html[data-theme="bsod"] .site .contact-row {
+	color: #fff;
+	
+}
+
+html[data-theme="bsod"] .site .contact-row:hover {
+	color: #ffff55;
+}
+
+html[data-theme="bsod"] .site .contact-row span:last-child {
+	color: #ffff55;
+}
+
+html[data-theme="bsod"] .site .skill-group {
+	color: #ccf;
+	
+}
+
+html[data-theme="bsod"] .site .skill-sep {
+	background: #fff;
+}
+
+html[data-theme="bsod"] .site .skill {
+	background: rgba(255, 255, 255, 0.12);
+	box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.5);
+}
+
+html[data-theme="bsod"] .site .skill img {
+	opacity: 0.95;
+	filter: brightness(0) invert(1);
+}
+
+html[data-theme="bsod"] .site .skill.active {
+	background: rgba(255, 255, 255, 0.25);
+	box-shadow: inset 0 0 0 1.5px #fff;
+}
+
+html[data-theme="bsod"] .site .cloth-meta span:first-child::before {
+	content: "*** STOP: 0x000000CA7 (MEOW_NOT_FOUND)";
+
+	color: #fff;
+
+	font-size: 10px;
+
+	letter-spacing: 0.05em;
+}
+
+html[data-theme="bsod"] .site .eyebrow::before {
+	content: "A problem has been detected: ";
+}
+
+html[data-theme="notfound"] {
+	--accent: #d93025;
+	--line: rgba(0, 0, 0, 0.25);
+}
+
+html[data-theme="notfound"] .site .cloth-content,
+html[data-theme="notfound"] .site .cloth-content * {
+	font-family: system-ui, 'Segoe UI', Arial, sans-serif;
+}
+
+html[data-theme="notfound"] .site :is(.intro h1, .contact h2, .contact h2 em, .hello) {
+	background: none;
+	-webkit-text-fill-color: currentColor;
+	filter: none;
+	animation: none;
+}
+
+html[data-theme="notfound"] .site .intro h1 span {
+	-webkit-text-fill-color: currentColor;
+	opacity: 1;
+	color: #d93025;
+}
+
+html[data-theme="notfound"] .site .intro h1 {
+	color: #202124;
+	font-weight: 800; letter-spacing: -0.03em;
+}
+
+html[data-theme="notfound"] .site .contact h2 {
+	color: #202124;
+	font-weight: 800; letter-spacing: -0.03em;
+}
+
+html[data-theme="notfound"] .site .contact h2 em {
+	color: #d93025;
+}
+
+html[data-theme="notfound"] .site .hello {
+	color: #202124;
+	
+}
+
+html[data-theme="notfound"] .site .intro-text {
+	color: #5f6368;
+	
+}
+
+html[data-theme="notfound"] .site :is(.eyebrow, .section-label span:first-child, .skills-caption) {
+	color: #d93025;
+	
+}
+
+html[data-theme="notfound"] .site .section-label .version {
+	color: #888;
+}
+
+html[data-theme="notfound"] .site .contact-row {
+	color: #202124;
+	
+}
+
+html[data-theme="notfound"] .site .contact-row:hover {
+	color: #d93025;
+}
+
+html[data-theme="notfound"] .site .contact-row span:last-child {
+	color: #d93025;
+}
+
+html[data-theme="notfound"] .site .skill-group {
+	color: #666;
+	
+}
+
+html[data-theme="notfound"] .site .skill-sep {
+	background: #d93025;
+}
+
+html[data-theme="notfound"] .site .skill {
+	background: rgba(0, 0, 0, 0.05);
+	box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.25);
+}
+
+
+html[data-theme="notfound"] .site .skill.active {
+	background: #fff;
+	box-shadow: inset 0 0 0 1.5px #d93025;
+}
+
+html[data-theme="notfound"] .site .eyebrow::before {
+	content: "404 · ";
+}
+
+html[data-theme="notfound"] .site .hello {
+	font-size: 0;
+}
+
+html[data-theme="notfound"] .site .hello::after {
+	content: "Pagina niet gevonden :(";
+
+	font-size: 16px;
+}
+
+html[data-theme="notfound"] .site .intro-text {
+	font-size: 0;
+}
+
+html[data-theme="notfound"] .site .intro-text::after {
+	content: "De pagina die je zoekt bestaat niet, of is verhuisd naar een andere kat.";
+
+	font-size: 13px;
+	line-height: 1.7;
+}
+
+html[data-theme="chess"] {
+	--accent: #8b1a1a;
+	--line: rgba(43, 29, 14, 0.4);
+}
+
+html[data-theme="chess"] .site .cloth-content,
+html[data-theme="chess"] .site .cloth-content * {
+	font-family: Georgia, "Times New Roman", serif;
+}
+
+html[data-theme="chess"] .site :is(.intro h1, .contact h2, .contact h2 em, .hello) {
+	background: none;
+	-webkit-text-fill-color: currentColor;
+	filter: none;
+	animation: none;
+}
+
+html[data-theme="chess"] .site .intro h1 span {
+	-webkit-text-fill-color: currentColor;
+	opacity: 1;
+	color: #8b1a1a;
+}
+
+html[data-theme="chess"] .site .intro h1 {
+	color: #2b1d0e;
+	font-weight: 800; letter-spacing: -0.03em;
+}
+
+html[data-theme="chess"] .site .contact h2 {
+	color: #2b1d0e;
+	font-weight: 800; letter-spacing: -0.03em;
+}
+
+html[data-theme="chess"] .site .contact h2 em {
+	color: #8b1a1a;
+}
+
+html[data-theme="chess"] .site .hello {
+	color: #5a4326;
+	
+}
+
+html[data-theme="chess"] .site .intro-text {
+	color: #3b2a14;
+	
+}
+
+html[data-theme="chess"] .site :is(.eyebrow, .section-label span:first-child, .skills-caption) {
+	color: #8b1a1a;
+	
+}
+
+html[data-theme="chess"] .site .section-label .version {
+	color: rgba(43, 29, 14, 0.5);
+}
+
+html[data-theme="chess"] .site .contact-row {
+	color: #2b1d0e;
+	
+}
+
+html[data-theme="chess"] .site .contact-row:hover {
+	color: #8b1a1a;
+}
+
+html[data-theme="chess"] .site .contact-row span:last-child {
+	color: #8b1a1a;
+}
+
+html[data-theme="chess"] .site .skill-group {
+	color: rgba(43, 29, 14, 0.6);
+	
+}
+
+html[data-theme="chess"] .site .skill-sep {
+	background: #8b1a1a;
+}
+
+html[data-theme="chess"] .site .skill {
+	background: rgba(255, 255, 255, 0.45);
+	box-shadow: inset 0 0 0 1px rgba(43, 29, 14, 0.3);
+}
+
+
+html[data-theme="chess"] .site .skill.active {
+	background: rgba(255, 255, 255, 0.8);
+	box-shadow: inset 0 0 0 1.5px #8b1a1a;
+}
+
+html[data-theme="minigolf"] {
+	--accent: #ffe34d;
+	--line: rgba(255, 255, 255, 0.4);
+}
+
+html[data-theme="minigolf"] .site .cloth-content,
+html[data-theme="minigolf"] .site .cloth-content * {
+	font-family: "Arial Rounded MT Bold", "Trebuchet MS", "Segoe UI", sans-serif;
+	text-shadow: 0 2px 0 rgba(10, 70, 20, 0.7);
+}
+
+html[data-theme="minigolf"] .site :is(.intro h1, .contact h2, .contact h2 em, .hello) {
+	background: none;
+	-webkit-text-fill-color: currentColor;
+	filter: none;
+	animation: none;
+}
+
+html[data-theme="minigolf"] .site .intro h1 span {
+	-webkit-text-fill-color: currentColor;
+	opacity: 1;
+	color: #ffe34d;
+}
+
+html[data-theme="minigolf"] .site .intro h1 {
+	color: #fff;
+	font-weight: 900; letter-spacing: -0.03em;
+}
+
+html[data-theme="minigolf"] .site .contact h2 {
+	color: #fff;
+	font-weight: 900; letter-spacing: -0.03em;
+}
+
+html[data-theme="minigolf"] .site .contact h2 em {
+	color: #ffe34d;
+}
+
+html[data-theme="minigolf"] .site .hello {
+	color: #eaffd0;
+	
+}
+
+html[data-theme="minigolf"] .site .intro-text {
+	color: #f4ffe6;
+	
+}
+
+html[data-theme="minigolf"] .site :is(.eyebrow, .section-label span:first-child, .skills-caption) {
+	color: #ffe34d;
+	
+}
+
+html[data-theme="minigolf"] .site .section-label .version {
+	color: rgba(255, 255, 255, 0.65);
+}
+
+html[data-theme="minigolf"] .site .contact-row {
+	color: #fff;
+	
+}
+
+html[data-theme="minigolf"] .site .contact-row:hover {
+	color: #ffe34d;
+}
+
+html[data-theme="minigolf"] .site .contact-row span:last-child {
+	color: #ffe34d;
+}
+
+html[data-theme="minigolf"] .site .skill-group {
+	color: rgba(255, 255, 255, 0.85);
+	
+}
+
+html[data-theme="minigolf"] .site .skill-sep {
+	background: #ffe34d;
+}
+
+html[data-theme="minigolf"] .site .skill {
+	background: rgba(0, 60, 10, 0.35);
+	box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.5);
+}
+
+html[data-theme="minigolf"] .site .skill img {
+	opacity: 0.95;
+	filter: brightness(0) invert(1);
+}
+
+html[data-theme="minigolf"] .site .skill.active {
+	background: rgba(255, 255, 255, 0.25);
+	box-shadow: inset 0 0 0 1.5px #ffe34d;
+}
+
+html[data-theme="airhockey"] {
+	--accent: #00f0ff;
+	--line: rgba(0, 240, 255, 0.35);
+}
+
+html[data-theme="airhockey"] .site .cloth-content,
+html[data-theme="airhockey"] .site .cloth-content * {
+	font-family: inherit;
+	text-shadow: 0 0 10px rgba(0, 240, 255, 0.35);
+}
+
+html[data-theme="airhockey"] .site :is(.intro h1, .contact h2, .contact h2 em, .hello) {
+	background: none;
+	-webkit-text-fill-color: currentColor;
+	filter: none;
+	animation: none;
+}
+
+html[data-theme="airhockey"] .site .intro h1 span {
+	-webkit-text-fill-color: currentColor;
+	opacity: 1;
+	color: #ff2bd6;
+}
+
+html[data-theme="airhockey"] .site .intro h1 {
+	color: #00f0ff;
+	font-weight: 800; letter-spacing: -0.03em;
+}
+
+html[data-theme="airhockey"] .site .contact h2 {
+	color: #fff;
+	font-weight: 800; letter-spacing: -0.03em;
+}
+
+html[data-theme="airhockey"] .site .contact h2 em {
+	color: #00f0ff;
+}
+
+html[data-theme="airhockey"] .site .hello {
+	color: #ff2bd6;
+	
+}
+
+html[data-theme="airhockey"] .site .intro-text {
+	color: rgba(210, 240, 255, 0.85);
+	
+}
+
+html[data-theme="airhockey"] .site :is(.eyebrow, .section-label span:first-child, .skills-caption) {
+	color: #00f0ff;
+	
+}
+
+html[data-theme="airhockey"] .site .section-label .version {
+	color: rgba(0, 240, 255, 0.55);
+}
+
+html[data-theme="airhockey"] .site .contact-row {
+	color: #e8fbff;
+	
+}
+
+html[data-theme="airhockey"] .site .contact-row:hover {
+	color: #ff2bd6;
+}
+
+html[data-theme="airhockey"] .site .contact-row span:last-child {
+	color: #ff2bd6;
+}
+
+html[data-theme="airhockey"] .site .skill-group {
+	color: rgba(0, 240, 255, 0.7);
+	
+}
+
+html[data-theme="airhockey"] .site .skill-sep {
+	background: #ff2bd6;
+}
+
+html[data-theme="airhockey"] .site .skill {
+	background: rgba(0, 20, 40, 0.7);
+	box-shadow: inset 0 0 0 1px rgba(0, 240, 255, 0.5);
+}
+
+html[data-theme="airhockey"] .site .skill img {
+	opacity: 0.95;
+	filter: brightness(0) invert(1);
+}
+
+html[data-theme="airhockey"] .site .skill.active {
+	background: rgba(0, 240, 255, 0.2);
+	box-shadow: inset 0 0 0 1.5px #00f0ff;
 }
