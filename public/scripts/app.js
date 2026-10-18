@@ -209,13 +209,13 @@ const themeState = {
 
 const CAT_FACES = ["🐈", "🐈‍⬛", "🐈", "🐈‍⬛", "🐈", "🐈‍⬛"];
 
-const OPENERS = ["meow", "meow?", "miauw", "meow meow", "mew"];
+const OPENERS = ["meow", "meow?", "miauw", "meow meow", "meow ik ben een kat"];
 
-const ANSWERS_TO_QUESTION = ["meow.", "meow meow", "purr...", "meow ik ben een poes", "MEOW"];
+const ANSWERS_TO_QUESTION = ["meow.", "meow meow", "meow ik ben een poes", "MEOW"];
 
-const ANSWERS_TO_SHOUT = ["meow?!", "kat geluid", "...meow", "meow meow?"];
+const ANSWERS_TO_SHOUT = ["meow?!", "kat geluid", "meow meow?"];
 
-const ANSWERS_GENERIC = ["meow", "meow?", "mew", "purr...", "meow meow meow", "MEOW!"];
+const ANSWERS_GENERIC = ["meow", "meow?", "mew", "meow meow meow", "MEOW!"];
 
 const party = {
 	element: null,
