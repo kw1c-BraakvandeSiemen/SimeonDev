@@ -837,61 +837,10 @@ async function moveCat(cat, px, py) {
 
 /* ---------- Windows XP ---------- */
 
-function drawXp(strength) {
-	ctx.globalAlpha = strength;
-
-	withMesh(0, 0, () => {
-		ctx.font = "bold 13px Tahoma, 'Trebuchet MS', sans-serif";
-		ctx.textBaseline = "middle";
-		ctx.textAlign = "left";
-
-		ctx.fillStyle = "rgba(0, 0, 0, 0.35)";
-		ctx.fillText("siemen.dev", 15, 21);
-
-		ctx.fillStyle = "#fff";
-		ctx.fillText("siemen.dev", 14, 20);
-
-		const button = (x, red) => {
-			ctx.fillStyle = red ? "#d9472b" : "#2f6ed6";
-			ctx.fillRect(x, 10, 20, 20);
-
-			ctx.strokeStyle = "#fff";
-			ctx.lineWidth = 1.5;
-			ctx.strokeRect(x + 0.5, 10.5, 19, 19);
-		};
-
-		const closeX = width - 30;
-
-		button(closeX, true);
-		button(closeX - 26, false);
-		button(closeX - 52, false);
-
-		ctx.strokeStyle = "#fff";
-		ctx.lineWidth = 2;
-
-		ctx.beginPath();
-		ctx.moveTo(closeX + 5, 15);
-		ctx.lineTo(closeX + 15, 25);
-		ctx.moveTo(closeX + 15, 15);
-		ctx.lineTo(closeX + 5, 25);
-		ctx.stroke();
-
-		ctx.strokeRect(closeX - 26 + 5, 15, 10, 9);
-
-		ctx.beginPath();
-		ctx.moveTo(closeX - 52 + 5, 24);
-		ctx.lineTo(closeX - 52 + 14, 24);
-		ctx.stroke();
-	});
-
-	ctx.globalAlpha = 1;
-}
-
 const XP = {
 	name: "xp",
 	fixed: ["0,84,227", "60,156,60", "10,36,106"],
 	edge: "rgba(0, 60, 200, 0.95)",
-	draw: drawXp,
 	color(t, nx, ny, s, time, i, j) {
 		if (j < 2) {
 			const f = i / Math.max(1, cols - 1);
@@ -1809,35 +1758,24 @@ const UNDERWATER = {
 
 /* ---------- VHS ---------- */
 
+let vhsTimeElement = null;
+
 function drawVhsOsd(strength, time) {
-	ctx.globalAlpha = strength;
+	if (!vhsTimeElement) {
+		vhsTimeElement = document.querySelector(".osd-time");
+	}
 
-	withMesh(0, 0, () => {
-		ctx.font = "26px VT323, 'Courier New', monospace";
-		ctx.textBaseline = "middle";
+	if (!vhsTimeElement) {
+		return;
+	}
 
-		const outline = (text, x, y, align) => {
-			ctx.textAlign = align;
+	const seconds = Math.floor(time);
 
-			ctx.fillStyle = "rgba(255, 0, 80, 0.7)";
-			ctx.fillText(text, x - 1.5, y);
+	const stamp = String(Math.floor(seconds / 3600) % 24).padStart(2, "0") + ":" + String(Math.floor(seconds / 60) % 60).padStart(2, "0") + ":" + String(seconds % 60).padStart(2, "0");
 
-			ctx.fillStyle = "rgba(0, 220, 255, 0.7)";
-			ctx.fillText(text, x + 1.5, y);
-
-			ctx.fillStyle = "#fff";
-			ctx.fillText(text, x, y);
-		};
-
-		outline("PLAY ▶", 16, 22, "left");
-
-		const seconds = Math.floor(time);
-		const stamp = String(Math.floor(seconds / 3600) % 24).padStart(2, "0") + ":" + String(Math.floor(seconds / 60) % 60).padStart(2, "0") + ":" + String(seconds % 60).padStart(2, "0");
-
-		outline(stamp, width - 16, 22, "right");
-	});
-
-	ctx.globalAlpha = 1;
+	if (vhsTimeElement.textContent !== stamp) {
+		vhsTimeElement.textContent = stamp;
+	}
 }
 
 const VHS = {
@@ -1935,7 +1873,73 @@ const CASSETTE = {
 	},
 };
 
-const ALL_THEMES = [...THEMES, RETRO, TERMINAL, GAMEBOY, BLUEPRINT, NEWSPAPER, FALLOUT, KEYBOARD, VIRTUALBOY, WATER, MINECRAFT, LEGO, TETRIS, CLOCK, RUNESCAPE, GEMS, CASINO, XP, INVADERS, BSOD, NOTFOUND, CHESS, MINIGOLF, AIRHOCKEY, BOWLING, PENALTY, DARTS, POKER, UNDERWATER, VHS, CASSETTE];
+function drawPool(strength) {
+	ctx.globalAlpha = strength;
+
+	const pockets = [
+		[12, 12, 12],
+		[width - 12, 12, 12],
+		[12, height - 12, 12],
+		[width - 12, height - 12, 12],
+		[width / 2, 8, 10],
+		[width / 2, height - 8, 10],
+	];
+
+	pockets.forEach(([px, py, radius]) => {
+		withMesh(px, py, () => {
+			ctx.fillStyle = "#050505";
+			ctx.beginPath();
+			ctx.arc(0, 0, radius, 0, Math.PI * 2);
+			ctx.fill();
+
+			ctx.strokeStyle = "rgba(255, 255, 255, 0.18)";
+			ctx.lineWidth = 1.5;
+			ctx.stroke();
+		});
+	});
+
+	ctx.fillStyle = "rgba(245, 235, 200, 0.55)";
+
+	for (let n = 1; n < 8; n++) {
+		if (n === 4) {
+			continue;
+		}
+
+		[7, height - 7].forEach((y) => {
+			withMesh((width / 8) * n, y, () => {
+				ctx.beginPath();
+				ctx.arc(0, 0, 2, 0, Math.PI * 2);
+				ctx.fill();
+			});
+		});
+	}
+
+	ctx.globalAlpha = 1;
+}
+
+const POOL = {
+	name: "pool",
+	fixed: ["255,255,255", "255,213,79", "14,112,80"],
+	edge: "rgba(60, 36, 18, 0.95)",
+	draw: drawPool,
+	color(t, nx, ny, s, time, i, j) {
+		if (i < 1 || i >= cols - 2 || j < 1 || j >= rows - 2) {
+			const grain = 0.94 + 0.12 * hash2(i, j);
+
+			return [clamp(98 * grain * s, 0, 255), clamp(62 * grain * s, 0, 255), clamp(34 * grain * s, 0, 255)];
+		}
+
+		const grain = 0.95 + 0.1 * hash2(i, j);
+
+		const r = lerp(14, 10, t) * grain * s;
+		const g = lerp(112, 96, t) * grain * s + Math.max(0, s - 1.05) * 50;
+		const b = lerp(80, 66, t) * grain * s;
+
+		return [clamp(r, 0, 255), clamp(g, 0, 255), clamp(b, 0, 255)];
+	},
+};
+
+const ALL_THEMES = [...THEMES, RETRO, TERMINAL, GAMEBOY, BLUEPRINT, NEWSPAPER, FALLOUT, KEYBOARD, VIRTUALBOY, WATER, MINECRAFT, LEGO, TETRIS, CLOCK, RUNESCAPE, GEMS, CASINO, XP, INVADERS, BSOD, NOTFOUND, CHESS, MINIGOLF, AIRHOCKEY, BOWLING, PENALTY, DARTS, POKER, UNDERWATER, VHS, CASSETTE, POOL];
 
 const BASICS_LINES = {
 	ask: "Meow ik heb geen verdere thema inspiratie meer,\nterug naar de basics",
@@ -2277,6 +2281,7 @@ const THEME_LINES = {
 	underwater: { ask: "Meow ik wil duiken", after: "meow. ik wil naar boven" },
 	vhs: { ask: "Meow ik wil terugspoelen", after: "meow. be kind, rewind" },
 	cassette: { ask: "Meow ik wil een mixtape", after: "meow. kant B" },
+	pool: { ask: "Meow ik wil poolen", after: "meow. 8 ball, corner pocket" },
 };
 
 const themeState = {
@@ -3146,7 +3151,7 @@ function drawNotes(now) {
 	});
 }
 
-function bandX(pad) {
+function bandRange(pad) {
 	const left = offsetX;
 	const right = window.innerWidth - (offsetX + width);
 
@@ -3160,7 +3165,11 @@ function bandX(pad) {
 		sides.push([offsetX + width + pad, window.innerWidth - pad]);
 	}
 
-	const range = sides.length ? pickRandom(sides) : [0, window.innerWidth];
+	return sides.length ? pickRandom(sides) : [0, window.innerWidth];
+}
+
+function bandX(pad) {
+	const range = bandRange(pad);
 
 	return range[0] + Math.random() * (range[1] - range[0]);
 }
@@ -3557,7 +3566,178 @@ function drawVhs(now) {
 	fxCtx.fillRect(0, barY - 40, window.innerWidth, 80);
 }
 
+const BEACH = { balls: [] };
+
+const BEACH_COLORS = ["#e53935", "#ffffff", "#fdd835", "#ffffff", "#1e88e5", "#ffffff"];
+
+function drawBeachBalls() {
+	fxCtx.setTransform(dpr, 0, 0, dpr, 0, 0);
+	fxCtx.clearRect(0, 0, window.innerWidth, window.innerHeight);
+
+	if (fxReduced()) {
+		return;
+	}
+
+	while (BEACH.balls.length < 5) {
+		const range = bandRange(40);
+
+		BEACH.balls.push({
+			min: range[0],
+			max: range[1],
+			x: range[0] + Math.random() * (range[1] - range[0]),
+			y: Math.random() * window.innerHeight * 0.5,
+			vx: (Math.random() < 0.5 ? -1 : 1) * (0.5 + Math.random() * 1),
+			vy: 0,
+			r: 22 + Math.random() * 14,
+			rot: Math.random() * Math.PI * 2,
+		});
+	}
+
+	BEACH.balls.forEach((ball) => {
+		ball.vy += 0.35;
+		ball.y += ball.vy;
+		ball.x += ball.vx;
+
+		const ground = window.innerHeight - ball.r;
+
+		if (ball.y > ground) {
+			ball.y = ground;
+			ball.vy = -Math.abs(ball.vy) * 0.82;
+
+			if (Math.abs(ball.vy) < 4) {
+				ball.vy = -(11 + Math.random() * 5);
+			}
+		}
+
+		if (ball.x < ball.min + ball.r) {
+			ball.x = ball.min + ball.r;
+			ball.vx = Math.abs(ball.vx);
+		}
+
+		if (ball.x > ball.max - ball.r) {
+			ball.x = ball.max - ball.r;
+			ball.vx = -Math.abs(ball.vx);
+		}
+
+		ball.rot += ball.vx * 0.04;
+
+		fxCtx.save();
+
+		fxCtx.translate(ball.x, ball.y);
+
+		fxCtx.fillStyle = "rgba(90, 60, 20, 0.18)";
+		fxCtx.beginPath();
+		fxCtx.arc(4, ball.r * 0.9, ball.r * 0.8, 0, Math.PI * 2);
+		fxCtx.fill();
+
+		fxCtx.beginPath();
+		fxCtx.arc(0, 0, ball.r, 0, Math.PI * 2);
+		fxCtx.clip();
+
+		fxCtx.rotate(ball.rot);
+
+		for (let n = 0; n < 6; n++) {
+			fxCtx.fillStyle = BEACH_COLORS[n];
+			fxCtx.beginPath();
+			fxCtx.moveTo(0, 0);
+			fxCtx.arc(0, 0, ball.r + 2, (n / 6) * Math.PI * 2, ((n + 1) / 6) * Math.PI * 2);
+			fxCtx.closePath();
+			fxCtx.fill();
+		}
+
+		fxCtx.rotate(-ball.rot);
+
+		fxCtx.fillStyle = "rgba(255, 255, 255, 0.4)";
+		fxCtx.beginPath();
+		fxCtx.arc(-ball.r * 0.35, -ball.r * 0.35, ball.r * 0.25, 0, Math.PI * 2);
+		fxCtx.fill();
+
+		fxCtx.restore();
+	});
+}
+
+const BILLIARDS = { items: [], last: 0 };
+
+const BILLIARD_COLORS = ["#fdd835", "#1e40af", "#e53935", "#6a1b9a", "#fb8c00", "#2e7d32", "#7b1f1f", "#111111"];
+
+function drawBilliardBall(x, y, r, num, rot) {
+	const stripe = num > 8;
+	const color = BILLIARD_COLORS[(num - 1) % 8];
+
+	fxCtx.save();
+
+	fxCtx.translate(x, y);
+
+	fxCtx.beginPath();
+	fxCtx.arc(0, 0, r, 0, Math.PI * 2);
+	fxCtx.clip();
+
+	fxCtx.rotate(rot);
+
+	fxCtx.fillStyle = stripe ? "#f5f5f0" : color;
+	fxCtx.fillRect(-r, -r, r * 2, r * 2);
+
+	if (stripe) {
+		fxCtx.fillStyle = color;
+		fxCtx.fillRect(-r, -r * 0.5, r * 2, r);
+	}
+
+	fxCtx.fillStyle = "#f5f5f0";
+	fxCtx.beginPath();
+	fxCtx.arc(0, 0, r * 0.45, 0, Math.PI * 2);
+	fxCtx.fill();
+
+	fxCtx.fillStyle = "#111";
+	fxCtx.font = "bold " + Math.round(r * 0.6) + "px Arial, sans-serif";
+	fxCtx.textAlign = "center";
+	fxCtx.textBaseline = "middle";
+	fxCtx.fillText(String(num), 0, 1);
+
+	fxCtx.rotate(-rot);
+
+	fxCtx.fillStyle = "rgba(255, 255, 255, 0.35)";
+	fxCtx.beginPath();
+	fxCtx.arc(-r * 0.4, -r * 0.4, r * 0.2, 0, Math.PI * 2);
+	fxCtx.fill();
+
+	fxCtx.restore();
+}
+
+function drawBilliards(now) {
+	fxCtx.setTransform(dpr, 0, 0, dpr, 0, 0);
+	fxCtx.clearRect(0, 0, window.innerWidth, window.innerHeight);
+
+	if (fxReduced()) {
+		return;
+	}
+
+	if (now - BILLIARDS.last > 260 && BILLIARDS.items.length < 30) {
+		BILLIARDS.last = now;
+
+		BILLIARDS.items.push({
+			x: bandX(30),
+			y: -40,
+			vy: 0.8 + Math.random() * 1.2,
+			r: 16 + Math.random() * 8,
+			num: 1 + Math.floor(Math.random() * 15),
+			rot: Math.random() * Math.PI * 2,
+			spin: (Math.random() - 0.5) * 0.05,
+		});
+	}
+
+	BILLIARDS.items = BILLIARDS.items.filter((ball) => {
+		ball.y += ball.vy;
+		ball.rot += ball.spin;
+
+		drawBilliardBall(ball.x, ball.y, ball.r, ball.num, ball.rot);
+
+		return ball.y < window.innerHeight + 40;
+	});
+}
+
 const FX_THEMES = {
+	water: drawBeachBalls,
+	pool: drawBilliards,
 	underwater: drawBubbles,
 	vhs: drawVhs,
 	invaders: drawInvaders,
@@ -4041,7 +4221,7 @@ function draw(time) {
 	ctx.stroke();
 }
 
-const WARP_SELECTOR = [".cloth-meta", ".eyebrow", ".intro h1", ".hello", ".intro-text", ".section-label", ".contact h2", ".contact-row", ".cloth-footer"].join(",");
+const WARP_SELECTOR = [".osd", ".cloth-meta", ".eyebrow", ".intro h1", ".hello", ".intro-text", ".section-label", ".contact h2", ".contact-row", ".cloth-footer"].join(",");
 
 let warpTargets = [];
 

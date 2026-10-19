@@ -5131,3 +5131,299 @@ html[data-theme="cassette"] .site .skill.active {
 .fx-canvas {
 	z-index: 1;
 }
+
+/* =========================================================
+   OSD (PART OF THE PAPER), POOL, BEACH BALLS, CAT TEXT
+   ========================================================= */
+
+.osd {
+	position: absolute;
+
+	top: 0;
+	right: 0;
+	left: 0;
+
+	display: none;
+
+	align-items: center;
+	justify-content: space-between;
+
+	height: 40px;
+
+	pointer-events: none;
+}
+
+html[data-theme="xp"] .osd-xp {
+	display: flex;
+
+	padding: 0 10px 0 14px;
+
+	color: #fff;
+
+	font: 700 13px Tahoma, "Segoe UI", sans-serif;
+
+	text-shadow: 1px 1px 0 rgba(0, 0, 0, 0.35);
+}
+
+.osd-btns {
+	display: flex;
+
+	gap: 6px;
+}
+
+.osd-btns i {
+	position: relative;
+
+	display: block;
+
+	width: 20px;
+	height: 20px;
+
+	border: 1.5px solid #fff;
+
+	background: #2f6ed6;
+}
+
+.osd-btns i.close {
+	background: #d9472b;
+}
+
+.osd-btns i.min::before {
+	content: "";
+
+	position: absolute;
+
+	bottom: 4px;
+	left: 4px;
+
+	width: 9px;
+	height: 2px;
+
+	background: #fff;
+}
+
+.osd-btns i.max::before {
+	content: "";
+
+	position: absolute;
+
+	top: 3px;
+	left: 3px;
+
+	width: 10px;
+	height: 9px;
+
+	border: 2px solid #fff;
+	border-top-width: 3px;
+}
+
+.osd-btns i.close::before,
+.osd-btns i.close::after {
+	content: "";
+
+	position: absolute;
+
+	top: 7px;
+	left: 2px;
+
+	width: 13px;
+	height: 2px;
+
+	background: #fff;
+
+	transform: rotate(45deg);
+}
+
+.osd-btns i.close::after {
+	transform: rotate(-45deg);
+}
+
+html[data-theme="vhs"] .osd-vhs {
+	display: flex;
+
+	padding: 0 16px;
+
+	color: #fff;
+
+	font: 26px VT323, "Courier New", monospace;
+
+	text-shadow:
+		-1.5px 0 rgba(255, 0, 80, 0.7),
+		1.5px 0 rgba(0, 220, 255, 0.7);
+}
+
+@media (min-width: 701px) {
+	.party-float {
+		font-size: 15px;
+	}
+}
+
+html[data-theme="water"] .fx-canvas,
+html[data-theme="pool"] .fx-canvas,
+html[data-theme="pool"] .bd-pool {
+	opacity: 1;
+}
+
+.bd-pool {
+	background:
+		radial-gradient(ellipse at 50% 35%, rgba(255, 230, 160, 0.16), transparent 55%),
+		radial-gradient(ellipse at center, #14331f 0%, #050d08 100%);
+}
+
+html[data-theme="pool"] {
+	--accent: #ffd54f;
+	--line: rgba(255, 255, 255, 0.4);
+}
+
+html[data-theme="pool"] .site .cloth-content,
+html[data-theme="pool"] .site .cloth-content * {
+	font-family: "Trebuchet MS", "Segoe UI", sans-serif;
+}
+
+html[data-theme="pool"] .site :is(.intro h1, .contact h2, .contact h2 em, .hello) {
+	background: none;
+	-webkit-text-fill-color: currentColor;
+	filter: none;
+	animation: none;
+}
+
+html[data-theme="pool"] .site .intro h1 span {
+	-webkit-text-fill-color: currentColor;
+	opacity: 1;
+	color: #ffd54f;
+}
+
+html[data-theme="pool"] .site .intro h1 {
+	color: #fff;
+	font-weight: 800; letter-spacing: -0.03em;
+}
+
+html[data-theme="pool"] .site .contact h2 {
+	color: #fff;
+	font-weight: 800; letter-spacing: -0.03em;
+}
+
+html[data-theme="pool"] .site .contact h2 em {
+	color: #ffd54f;
+}
+
+html[data-theme="pool"] .site .hello {
+	color: #d9f5e6;
+	
+}
+
+html[data-theme="pool"] .site .intro-text {
+	color: rgba(255, 255, 255, 0.9);
+	
+}
+
+html[data-theme="pool"] .site :is(.eyebrow, .section-label span:first-child, .skills-caption) {
+	color: #ffd54f;
+	
+}
+
+html[data-theme="pool"] .site .section-label .version {
+	color: rgba(255, 255, 255, 0.6);
+}
+
+html[data-theme="pool"] .site .contact-row {
+	color: #fff;
+	
+}
+
+html[data-theme="pool"] .site .contact-row:hover {
+	color: #ffd54f;
+}
+
+html[data-theme="pool"] .site .contact-row span:last-child {
+	color: #ffd54f;
+}
+
+html[data-theme="pool"] .site .skill-group {
+	color: rgba(255, 255, 255, 0.78);
+	
+}
+
+html[data-theme="pool"] .site .skill-sep {
+	background: #ffd54f;
+}
+
+html[data-theme="pool"] .site .skill {
+	background: rgba(0, 0, 0, 0.25);
+	box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.45);
+}
+
+html[data-theme="pool"] .site .skill img {
+	opacity: 0.95;
+	filter: brightness(0) invert(1);
+}
+
+html[data-theme="pool"] .site .skill.active {
+	background: rgba(255, 255, 255, 0.2);
+	box-shadow: inset 0 0 0 1.5px #ffd54f;
+}
+
+@media (min-width: 701px) {
+	.intro {
+		container-type: inline-size;
+	}
+
+	.intro h1 {
+		font-size: min(86px, calc(100cqw / 5.8));
+	}
+
+	html[data-theme] .site .intro h1 {
+		font-size: min(86px, calc(100cqw / 5.8));
+	}
+
+	html[data-theme="holographic"] .site .intro h1,
+	html[data-theme="aurora"] .site .intro h1,
+	html[data-theme="retrowave"] .site .intro h1,
+	html[data-theme="water"] .site .intro h1,
+	html[data-theme="lego"] .site .intro h1,
+	html[data-theme="gems"] .site .intro h1,
+	html[data-theme="xp"] .site .intro h1,
+	html[data-theme="notfound"] .site .intro h1,
+	html[data-theme="minigolf"] .site .intro h1,
+	html[data-theme="airhockey"] .site .intro h1,
+	html[data-theme="bowling"] .site .intro h1,
+	html[data-theme="penalty"] .site .intro h1,
+	html[data-theme="underwater"] .site .intro h1,
+	html[data-theme="pool"] .site .intro h1 {
+		font-size: min(86px, calc(100cqw / 5.8));
+	}
+
+	html[data-theme="blueprint"] .site .intro h1 {
+		font-size: min(86px, calc(100cqw / 5.4));
+	}
+
+	html[data-theme="newspaper"] .site .intro h1,
+	html[data-theme="keyboard"] .site .intro h1,
+	html[data-theme="clock"] .site .intro h1,
+	html[data-theme="darts"] .site .intro h1,
+	html[data-theme="poker"] .site .intro h1,
+	html[data-theme="casino"] .site .intro h1,
+	html[data-theme="chess"] .site .intro h1,
+	html[data-theme="terminal"] .site .intro h1,
+	html[data-theme="fallout"] .site .intro h1,
+	html[data-theme="bsod"] .site .intro h1,
+	html[data-theme="runescape"] .site .intro h1 {
+		font-size: min(86px, calc(100cqw / 6.4));
+	}
+
+	html[data-theme="cassette"] .site .intro h1 {
+		font-size: min(86px, calc(100cqw / 6.6));
+	}
+
+	html[data-theme="vhs"] .site .intro h1 {
+		font-size: min(86px, calc(100cqw / 4.6));
+	}
+
+	html[data-theme="gameboy"] .site .intro h1,
+	html[data-theme="virtualboy"] .site .intro h1,
+	html[data-theme="minecraft"] .site .intro h1,
+	html[data-theme="tetris"] .site .intro h1,
+	html[data-theme="invaders"] .site .intro h1 {
+		font-size: min(86px, calc(100cqw / 10.6));
+	}
+}
